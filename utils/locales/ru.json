@@ -1,0 +1,428 @@
+{
+  "common": {
+    "back": "Назад",
+    "next": "Далее",
+    "skip": "Пропустить",
+    "done": "Готово",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "retry": "Повторить",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "sort": "Сортировка",
+    "price": "Цена",
+    "name": "Имя",
+    "email": "Email",
+    "password": "Пароль",
+    "phone": "Телефон",
+    "address": "Адрес",
+    "success": "Успех",
+    "ok": "ОК",
+    "seeAll": "Показать все",
+    "seller": "Продавец",
+    "selectLanguage": "Выбрать язык",
+    "yes": "Да",
+    "no": "Нет",
+    "call": "Позвонить",
+    "warning": "Предупреждение",
+    "unsavedChanges": "У вас есть несохранённые изменения",
+    "clear": "Очистить",
+    "apply": "Применить",
+    "clear": "Очистить",
+    "apply": "Применить"
+  },
+  "appName": "Корейский Магазин",
+  "home": {
+    "title": "Корейский Магазин",
+    "searchPlaceholder": "Поиск товаров...",
+    "welcomeBanner": "Откройте удивительные корейские товары",
+    "categories": "Категории",
+    "featured": "Рекомендуемые товары",
+    "bestSellers": "Хит продаж",
+    "newArrivals": "Новинки",
+    "popularItems": "Популярные товары",
+    "new": "Новинка",
+    "outOfStock": "Нет в наличии",
+    "addToCart": "Добавить в корзину",
+    "specialOffers": "Специальные предложения",
+    "seeAll": "Показать все",
+    "sort": {
+      "default": "По умолчанию",
+      "relevance": "По релевантности",
+      "newest": "Новые",
+      "priceLowHigh": "Цена: по возрастанию",
+      "priceHighLow": "Цена: по убыванию",
+      "popularity": "Популярность",
+      "rating": "Рейтинг покупателей"
+    },
+    "filter": {
+      "title": "Фильтры",
+      "category": "Категория",
+      "priceRange": "Диапазон цен",
+      "rating": "Рейтинг",
+      "inStock": "Только в наличии",
+      "clear": "Очистить все",
+      "apply": "Применить"
+    }
+  },
+  "splash": {
+    "loading": "Загрузка..."
+  },
+  "categories": {
+    "cosmetics": "Косметика",
+    "skincare": "Уход за кожей",
+    "snacks": "Снеки",
+    "fashion": "Мода",
+    "homeDecor": "Декор для дома",
+    "electronics": "Электроника",
+    "all": "Все категории"
+  },
+  "settings": {
+    "title": "Настройки",
+    "subtitle": "Настройте ваш опыт",
+    "reset": "Сбросить",
+    "save": "Сохранить изменения"
+  },
+  "sort": {
+    "relevance": "По релевантности",
+    "newest": "Новые",
+    "priceLowHigh": "Цена: по возрастанию",
+    "priceHighLow": "Цена: по убыванию",
+    "popularity": "Популярность",
+    "rating": "Рейтинг покупателей"
+  },
+  "filters": {
+    "onSale": "По скидке",
+    "clearAll": "Очистить все",
+    "last30Days": "За последние 30 дней",
+    "last6Months": "За последние 6 месяцев",
+    "lastYear": "За последний год"
+  },
+  "search": {
+    "startSearching": "Начните поиск товаров",
+    "searchInstructions": "Используйте поисковую строку выше, чтобы найти корейские товары",
+    "tryDifferentKeywords": "Попробуйте другие ключевые слова",
+    "resultsCount": "Найдено результатов: {{count}}",
+    "showing": "Показано",
+    "of": "из",
+    "results": "результатов",
+    "filters": "Фильтры"
+  },
+  "errors": {
+    "noProducts": "Товары не найдены",
+    "somethingWentWrong": "Что-то пошло не так",
+    "tryAgain": "Пожалуйста, попробуйте ещё раз",
+    "goBack": "Назад",
+    "noInternet": {
+      "title": "Нет интернет-соединения",
+      "description": "Проверьте интернет-соединение и попробуйте снова",
+      "tips": "Попробуйте эти решения:",
+      "airplaneMode": "Отключите режим полёта",
+      "wifi": "Проверьте Wi-Fi соединение",
+      "mobileData": "Включите мобильные данные"
+    },
+    "paymentError": {
+      "title": "Ошибка оплаты",
+      "description": "Произошла ошибка при обработке платежа",
+      "commonReasons": "Общие причины:",
+      "insufficientFunds": "Недостаточно средств",
+      "expiredCard": "Карта просрочена",
+      "declined": "Карта отклонена",
+      "tryDifferentMethod": "Попробуйте другой способ оплаты"
+    },
+    "emptyCart": {
+      "title": "Пустая корзина",
+      "description": "Ваша корзина пуста. Добавьте товары, чтобы начать!"
+    },
+    "emptyOrders": {
+      "title": "Нет заказов",
+      "description": "Вы еще не разместили ни одного заказа. Начните покупки, чтобы увидеть свои заказы здесь!"
+    },
+    "serverError": {
+      "title": "Ошибка сервера",
+      "description": "У нас технические проблемы. Попробуйте позже."
+    },
+    "noProducts": {
+      "title": "Товары не найдены",
+      "description": "Мы не смогли найти товары, соответствующие вашим критериям",
+      "tryDifferentFilters": "Попробуйте другие фильтры или поисковые запросы",
+      "checkBack": "Загляните позже за новыми товарами"
+    },
+    "emptySearch": {
+      "title": "Нет результатов поиска",
+      "description": "Мы не смогли найти ничего подходящего к вашему запросу",
+      "searchTips": "Советы по поиску:",
+      "checkSpelling": "Проверьте правописание",
+      "broaderTerms": "Попробуйте более общие термины",
+      "fewerFilters": "Используйте меньше фильтров"
+    }
+  },
+  "actions": {
+    "retry": "Повторить"
+  },
+  "checkout": {
+    "title": "Оформление заказа",
+    "emptyCart": "Корзина пуста",
+    "selectAddress": "Пожалуйста, выберите адрес доставки"
+  },
+  "auth": {
+    "login": "Войти",
+    "register": "Регистрация",
+    "logout": "Выйти",
+    "forgotPassword": "Забыли пароль?",
+    "createAccount": "Создать аккаунт",
+    "confirmPassword": "Подтвердить пароль",
+    "fullName": "Полное имя",
+    "loginSuccess": "Успешный вход",
+    "registerSuccess": "Успешная регистрация",
+    "invalidCredentials": "Неверные данные",
+    "passwordMismatch": "Пароли не совпадают",
+    "welcomeBack": "Добро пожаловать обратно",
+    "signInToContinue": "Войдите в свой аккаунт, чтобы продолжить",
+    "emailRequired": "Email обязателен",
+    "emailInvalid": "Пожалуйста, введите действительный email",
+    "passwordRequired": "Пароль обязателен",
+    "passwordTooShort": "Пароль должен содержать минимум 6 символов",
+    "nameRequired": "Имя обязательно",
+    "phoneRequired": "Номер телефона обязателен",
+    "dontHaveAccount": "Нет аккаунта?",
+    "emailPlaceholder": "Введите ваш email",
+    "passwordPlaceholder": "Введите ваш пароль",
+    "fullNamePlaceholder": "Введите ваше полное имя",
+    "phonePlaceholder": "Введите номер телефона",
+    "confirmPasswordPlaceholder": "Подтвердите пароль",
+    "rememberMe": "Запомнить меня",
+    "haveAccount": "Уже есть аккаунт?",
+    "signIn": "Войти",
+    "createNewAccount": "Создать новый аккаунт",
+    "resetPassword": "Сбросить пароль",
+    "resetPasswordDescription": "Введите ваш email адрес и мы отправим вам ссылку для сброса пароля",
+    "sendResetLink": "Отправить ссылку",
+    "backToLogin": "Назад к входу",
+    "resetEmailSent": "Письмо для сброса отправлено! Проверьте вашу почту",
+    "usePassword": "Использовать пароль",
+    "email": "Email",
+    "password": "Пароль",
+    "orContinueWith": "или продолжить с",
+    "noAccount": "Нет аккаунта?",
+    "signUp": "Регистрация",
+    "success": {
+      "login": "Успешный вход",
+      "registration": "Успешная регистрация"
+    },
+    "errors": {
+      "networkError": "Ошибка сети",
+      "unknownError": "Произошла неизвестная ошибка"
+    },
+    "validation": {
+      "required": "Это поле обязательно"
+    }
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "Поиск и покупка товаров",
+      "description": "Открывайте удивительные корейские товары с удобным поиском и покупками"
+    },
+    "slide2": {
+      "title": "Быстрая доставка",
+      "description": "Получайте заказы быстро и безопасно прямо к вашей двери"
+    },
+    "slide3": {
+      "title": "Отслеживание заказа",
+      "description": "Отслеживайте заказы в реальном времени от склада до доставки"
+    },
+    "slide4": {
+      "title": "Безопасные платежи",
+      "description": "Покупайте с уверенностью, используя нашу безопасную систему платежей"
+    },
+    "getStarted": "Начать"
+  },
+  "product": {
+    "details": "Детали товара",
+    "specifications": "Характеристики",
+    "shipping": "Информация о доставке",
+    "freeShipping": "Бесплатная доставка",
+    "standardShipping": "Стандартная доставка",
+    "days": "дней",
+    "responseRate": "Скорость ответа",
+    "addToCart": "В корзину",
+    "buyNow": "Купить сейчас",
+    "outOfStock": "Нет в наличии",
+    "inStock": "В наличии",
+    "reviews": "Отзывы",
+    "rating": "Рейтинг",
+    "bestSellers": "Бестселлеры",
+    "newProducts": "Новые товары",
+    "featuredProducts": "Рекомендуемые товары"
+  },
+  "cart": {
+    "title": "Корзина",
+    "empty": "Корзина пуста",
+    "total": "Итого",
+    "subtotal": "Подытог",
+    "checkout": "Оформить заказ"
+  },
+  "delivery": {
+    "morning": "Утром (9:00 - 12:00)",
+    "afternoon": "Днем (12:00 - 18:00)",
+    "evening": "Вечером (18:00 - 21:00)",
+    "contactDriver": "Связаться с водителем",
+    "deliveryWindow": "Окно доставки",
+    "liveTracking": "Отслеживание в реальном времени",
+    "signatureRequired": "Требуется подпись"
+  },
+  "orders": {
+    "emptyTitle": "Пока заказов нет",
+    "emptyDescription": "Похоже, вы еще не делали заказов. Начните покупки, чтобы увидеть свои заказы здесь!",
+    "startShopping": "Начать покупки",
+    "order": "Заказ",
+    "items": "товаров",
+    "amount": "Итого",
+    "viewDetails": "Подробности",
+    "trackOrder": "Отследить заказ",
+    "reorder": "Заказать снова",
+    "cancelOrder": "Отменить заказ",
+    "writeReview": "Написать отзыв",
+    "cancelConfirm": "Вы уверены, что хотите отменить этот заказ?",
+    "title": "Мои заказы",
+    "all": "заказов",
+    "orderTotal": "Итого по заказу",
+    "search": "Поиск заказов...",
+    "filter": "Фильтр",
+    "sort": "Сортировка",
+    "status": "Статус",
+    "date": "Диапазон дат"
+  },
+  "tracking": {
+    "statusTimeline": "Хронология статуса заказа",
+    "loadError": "Не удалось загрузить информацию о отслеживании",
+    "mapNotAvailable": "Карта недоступна",
+    "mapNotAvailableDescription": "Отслеживание местоположения в данный момент недоступно",
+    "currentLocation": "Текущее местоположение",
+    "destination": "Пункт назначения",
+    "deliveryPerson": "Курьер",
+    "mapNotReady": "Загрузка карты",
+    "mapNotReadyDescription": "Пожалуйста, подождите, загружается карта",
+    "carrier": "Перевозчик",
+    "trackingNumber": "Номер отслеживания",
+    "trackShipment": "Отследить посылку",
+    "orderNumber": "Номер заказа",
+    "currentStatus": "Текущий статус",
+    "estimatedDelivery": "Предполагаемая доставка",
+    "delayed": "Задерживается",
+    "onTime": "Вовремя",
+    "deliveredOn": "Доставлено",
+    "deliveryProgress": "Завершено",
+    "viewDetails": "Подробности",
+    "contactSupport": "Связаться с поддержкой",
+    "packageInfo": "Содержимое посылки"
+  },
+  "timeline": {
+    "estimatedTime": "Ожидаемое",
+    "actualTime": "Фактическое"
+  },
+  "orderStatus": {
+    "pending": "Ожидание",
+    "confirmed": "Подтверждён",
+    "processing": "Обрабатывается",
+    "shipped": "Отправлен",
+    "delivered": "Доставлен",
+    "cancelled": "Отменён",
+    "returned": "Возвращён"
+  },
+  "orderDetails": {
+    "statusPending": "Ваш заказ ожидает подтверждения",
+    "statusConfirmed": "Ваш заказ подтверждён",
+    "statusProcessing": "Ваш заказ обрабатывается",
+    "statusShipped": "Ваш заказ отправлен",
+    "statusDelivered": "Ваш заказ доставлен",
+    "statusCancelled": "Ваш заказ отменён",
+    "statusReturned": "Ваш заказ возвращён",
+    "cannotOpenInvoice": "Невозможно открыть счёт в данный момент",
+    "invoiceError": "Ошибка создания счёта",
+    "supportMessage": "Как мы можем помочь вам с этим заказом?",
+    "tracking": "Информация о отслеживании",
+    "notes": "Примечания к заказу",
+    "trackingNotAvailable": "Отслеживание недоступно для данного заказа",
+    "reorderConfirm": "Хотите ли перезаказать эти товары?",
+    "reorderSuccess": "Товары успешно добавлены в корзину",
+    "cancelSuccess": "Заказ успешно отменён",
+    "noFilterResults": "Ни один заказ не соответствует вашим фильтрам",
+    "estimatedDelivery": "Ожидаемая доставка",
+    "orderPlaced": "Заказ размещён",
+    "shippingAddress": "Адрес доставки",
+    "paymentMethod": "Способ оплаты",
+    "needHelp": "Нужна помощь?"
+  },
+  "actions": {
+    "retry": "Повторить",
+    "goBack": "Назад",
+    "cancel": "Отменить",
+    "confirm": "Подтвердить",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "add": "Добавить",
+    "remove": "Удалить",
+    "update": "Обновить"
+  },
+  "profile": {
+    "title": "Профиль",
+    "currency": "Валюта",
+    "account": "Аккаунт",
+    "settings": "Настройки",
+    "orders": "Мои заказы",
+    "wishlist": "Список желаний",
+    "addresses": "Адреса",
+    "paymentMethods": "Способы оплаты",
+    "preferences": "Настройки",
+    "language": "Язык",
+    "languageDescription": "Выберите предпочитаемый язык",
+    "theme": "Тема",
+    "themeDescription": "Выберите светлую или тёмную тему",
+    "selectLanguage": "Выберите предпочитаемый язык",
+    "selectTheme": "Выберите предпочитаемую тему",
+    "help": "Помощь и поддержка",
+    "about": "О приложении",
+    "logout": "Выход",
+    "support": "Поддержка",
+    "saveSuccess": "Профиль успешно обновлён",
+    "premium": "Премиум",
+    "memberSince": "Участник с",
+    "editProfile": "Редактировать профиль",
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "support": "Поддержка",
+    "saveSuccess": "Профиль успешно обновлён",
+    "premium": "Премиум",
+    "memberSince": "Участник с",
+    "editProfile": "Редактировать профиль",
+    "totalSpent": "Всего потрачено",
+    "points": "Баллы",
+    "name": "Имя",
+    "namePlaceholder": "Введите ваше имя",
+    "emailPlaceholder": "Введите ваш email",
+    "phonePlaceholder": "Введите ваш телефон",
+    "birthDate": "Дата рождения",
+    "gender": "Пол",
+    "location": "Местоположение",
+    "locationPlaceholder": "Введите ваше местоположение",
+    "cancel": "Отменить",
+    "save": "Сохранить"
+  },
+  "favorites": {
+    "title": "Избранное",
+    "empty": "Пока нет избранных",
+    "emptyDescription": "Добавляйте товары в избранное, нажимая на значок сердца"
+  },
+  "navigation": {
+    "home": "Главная",
+    "favorites": "Избранное",
+    "cart": "Корзина",
+    "orders": "Заказы",
+    "profile": "Профиль"
+  }
+}

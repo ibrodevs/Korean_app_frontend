@@ -1,0 +1,514 @@
+{
+  "common": {
+    "back": "뒤로",
+    "next": "다음",
+    "skip": "건너뛰기",
+    "done": "완료",
+    "save": "저장",
+    "cancel": "취소",
+    "confirm": "확인",
+    "loading": "로딩 중...",
+    "error": "오류",
+    "retry": "다시 시도",
+    "search": "검색",
+    "filter": "필터",
+    "sort": "정렬",
+    "price": "가격",
+    "name": "이름",
+    "email": "이메일",
+    "password": "비밀번호",
+    "phone": "전화번호",
+    "address": "주소",
+    "success": "성공",
+    "ok": "확인",
+    "seeAll": "모두 보기",
+    "seller": "판매자",
+    "selectLanguage": "언어 선택",
+    "yes": "예",
+    "no": "아니오",
+    "call": "전화하기",
+    "warning": "경고",
+    "unsavedChanges": "저장되지 않은 변경 사항이 있습니다",
+    "clear": "지우기",
+    "apply": "적용"
+  },
+  "appName": "코리안 스토어",
+  "home": {
+    "title": "코리안 스토어",
+    "searchPlaceholder": "상품 검색...",
+    "welcomeBanner": "놀라운 한국 제품을 발견하세요",
+    "categories": "카테고리",
+    "featured": "추천 상품",
+    "bestSellers": "베스트셀러",
+    "newArrivals": "신상품",
+    "popularItems": "인기 상품",
+    "new": "신제품",
+    "outOfStock": "품절",
+    "addToCart": "장바구니에 추가",
+    "specialOffers": "특별 혜택",
+    "seeAll": "모두 보기",
+    "sort": {
+      "default": "기본",
+      "relevance": "관련성",
+      "newest": "최신",
+      "priceLowHigh": "가격: 낮은 순",
+      "priceHighLow": "가격: 높은 순",
+      "popularity": "인기순",
+      "rating": "고객 평점"
+    },
+    "filter": {
+      "title": "필터",
+      "category": "카테고리",
+      "priceRange": "가격 범위",
+      "rating": "평점",
+      "inStock": "재고 있음만",
+      "clear": "모두 지우기",
+      "apply": "적용"
+    }
+  },
+  "splash": {
+    "loading": "로딩 중..."
+  },
+  "categories": {
+    "cosmetics": "화장품",
+    "skincare": "스킨케어",
+    "snacks": "간식",
+    "fashion": "패션",
+    "homeDecor": "홈 데코",
+    "electronics": "전자제품",
+    "all": "모든 카테고리"
+  },
+  "settings": {
+    "title": "설정",
+    "subtitle": "경험을 사용자 정의하기",
+    "reset": "리셋",
+    "save": "변경사항 저장",
+    "settingsSaved": "설정이 성공적으로 저장되었습니다",
+    "saveError": "설정 저장에 실패했습니다",
+    "settingsReset": "설정이 성공적으로 재설정되었습니다",
+    "cacheCleared": "캐시가 성공적으로 지워졌습니다",
+    "searchCleared": "검색 기록이 지워졌습니다",
+    "cannotOpenStore": "앱 스토어를 열 수 없습니다",
+    "notificationSettings": "알림 설정",
+    "notificationDescription": "알림 설정을 관리하세요",
+    "clearCache": "캐시 지우기",
+    "clearCacheDescription": "앱 캐시와 임시 파일을 지웁니다",
+    "clearCacheConfirm": "정말로 캐시를 지우시겠습니까?",
+    "language": "언어",
+    "languageDescription": "선호하는 언어를 선택하세요",
+    "theme": "테마",
+    "themeDescription": "선호하는 테마를 선택하세요",
+    "auto": "자동",
+    "light": "라이트",
+    "dark": "다크",
+    "currency": "통화",
+    "currencyDescription": "선호하는 통화를 선택하세요",
+    "pushNotifications": "푸시 알림",
+    "orderUpdates": "주문 업데이트",
+    "promotions": "프로모션",
+    "priceDrops": "가격 하락",
+    "newArrivals": "신상품",
+    "dataCollection": "데이터 수집",
+    "dataCollectionDescription": "더 나은 경험을 위해 데이터 수집을 허용합니다",
+    "personalizedAds": "개인화된 광고",
+    "personalizedAdsDescription": "개인화된 광고를 표시합니다",
+    "showActivity": "활동 표시",
+    "showActivityDescription": "다른 사용자에게 활동을 표시합니다",
+    "clearSearchHistory": "검색 기록 지우기",
+    "deleteAccount": "계정 삭제",
+    "version": "버전",
+    "buildNumber": "빌드 번호",
+    "terms": "서비스 약관",
+    "privacyPolicy": "개인정보 처리방침",
+    "rateApp": "앱 평가하기",
+    "shareApp": "앱 공유하기",
+    "contactSupport": "고객 지원",
+    "faq": "자주 묻는 질문",
+    "reportIssue": "문제 신고",
+    "suggestFeature": "기능 제안",
+    "sections": {
+      "general": "일반",
+      "notifications": "알림",
+      "privacy": "개인정보 보호",
+      "about": "앱 정보",
+      "support": "지원"
+    }
+  },
+  "sort": {
+    "relevance": "관련성",
+    "newest": "최신",
+    "priceLowHigh": "가격: 낮은 순",
+    "priceHighLow": "가격: 높은 순",
+    "popularity": "인기순",
+    "rating": "고객 평점"
+  },
+  "filters": {
+    "onSale": "세일 중",
+    "clearAll": "모두 지우기"
+  },
+  "search": {
+    "startSearching": "상품 검색을 시작하세요",
+    "searchInstructions": "위의 검색창을 사용해서 한국 상품을 찾아보세요",
+    "tryDifferentKeywords": "다른 키워드로 시도해보세요",
+    "resultsCount": "{{count}}개의 결과를 찾았습니다",
+    "showing": "표시 중",
+    "of": "총",
+    "results": "결과",
+    "filters": "필터"
+  },
+  "errors": {
+    "noProducts": "상품을 찾을 수 없습니다",
+    "somethingWentWrong": "문제가 발생했습니다",
+    "tryAgain": "다시 시도해 주세요",
+    "goBack": "뒤로 가기",
+    "noInternet": {
+      "title": "인터넷 연결 없음",
+      "description": "인터넷 연결을 확인하고 다시 시도하세요",
+      "tips": "다음을 시도해 보세요:",
+      "airplaneMode": "비행기 모드 끄기",
+      "wifi": "Wi-Fi 연결 확인",
+      "mobileData": "모바일 데이터 활성화"
+    },
+    "paymentError": {
+      "title": "결제 오류",
+      "description": "결제 처리 중 문제가 발생했습니다",
+      "commonReasons": "일반적인 이유:",
+      "insufficientFunds": "잔액 부족",
+      "expiredCard": "카드 만료",
+      "declined": "카드 거부됨",
+      "tryDifferentMethod": "다른 결제 수단을 시도하세요"
+    },
+    "emptyCart": {
+      "title": "빈 장바구니",
+      "description": "장바구니가 비어 있습니다. 상품을 추가하여 시작하세요!"
+    },
+    "emptyOrders": {
+      "title": "주문 내역 없음",
+      "description": "아직 주문을 하지 않으셨습니다. 쇼핑을 시작하여 주문 내역을 여기서 확인하세요!"
+    },
+    "serverError": {
+      "title": "서버 오류",
+      "description": "기술적 문제가 발생했습니다. 나중에 다시 시도해 주세요."
+    },
+    "noProducts": {
+      "title": "상품을 찾을 수 없습니다",
+      "description": "검색 조건에 맞는 상품을 찾을 수 없습니다",
+      "tryDifferentFilters": "다른 필터나 검색어를 시도해 보세요",
+      "checkBack": "새로운 상품이 있는지 나중에 다시 확인해 보세요"
+    },
+    "emptySearch": {
+      "title": "검색 결과 없음",
+      "description": "검색어와 일치하는 항목을 찾을 수 없습니다",
+      "searchTips": "검색 팁:",
+      "checkSpelling": "철자를 확인하세요",
+      "broaderTerms": "더 일반적인 용어를 사용해 보세요",
+      "fewerFilters": "더 적은 필터를 사용하세요"
+    }
+  },
+  "actions": {
+    "retry": "다시 시도"
+  },
+  "checkout": {
+    "title": "결제",
+    "emptyCart": "장바구니가 비어있습니다",
+    "selectAddress": "배송 주소를 선택해 주세요"
+  },
+  "auth": {
+    "login": "로그인",
+    "register": "회원가입",
+    "logout": "로그아웃",
+    "forgotPassword": "비밀번호 찾기",
+    "createAccount": "계정 만들기",
+    "confirmPassword": "비밀번호 확인",
+    "fullName": "성명",
+    "loginSuccess": "로그인 성공",
+    "registerSuccess": "회원가입 성공",
+    "invalidCredentials": "잘못된 인증 정보",
+    "passwordMismatch": "비밀번호가 일치하지 않습니다",
+    "welcomeBack": "다시 오신 것을 환영합니다",
+    "signInToContinue": "계속하려면 계정에 로그인하세요",
+    "emailRequired": "이메일이 필요합니다",
+    "emailInvalid": "올바른 이메일을 입력하세요",
+    "passwordRequired": "비밀번호가 필요합니다",
+    "passwordTooShort": "비밀번호는 최소 6자 이상이어야 합니다",
+    "nameRequired": "이름이 필요합니다",
+    "phoneRequired": "전화번호가 필요합니다",
+    "dontHaveAccount": "계정이 없으신가요?",
+    "emailPlaceholder": "이메일을 입력하세요",
+    "passwordPlaceholder": "비밀번호를 입력하세요",
+    "fullNamePlaceholder": "성명을 입력하세요",
+    "phonePlaceholder": "전화번호를 입력하세요",
+    "confirmPasswordPlaceholder": "비밀번호를 확인하세요",
+    "rememberMe": "로그인 상태 유지",
+    "haveAccount": "이미 계정이 있으신가요?",
+    "signIn": "로그인",
+    "createNewAccount": "새 계정 만들기",
+    "resetPassword": "비밀번호 재설정",
+    "resetPasswordDescription": "이메일 주소를 입력하시면 비밀번호 재설정 링크를 보내드립니다",
+    "sendResetLink": "재설정 링크 보내기",
+    "backToLogin": "로그인으로 돌아가기",
+    "resetEmailSent": "재설정 이메일이 전송되었습니다! 이메일을 확인하세요",
+    "usePassword": "비밀번호 사용",
+    "email": "이메일",
+    "password": "비밀번호",
+    "orContinueWith": "또는 다음으로 계속",
+    "noAccount": "계정이 없으신가요?",
+    "signUp": "회원가입",
+    "success": {
+      "login": "로그인 성공",
+      "registration": "회원가입 성공"
+    },
+    "errors": {
+      "networkError": "네트워크 오류가 발생했습니다",
+      "unknownError": "알 수 없는 오류가 발생했습니다"
+    },
+    "validation": {
+      "required": "이 필드는 필수입니다"
+    }
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "제품 찾기 및 구매",
+      "description": "쉬운 검색과 구매로 놀라운 한국 제품을 발견하세요"
+    },
+    "slide2": {
+      "title": "빠른 배송",
+      "description": "주문을 빠르고 안전하게 문 앞까지 배송받으세요"
+    },
+    "slide3": {
+      "title": "주문 추적",
+      "description": "창고에서 배송까지 실시간으로 주문을 추적하세요"
+    },
+    "slide4": {
+      "title": "안전한 결제",
+      "description": "안전한 결제 시스템으로 안심하고 쇼핑하세요"
+    },
+    "getStarted": "시작하기"
+  },
+  "product": {
+    "details": "상품 상세",
+    "specifications": "사양",
+    "shipping": "배송 정보",
+    "freeShipping": "무료 배송",
+    "standardShipping": "일반 배송",
+    "days": "일",
+    "responseRate": "응답률",
+    "addToCart": "장바구니 담기",
+    "buyNow": "바로 구매",
+    "outOfStock": "품절",
+    "inStock": "재고 있음",
+    "reviews": "리뷰",
+    "rating": "평점",
+    "bestSellers": "베스트셀러",
+    "newProducts": "신상품",
+    "featuredProducts": "추천 상품"
+  },
+  "cart": {
+    "title": "장바구니",
+    "empty": "장바구니가 비어있습니다",
+    "total": "총합계",
+    "subtotal": "소계",
+    "checkout": "결제하기"
+  },
+  "delivery": {
+    "morning": "오전 (9:00 - 12:00)",
+    "afternoon": "오후 (12:00 - 18:00)",
+    "evening": "저녁 (18:00 - 21:00)",
+    "contactDriver": "배송기사 연락",
+    "deliveryWindow": "배솨 시간",
+    "liveTracking": "실시간 추적",
+    "signatureRequired": "서명 필요"
+  },
+  "orders": {
+    "emptyTitle": "아직 주문이 없습니다",
+    "emptyDescription": "아직 주문을 하지 않으신 것 같습니다. 쇼핑을 시작하여 주문 내역을 여기서 확인하세요!",
+    "startShopping": "쇼핑 시작",
+    "order": "주문",
+    "items": "개 상품",
+    "amount": "총 금액",
+    "viewDetails": "상세 보기",
+    "trackOrder": "주문 추적",
+    "reorder": "재주문",
+    "cancelOrder": "주문 취소",
+    "writeReview": "리뷰 작성",
+    "cancelConfirm": "정말로 이 주문을 취소하시겠습니까?",
+    "title": "내 주문",
+    "all": "개 주문",
+    "orderTotal": "주문 총액",
+    "search": "주문 검색...",
+    "filter": "필터",
+    "sort": "정렬",
+    "status": "상태",
+    "date": "날짜 범위"
+  },
+  "tracking": {
+    "statusTimeline": "주문 상태 타임라인",
+    "loadError": "추적 정보를 불러오는데 실패했습니다",
+    "mapNotAvailable": "지도 보기를 사용할 수 없습니다",
+    "mapNotAvailableDescription": "현재 위치 추적을 사용할 수 없습니다",
+    "currentLocation": "현재 위치",
+    "destination": "목적지",
+    "deliveryPerson": "배송기사",
+    "mapNotReady": "지도 로딩 중",
+    "mapNotReadyDescription": "지도를 불러오는 동안 잠시 기다려 주세요",
+    "carrier": "택배사",
+    "trackingNumber": "추적 번호",
+    "trackShipment": "배송 추적",
+    "orderNumber": "주문 번호",
+    "currentStatus": "현재 상태",
+    "estimatedDelivery": "예상 배송 날짜",
+    "delayed": "지연",
+    "onTime": "정시",
+    "deliveredOn": "배송 완료",
+    "deliveryProgress": "완료",
+    "viewDetails": "세부 정보 보기",
+    "contactSupport": "고객 지원 문의",
+    "packageInfo": "패키지 내용물"
+  },
+  "timeline": {
+    "estimatedTime": "예상 시간",
+    "actualTime": "실제 시간"
+  },
+  "orderStatus": {
+    "pending": "대기 중",
+    "confirmed": "확인됨",
+    "processing": "처리 중",
+    "shipped": "배송됨",
+    "delivered": "배송 완료",
+    "cancelled": "취소됨",
+    "returned": "반품됨"
+  },
+  "orderDetails": {
+    "statusPending": "주문이 확인 대기 중입니다",
+    "statusConfirmed": "주문이 확인되었습니다",
+    "statusProcessing": "주문이 처리 중입니다",
+    "statusShipped": "주문이 배송되었습니다",
+    "statusDelivered": "주문이 배송 완료되었습니다",
+    "statusCancelled": "주문이 취소되었습니다",
+    "statusReturned": "주문이 반품되었습니다",
+    "cannotOpenInvoice": "현재 인보이스를 열 수 없습니다",
+    "invoiceError": "인보이스 생성 오류",
+    "supportMessage": "이 주문에 대해 어떻게 도와드릴까요?",
+    "tracking": "추적 정보",
+    "notes": "주문 메모",
+    "trackingNotAvailable": "이 주문에 대한 추적을 사용할 수 없습니다",
+    "reorderConfirm": "이 상품들을 다시 주문하시겠습니까?",
+    "reorderSuccess": "상품이 장바구니에 성공적으로 추가되었습니다",
+    "cancelSuccess": "주문이 성공적으로 취소되었습니다",
+    "noFilterResults": "현재 필터에 맞는 주문이 없습니다",
+    "estimatedDelivery": "예상 배송",
+    "orderPlaced": "주문 완료",
+    "shippingAddress": "배송 주소",
+    "paymentMethod": "결제 방법",
+    "needHelp": "도움이 필요하신가요?"
+  },
+  "actions": {
+    "retry": "다시 시도",
+    "goBack": "뒤로 가기",
+    "cancel": "취소",
+    "confirm": "확인",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "편집",
+    "add": "추가",
+    "remove": "제거",
+    "update": "업데이트"
+  },
+  "profile": {
+    "title": "프로필",
+    "currency": "통화",
+    "account": "계정",
+    "settings": "설정",
+    "orders": "내 주문",
+    "wishlist": "위시리스트",
+    "addresses": "주소",
+    "paymentMethods": "결제 수단",
+    "preferences": "환경설정",
+    "language": "언어",
+    "languageDescription": "선호하는 언어를 선택하세요",
+    "theme": "테마",
+    "themeDescription": "라이트 또는 다크 테마를 선택하세요",
+    "selectLanguage": "선호하는 언어를 선택하세요",
+    "selectTheme": "선호하는 테마를 선택하세요",
+    "help": "도움말 및 지원",
+    "about": "애플리케이션 소개",
+    "logout": "로그아웃",
+    "support": "고객지원",
+    "saveSuccess": "프로필이 성공적으로 업데이트되었습니다",
+    "premium": "프리미엄",
+    "memberSince": "가입일",
+    "editProfile": "프로필 편집",
+    "light": "라이트",
+    "dark": "다크",
+    "totalSpent": "총 사용 금액",
+    "points": "포인트",
+    "name": "이름",
+    "namePlaceholder": "이름을 입력하세요",
+    "emailPlaceholder": "이메일을 입력하세요",
+    "phonePlaceholder": "전화번호를 입력하세요",
+    "birthDate": "생년월일",
+    "gender": "성별",
+    "location": "위치",
+    "locationPlaceholder": "위치를 입력하세요",
+    "cancel": "취소",
+    "save": "저장"
+  },
+  "product": {
+    "description": "설명",
+    "specs": "사양",
+    "contactSeller": "판매자 연락",
+    "relatedProducts": "관련 상품",
+    "quantity": "수량"
+  },
+  "search": {
+    "advanced": "고급 검색"
+  },
+  "support": {
+    "title": "지원",
+    "faq": "자주 묻는 질문",
+    "liveChat": "라이브 채팅",
+    "contact": "문의하기"
+  },
+  "payment": {
+    "title": "결제",
+    "paid": "결제 완료"
+  },
+  "theme": {
+    "light": "라이트",
+    "dark": "다크",
+    "auto": "자동"
+  },
+  "languages": {
+    "auto": "자동",
+    "en": "영어",
+    "ru": "러시아어",
+    "ko": "한국어"
+  },
+  "currencies": {
+    "usd": "USD ($)",
+    "eur": "EUR (€)",
+    "krw": "KRW (₩)",
+    "rub": "RUB (₽)"
+  },
+  "filters": {
+    "customRange": "사용자 정의 범위"
+  },
+  "sortOptions": {
+    "newest": "최신 순",
+    "oldest": "오래된 순",
+    "highestAmount": "가격 높은 순",
+    "lowestAmount": "가격 낮은 순"
+  },
+  "favorites": {
+    "title": "즐겨찾기",
+    "empty": "즐겨찾기가 없습니다",
+    "emptyDescription": "하트 아이콘을 눌러 상품을 즐겨찾기에 추가하세요"
+  },
+  "navigation": {
+    "home": "홈",
+    "favorites": "즐겨찾기",
+    "cart": "장바구니",
+    "orders": "주문내역",
+    "profile": "프로필"
+  }
+}

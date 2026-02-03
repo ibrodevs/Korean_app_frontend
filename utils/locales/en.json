@@ -1,0 +1,426 @@
+{
+  "common": {
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "done": "Done",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "price": "Price",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "phone": "Phone",
+    "address": "Address",
+    "success": "Success",
+    "ok": "OK",
+    "seeAll": "See All",
+    "seller": "Seller",
+    "selectLanguage": "Select Language",
+    "yes": "Yes",
+    "no": "No",
+    "call": "Call",
+    "warning": "Warning",
+    "unsavedChanges": "You have unsaved changes",
+    "clear": "Clear",
+    "apply": "Apply"
+  },
+  "appName": "Korean Store",
+  "home": {
+    "title": "Korean Store",
+    "searchPlaceholder": "Search products...",
+    "welcomeBanner": "Discover Amazing Korean Products",
+    "categories": "Categories",
+    "featured": "Featured Products",
+    "bestSellers": "Best Seller",
+    "newArrivals": "New Arrivals",
+    "popularItems": "Popular Items",
+    "new": "New",
+    "outOfStock": "Out of Stock",
+    "addToCart": "Add to Cart",
+    "specialOffers": "Special Offers",
+    "seeAll": "See All",
+    "sort": {
+      "default": "Default",
+      "relevance": "Relevance",
+      "newest": "Newest",
+      "priceLowHigh": "Price: Low to High",
+      "priceHighLow": "Price: High to Low",
+      "popularity": "Popularity",
+      "rating": "Customer Rating"
+    },
+    "filter": {
+      "title": "Filters",
+      "category": "Category",
+      "priceRange": "Price Range",
+      "rating": "Rating",
+      "inStock": "In Stock Only",
+      "clear": "Clear All",
+      "apply": "Apply"
+    }
+  },
+  "splash": {
+    "loading": "Loading..."
+  },
+  "categories": {
+    "cosmetics": "Cosmetics",
+    "skincare": "Skincare",
+    "snacks": "Snacks",
+    "fashion": "Fashion",
+    "homeDecor": "Home Decor",
+    "electronics": "Electronics",
+    "all": "All Categories"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your experience",
+    "reset": "Reset",
+    "save": "Save Changes"
+  },
+  "sort": {
+    "relevance": "Relevance",
+    "newest": "Newest",
+    "priceLowHigh": "Price: Low to High",
+    "priceHighLow": "Price: High to Low",
+    "popularity": "Popularity",
+    "rating": "Customer Rating"
+  },
+  "filters": {
+    "onSale": "On Sale",
+    "clearAll": "Clear All",
+    "last30Days": "Last 30 Days",
+    "last6Months": "Last 6 Months",
+    "lastYear": "Last Year"
+  },
+  "search": {
+    "startSearching": "Start searching for products",
+    "searchInstructions": "Use the search bar above to find Korean products",
+    "tryDifferentKeywords": "Try different keywords",
+    "resultsCount": "{{count}} results found",
+    "showing": "Showing",
+    "of": "of",
+    "results": "results",
+    "filters": "Filters"
+  },
+  "errors": {
+    "noProducts": "No products found",
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Please try again",
+    "goBack": "Go Back",
+    "noInternet": {
+      "title": "No Internet Connection",
+      "description": "Please check your internet connection and try again",
+      "tips": "Try these suggestions:",
+      "airplaneMode": "Turn off airplane mode",
+      "wifi": "Check your Wi-Fi connection",
+      "mobileData": "Enable mobile data"
+    },
+    "paymentError": {
+      "title": "Payment Error",
+      "description": "There was a problem processing your payment",
+      "commonReasons": "Common reasons:",
+      "insufficientFunds": "Insufficient funds",
+      "expiredCard": "Expired card",
+      "declined": "Card declined",
+      "tryDifferentMethod": "Try a different payment method"
+    },
+    "emptyCart": {
+      "title": "Empty Cart",
+      "description": "Your cart is currently empty. Add some products to get started!"
+    },
+    "emptyOrders": {
+      "title": "No Orders",
+      "description": "You haven't placed any orders yet. Start shopping to see your orders here!"
+    },
+    "serverError": {
+      "title": "Server Error",
+      "description": "We're experiencing technical difficulties. Please try again later."
+    },
+    "noProducts": {
+      "title": "No Products Found",
+      "description": "We couldn't find any products matching your criteria",
+      "tryDifferentFilters": "Try different filters or search terms",
+      "checkBack": "Check back later for new products"
+    },
+    "emptySearch": {
+      "title": "No Search Results",
+      "description": "We couldn't find anything matching your search",
+      "searchTips": "Search tips:",
+      "checkSpelling": "Check your spelling",
+      "broaderTerms": "Try more general terms",
+      "fewerFilters": "Use fewer filters"
+    }
+  },
+  "actions": {
+    "retry": "Retry"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "emptyCart": "Your cart is empty",
+    "selectAddress": "Please select shipping address"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "forgotPassword": "Forgot Password?",
+    "createAccount": "Create Account",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Full Name",
+    "loginSuccess": "Login successful",
+    "registerSuccess": "Registration successful",
+    "invalidCredentials": "Invalid credentials",
+    "passwordMismatch": "Passwords do not match",
+    "welcomeBack": "Welcome Back",
+    "signInToContinue": "Sign in to your account to continue",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "nameRequired": "Name is required",
+    "phoneRequired": "Phone number is required",
+    "dontHaveAccount": "Don't have an account?",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "fullNamePlaceholder": "Enter your full name",
+    "phonePlaceholder": "Enter your phone number",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "rememberMe": "Remember me",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign In",
+    "createNewAccount": "Create New Account",
+    "resetPassword": "Reset Password",
+    "resetPasswordDescription": "Enter your email address and we'll send you a link to reset your password",
+    "sendResetLink": "Send Reset Link",
+    "backToLogin": "Back to Login",
+    "resetEmailSent": "Reset email sent! Check your inbox",
+    "usePassword": "Use Password",
+    "email": "Email",
+    "password": "Password",
+    "orContinueWith": "or continue with",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign Up",
+    "success": {
+      "login": "Login successful",
+      "registration": "Registration successful"
+    },
+    "errors": {
+      "networkError": "Network error occurred",
+      "unknownError": "An unknown error occurred"
+    },
+    "validation": {
+      "required": "This field is required"
+    }
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "Discover Korean Products",
+      "description": "Find amazing Korean products with easy search and shopping"
+    },
+    "slide2": {
+      "title": "Fast Delivery",
+      "description": "Get your orders delivered quickly and safely to your door"
+    },
+    "slide3": {
+      "title": "Track Your Order",
+      "description": "Follow your orders in real-time from warehouse to delivery"
+    },
+    "slide4": {
+      "title": "Secure Payments",
+      "description": "Shop with confidence using our secure payment system"
+    },
+    "getStarted": "Get Started"
+  },
+  "product": {
+    "details": "Product Details",
+    "specifications": "Specifications",
+    "shipping": "Shipping Information",
+    "freeShipping": "Free Shipping",
+    "standardShipping": "Standard Shipping",
+    "days": "days",
+    "responseRate": "Response Rate",
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy Now",
+    "outOfStock": "Out of Stock",
+    "inStock": "In Stock",
+    "reviews": "Reviews",
+    "rating": "Rating",
+    "bestSellers": "Best Sellers",
+    "newProducts": "New Products",
+    "featuredProducts": "Featured Products",
+    "addedToCart": "Added to Cart",
+    "addedToCartMessage": "has been added to your cart",
+    "addedToFavorites": "Added to Favorites",
+    "removeFavorite": "Removed from Favorites"
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": "Your cart is empty",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "checkout": "Checkout"
+  },
+  "delivery": {
+    "morning": "Morning (9AM - 12PM)",
+    "afternoon": "Afternoon (12PM - 6PM)",
+    "evening": "Evening (6PM - 9PM)",
+    "contactDriver": "Contact Driver",
+    "deliveryWindow": "Delivery Window",
+    "liveTracking": "Live Tracking",
+    "signatureRequired": "Signature Required"
+  },
+  "orders": {
+    "emptyTitle": "No Orders Yet",
+    "emptyDescription": "Looks like you haven't made any orders yet. Start shopping to see your orders here!",
+    "startShopping": "Start Shopping",
+    "order": "Order",
+    "items": "items",
+    "amount": "Total",
+    "viewDetails": "View Details",
+    "trackOrder": "Track Order",
+    "reorder": "Reorder",
+    "cancelOrder": "Cancel Order",
+    "writeReview": "Write Review",
+    "cancelConfirm": "Are you sure you want to cancel this order?",
+    "title": "My Orders",
+    "all": "orders",
+    "orderTotal": "Order Total",
+    "search": "Search orders...",
+    "filter": "Filter",
+    "sort": "Sort",
+    "status": "Status",
+    "date": "Date Range"
+  },
+  "tracking": {
+    "statusTimeline": "Order Status Timeline",
+    "loadError": "Failed to load tracking information",
+    "mapNotAvailable": "Map View Not Available",
+    "mapNotAvailableDescription": "Location tracking is currently unavailable",
+    "currentLocation": "Current Location",
+    "destination": "Destination",
+    "deliveryPerson": "Delivery Person",
+    "mapNotReady": "Map Loading",
+    "mapNotReadyDescription": "Please wait while we load the map",
+    "carrier": "Carrier",
+    "trackingNumber": "Tracking Number",
+    "trackShipment": "Track Shipment",
+    "orderNumber": "Order Number",
+    "currentStatus": "Current Status",
+    "estimatedDelivery": "Estimated Delivery",
+    "delayed": "Delayed",
+    "onTime": "On Time",
+    "deliveredOn": "Delivered on",
+    "deliveryProgress": "Complete",
+    "viewDetails": "View Details",
+    "contactSupport": "Contact Support",
+    "packageInfo": "Package Contents"
+  },
+  "timeline": {
+    "estimatedTime": "Estimated",
+    "actualTime": "Actual"
+  },
+  "orderStatus": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "returned": "Returned"
+  },
+  "orderDetails": {
+    "statusPending": "Your order is pending confirmation",
+    "statusConfirmed": "Your order has been confirmed",
+    "statusProcessing": "Your order is being processed",
+    "statusShipped": "Your order has been shipped",
+    "statusDelivered": "Your order has been delivered",
+    "statusCancelled": "Your order has been cancelled",
+    "statusReturned": "Your order has been returned",
+    "cannotOpenInvoice": "Cannot open invoice at this time",
+    "invoiceError": "Error generating invoice",
+    "supportMessage": "How can we help you with this order?",
+    "tracking": "Tracking Information",
+    "notes": "Order Notes",
+    "trackingNotAvailable": "Tracking not available for this order",
+    "reorderConfirm": "Would you like to reorder these items?",
+    "reorderSuccess": "Items added to cart successfully",
+    "cancelSuccess": "Order cancelled successfully",
+    "noFilterResults": "No orders match your current filters",
+    "estimatedDelivery": "Estimated Delivery",
+    "orderPlaced": "Order Placed",
+    "shippingAddress": "Shipping Address",
+    "paymentMethod": "Payment Method",
+    "needHelp": "Need Help?"
+  },
+  "actions": {
+    "retry": "Retry",
+    "goBack": "Go Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "update": "Update"
+  },
+  "profile": {
+    "title": "Profile",
+    "currency": "Currency",
+    "account": "Account",
+    "settings": "Settings",
+    "orders": "My Orders",
+    "wishlist": "Wishlist",
+    "addresses": "Addresses",
+    "paymentMethods": "Payment Methods",
+    "preferences": "Preferences",
+    "language": "Language",
+    "languageDescription": "Choose your preferred language",
+    "theme": "Theme",
+    "themeDescription": "Choose light or dark theme",
+    "selectLanguage": "Select your preferred language",
+    "selectTheme": "Select your preferred theme",
+    "help": "Help & Support",
+    "about": "About",
+    "logout": "Logout",
+    "support": "Support",
+    "saveSuccess": "Profile updated successfully",
+    "premium": "Premium",
+    "memberSince": "Member since",
+    "editProfile": "Edit Profile",
+    "light": "Light",
+    "dark": "Dark",
+    "premium": "Premium",
+    "memberSince": "Member since",
+    "editProfile": "Edit Profile",
+    "totalSpent": "Total Spent",
+    "points": "Points",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "emailPlaceholder": "Enter your email",
+    "phonePlaceholder": "Enter your phone number",
+    "birthDate": "Birth Date",
+    "gender": "Gender",
+    "location": "Location",
+    "locationPlaceholder": "Enter your location"
+  },
+  "favorites": {
+    "title": "Favorites",
+    "empty": "No favorites yet",
+    "emptyDescription": "Add products to your favorites by tapping the heart icon"
+  },
+  "navigation": {
+    "home": "Home",
+    "favorites": "Favorites",
+    "cart": "Cart",
+    "orders": "Orders",
+    "profile": "Profile"
+  }
+}

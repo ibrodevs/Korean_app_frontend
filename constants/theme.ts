@@ -1,53 +1,103 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-import { Platform } from 'react-native';
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    primary: '#1774F3',
+    primaryHover: '#2563EB',
+    primaryActive: '#1D4ED8',
+    primaryDisabled: '#93C5FD',
+    error: '#DC2626',
+    success: '#059669',
+    warning: '#D97706',
+    info: '#0284C7',
+    secondary: '#475569',
+    header: '#0F172A',
+    background: '#FFFFFF',
+    backgroundSecondary: '#F5F7FB',
+    navigation: '#1774F3',
+    text: '#0F172A',
+    textSecondary: '#475569',
+    textHint: '#94A3B8',
+    textMuted: '#64748B',
+    card: '#F5F7FB',
+    border: '#E2E8F0',
+    borderLight: '#F1F5F9',
+    shadow: '#00000020',
+    accent: '#1774F3',
+    heading: '#0F172A',
+    navBackground: '#1774F3',
+    white: '#FFFFFF',
+    black: '#0F172A',
+    gray: '#475569',
+    lightGray: '#E2E8F0',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    primary: '#1774F3',
+    primaryHover: '#2563EB',
+    primaryActive: '#1D4ED8',
+    primaryDisabled: '#93C5FD',
+    error: '#F87171',
+    success: '#34D399',
+    warning: '#FBBF24',
+    info: '#38BDF8',
+    secondary: '#CBD5E1',
+    header: '#F8FAFC',
+    background: '#0B1020',
+    backgroundSecondary: '#111827',
+    backgroundHover: '#1F2933',
+    navigation: '#1774F3',
+    text: '#F8FAFC',
+    textSecondary: '#CBD5E1',
+    textHint: '#64748B',
+    textMuted: '#475569',
+    card: '#111827',
+    border: '#1E293B',
+    borderLight: '#334155',
+    shadow: '#00000040',
+    accent: '#1774F3',
+    heading: '#F8FAFC',
+    navBackground: '#1774F3',
+    white: '#F8FAFC',
+    black: '#0B1020',
+    gray: '#CBD5E1',
+    lightGray: '#334155',
   },
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+export const Spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+};
+
+export const Typography = {
+  h1: {
+    fontSize: 32,
+    fontWeight: 'bold' as const,
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+  h2: {
+    fontSize: 24,
+    fontWeight: 'bold' as const,
   },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+  h3: {
+    fontSize: 20,
+    fontWeight: '600' as const,
   },
-});
+  body: {
+    fontSize: 16,
+    fontWeight: '400' as const,
+  },
+  caption: {
+    fontSize: 12,
+    fontWeight: '400' as const,
+  },
+};
+
+export const BorderRadius = {
+  sm: 4,
+  md: 8,
+  lg: 12,
+  xl: 16,
+  round: 50,
+};

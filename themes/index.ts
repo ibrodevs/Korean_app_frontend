@@ -1,0 +1,73 @@
+export const COLORS = {
+  primary: '#1774F3',
+  primaryHover: '#2563EB',
+  primaryActive: '#1D4ED8',
+  primaryDisabled: '#93C5FD',
+  error: '#DC2626',
+  success: '#059669',
+  warning: '#D97706',
+  info: '#0284C7',
+  secondary: '#475569',
+  heading: '#0F172A',
+  background: '#FFFFFF',
+  
+  // Дополнительные цвета
+  white: '#FFFFFF',
+  black: '#0F172A',
+  gray: '#475569',
+  lightGray: '#E2E8F0',
+};
+
+export const lightTheme = {
+  ...COLORS,
+  primary: '#1774F3',
+  primaryHover: '#2563EB',
+  primaryActive: '#1D4ED8',
+  primaryDisabled: '#93C5FD',
+  error: '#DC2626',
+  success: '#059669',
+  warning: '#D97706',
+  info: '#0284C7',
+  text: '#0F172A',
+  textSecondary: '#475569',
+  textHint: '#94A3B8',
+  textMuted: '#64748B',
+  surface: '#FFFFFF',
+  card: '#F5F7FB',
+  border: '#E2E8F0',
+  borderLight: '#F1F5F9',
+  background: '#FFFFFF',
+  backgroundSecondary: '#F5F7FB',
+  navBackground: '#1774F3',
+  shadow: '#00000020',
+  gradient: ['#1774F3', '#2563EB'],
+};
+
+export const darkTheme = {
+  ...COLORS,
+  primary: '#1774F3',
+  primaryHover: '#2563EB',
+  primaryActive: '#1D4ED8',
+  primaryDisabled: '#93C5FD',
+  error: '#F87171',
+  success: '#34D399',
+  warning: '#FBBF24',
+  info: '#38BDF8',
+  text: '#F8FAFC',
+  textSecondary: '#CBD5E1',
+  textHint: '#64748B',
+  textMuted: '#475569',
+  surface: '#1E293B',
+  card: '#111827',
+  border: '#1E293B',
+  borderLight: '#334155',
+  background: '#0B1020',
+  backgroundSecondary: '#111827',
+  backgroundHover: '#1F2933',
+  navBackground: '#1774F3',
+  shadow: '#00000040',
+  gradient: ['#1774F3', '#1D4ED8'],
+};
+
+export type ThemeType = typeof lightTheme;
+export type ColorKey = keyof typeof COLORS;
