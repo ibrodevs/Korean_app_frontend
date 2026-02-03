@@ -1,11 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
+import 'nativewind';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Dimensions,
   FlatList,
-  Image,
   RefreshControl,
   ScrollView,
   StatusBar,
@@ -14,7 +13,10 @@ import {
   View,
 } from 'react-native';
 import ProductCard from '../components/ProductCard';
+import CategoryCard from '../components/CategoryCard';
+import BannerCarousel from '../components/BannerCarousel';
 import Text from '../components/Text';
+import { Spacing, Typography } from '../constants/theme';
 import { useCart } from '../contexts/CartContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -135,108 +137,67 @@ export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>(mockProducts);
-  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
 
-  const flatListRef = useRef<ScrollView>(null);
-  const { width } = Dimensions.get('window');
-  const bannerWidth = width - 40;
-
-  const bannerImages = [
+  const bannerImages = useMemo(() => [
     'https://picsum.photos/300/300?random=1',
     'https://picsum.photos/300/300?random=2',
     'https://picsum.photos/300/300?random=3',
     'https://picsum.photos/300/300?random=4',
-  ];
-  const infiniteBannerImages = bannerImages.concat(bannerImages);
+  ], []);
 
-  // Remove StyleSheet - using Tailwind classes instead
-
-  useEffect(() => {
-    loadFeaturedProducts();
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBannerIndex((prev) => {
-        const next = (prev + 1) % bannerImages.length;
-        const infiniteNext = (prev + 1) % infiniteBannerImages.length;
-        flatListRef.current?.scrollTo({ x: infiniteNext * (bannerWidth + 20), animated: true });
-        return next;
-      });
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [bannerImages.length, infiniteBannerImages.length, bannerWidth]);
-
-  const loadFeaturedProducts = async () => {
+  const loadFeaturedProducts = useCallback(async () => {
     // Simulate API call
     setFeaturedProducts(mockProducts);
-  };
+  }, []);
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadFeaturedProducts();
     setRefreshing(false);
-  };
+  }, [loadFeaturedProducts]);
 
-  const handleProductPress = (product: Product) => {
-    // Навигация на уровне Root Navigator
+  const handleProductPress = useCallback((product: Product) => {
     const rootNavigation = navigation.getParent();
     rootNavigation?.navigate('ProductDetail', { product });
-  };
+  }, [navigation]);
 
-  const handleToggleWishlist = (product: Product) => {
+  const handleToggleWishlist = useCallback((product: Product) => {
     toggleFavorite(product.id);
-  };
+  }, [toggleFavorite]);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = useCallback((product: Product) => {
     addToCart(product, 1);
-    // Можно добавить Toast или Alert для подтверждения
     console.log('Added to cart:', product.name);
-  };
+  }, [addToCart]);
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     if (searchQuery.trim()) {
       const rootNavigation = navigation.getParent();
       rootNavigation?.navigate('AdvancedSearch', { query: searchQuery });
     }
-  };
+  }, [navigation, searchQuery]);
   
-  const handleCartPress = () => {
+  const handleCartPress = useCallback(() => {
     navigation.navigate('CartTab' as never);
-  };
+  }, [navigation]);
 
-  const handleScrollEnd = (event: any) => {
-    const index = Math.round(event.nativeEvent.contentOffset.x / (bannerWidth + 20));
-    let realIndex = index % bannerImages.length;
-    setCurrentBannerIndex(realIndex);
-    if (index >= bannerImages.length) {
-      flatListRef.current?.scrollTo({ x: realIndex * (bannerWidth + 20), animated: false });
-    }
-  };
-
-  const handleCategoryPress = (category: Category) => {
+  const handleCategoryPress = useCallback((category: Category) => {
     const rootNavigation = navigation.getParent();
     rootNavigation?.navigate('AdvancedSearch', { category: category.id });
-  };
+  }, [navigation]);
 
-  const renderCategory = ({ item }: { item: Category }) => (
-    <TouchableOpacity
-      className="w-20 items-center mr-5"
-      onPress={() => handleCategoryPress(item)}
-    >
-      <View 
-        className="w-16 h-16 rounded-2xl justify-center items-center mb-2 shadow-sm"
-        style={{ backgroundColor: item.color }}
-      >
-        <Text className="text-3xl">{item.icon}</Text>
-      </View>
-      <Text className="text-xs font-semibold text-gray-700 text-center leading-3.5" numberOfLines={2}>
-        {item.name}
-      </Text>
-    </TouchableOpacity>
-  );
+  useEffect(() => {
+    loadFeaturedProducts();
+  }, [loadFeaturedProducts]);
 
-  const renderProduct = ({ item, index }: { item: Product; index: number }) => (
+  const renderCategory = useCallback(({ item }: { item: Category }) => (
+    <CategoryCard
+      category={item}
+      onPress={handleCategoryPress}
+    />
+  ), [handleCategoryPress]);
+
+  const renderProduct = useCallback(({ item, index }: { item: Product; index: number }) => (
     <View className="flex-1">
       <ProductCard
         product={item}
@@ -246,26 +207,33 @@ export default function HomeScreen() {
         onAddToCart={handleAddToCart}
       />
     </View>
-  );
+  ), [handleProductPress, handleToggleWishlist, isFavorite, handleAddToCart]);
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      {/* Header with search */}
       <View 
-        className="bg-primary px-5 pb-5 rounded-b-3xl shadow-lg"
+        className="bg-blue-600 px-5 pb-5 rounded-b-3xl shadow-lg"
         style={{ 
           paddingTop: (StatusBar.currentHeight || 0) + 10,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
+          elevation: 8
         }}
       >
+        {/* Header top */}
         <View className="flex-row justify-between items-center mb-4">
           <View className="flex-row items-center">
-            <Text className="text-white font-bold text-3xl tracking-wide">Korean Shop</Text>
-            <View className="ml-2 bg-white/20 rounded-lg p-1.5">
+            <Text className="text-white font-bold text-3xl tracking-wider">Korean Shop</Text>
+            <View className="ml-2 bg-white bg-opacity-20 rounded-lg p-2">
               <Ionicons name="business-outline" size={18} color="white" />
             </View>
           </View>
-          <View className="flex-row items-center">
+          <View className="flex-row items-center gap-2">
             <TouchableOpacity 
-              className="w-10 h-10 rounded-full justify-center items-center bg-white/20" 
+              className="w-10 h-10 rounded-full justify-center items-center bg-white bg-opacity-20" 
               onPress={handleCartPress}
             >
               <Ionicons name="cart-outline" size={24} color="white" />
@@ -273,11 +241,12 @@ export default function HomeScreen() {
           </View>
         </View>
         
+        {/* Search */}
         <View className="mt-4">
-          <View className="flex-row items-center bg-white rounded-3xl px-4 py-3 shadow-sm">
+          <View className="flex-row items-center bg-white rounded-3xl px-4 py-3 shadow-sm" style={{ elevation: 3 }}>
             <Ionicons name="search" size={20} color="#9CA3AF" className="mr-3" />
             <TextInput
-              className="flex-1 text-base text-gray-700"
+              className="flex-1 text-base text-gray-700 py-0"
               placeholder="Search for fruits, vegetables, groce..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
@@ -295,44 +264,13 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        <View className="h-50 my-5">
-          <ScrollView
-            ref={flatListRef}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={handleScrollEnd}
-            contentContainerStyle={{ paddingHorizontal: 20 }}
-            snapToInterval={bannerWidth + 20}
-            snapToAlignment="center"
-            decelerationRate="fast"
-          >
-            {infiniteBannerImages.map((item, index) => (
-              <Image 
-                key={index} 
-                source={{ uri: item }} 
-                className="rounded-2xl mx-2.5"
-                style={{ width: bannerWidth, height: 200 }}
-              />
-            ))}
-          </ScrollView>
-          <View className="flex-row justify-start mt-3 ml-5">
-            {bannerImages.map((_, index) => (
-              <View
-                key={index}
-                className={`w-2 h-2 rounded mx-1 ${
-                  index === currentBannerIndex 
-                    ? 'bg-primary w-5' 
-                    : 'bg-gray-300'
-                }`}
-              />
-            ))}
-          </View>
-        </View>
+        {/* Banner Section */}
+        <BannerCarousel images={bannerImages} />
 
         {/* Categories */}
-        <View className="px-5 mb-6">
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-gray-700 text-xl font-bold">Categories</Text>
+        <View className="mb-8">
+          <View className="flex-row justify-between items-center mb-4 px-5">
+            <Text className="text-gray-700 text-2xl font-bold">Categories</Text>
           </View>
           
           <FlatList
@@ -341,19 +279,29 @@ export default function HomeScreen() {
             keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 20 }}
+            contentContainerStyle={{ paddingLeft: 20 }}
           />
         </View>
 
         {/* Featured Products */}
-        <View className="px-5 mb-6">
+        <View className="mb-8 px-5">
           <View className="flex-row justify-between items-center mb-4">
-            <Text className="font-bold text-lg" style={{ color: theme.text }}>{t('home.featured')}</Text>
+            <Text 
+              className="text-xl font-bold" 
+              style={{ color: theme.text }}
+            >
+              {t('home.featured')}
+            </Text>
             <TouchableOpacity onPress={() => {
               const rootNavigation = navigation.getParent();
               rootNavigation?.navigate('Search');
             }}>
-              <Text className="text-sm font-semibold" style={{ color: theme.primary }}>{t('common.seeAll')}</Text>
+              <Text 
+                className="text-sm font-semibold" 
+                style={{ color: theme.primary }}
+              >
+                {t('common.seeAll')}
+              </Text>
             </TouchableOpacity>
           </View>
           
@@ -363,9 +311,9 @@ export default function HomeScreen() {
             keyExtractor={(item) => item.id}
             numColumns={2}
             scrollEnabled={false}
-            contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 4 }}
-            columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 0 }}
-            ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
+            className="pt-1"
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
+            ItemSeparatorComponent={() => <View className="h-0" />}
           />
         </View>
       </ScrollView>
