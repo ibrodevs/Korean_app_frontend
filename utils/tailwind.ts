@@ -52,14 +52,19 @@ export const colors = {
     800: '#166534',
     900: '#14532d',
   },
+  primary: '#1774F3', // Добавляем primary цвет
 };
 
 // Размеры
 export const spacing = {
   0: 0,
+  0.5: 2,
   1: 4,
+  1.5: 6,
   2: 8,
+  2.5: 10,
   3: 12,
+  3.5: 14,
   4: 16,
   5: 20,
   6: 24,
@@ -70,6 +75,7 @@ export const spacing = {
   20: 80,
   24: 96,
   32: 128,
+  50: 200, // h-50
 };
 
 // Размеры шрифтов
@@ -104,11 +110,14 @@ export const tw = StyleSheet.create({
   // Background colors
   'bg-white': { backgroundColor: colors.white },
   'bg-black': { backgroundColor: colors.black },
+  'bg-primary': { backgroundColor: colors.primary },
   'bg-gray-100': { backgroundColor: colors.gray[100] },
   'bg-gray-200': { backgroundColor: colors.gray[200] },
+  'bg-gray-300': { backgroundColor: colors.gray[300] },
   'bg-blue-50': { backgroundColor: colors.blue[50] },
   'bg-blue-100': { backgroundColor: colors.blue[100] },
   'bg-blue-500': { backgroundColor: colors.blue[500] },
+  'bg-white/20': { backgroundColor: 'rgba(255, 255, 255, 0.2)' },
   
   // Text colors
   'text-white': { color: colors.white },
@@ -136,35 +145,68 @@ export const tw = StyleSheet.create({
   'font-semibold': { fontWeight: '600' },
   'font-bold': { fontWeight: '700' },
   
+  // Letter spacing
+  'tracking-wide': { letterSpacing: 0.5 },
+  
+  // Line height
+  'leading-3.5': { lineHeight: 14 },
+  
+  // Width & Height
+  'w-2': { width: spacing[2] },
+  'w-5': { width: spacing[5] },
+  'w-10': { width: spacing[10] },
+  'w-16': { width: spacing[16] },
+  'w-20': { width: spacing[20] },
+  'h-2': { height: spacing[2] },
+  'h-10': { height: spacing[10] },
+  'h-16': { height: spacing[16] },
+  'h-50': { height: spacing[50] },
+  
   // Margins
   'm-1': { margin: spacing[1] },
   'm-2': { margin: spacing[2] },
   'm-4': { margin: spacing[4] },
   'mt-1': { marginTop: spacing[1] },
   'mt-2': { marginTop: spacing[2] },
+  'mt-3': { marginTop: spacing[3] },
   'mt-4': { marginTop: spacing[4] },
   'mb-1': { marginBottom: spacing[1] },
   'mb-2': { marginBottom: spacing[2] },
   'mb-4': { marginBottom: spacing[4] },
+  'mb-6': { marginBottom: spacing[6] },
+  'ml-2': { marginLeft: spacing[2] },
+  'ml-3': { marginLeft: spacing[3] },
+  'ml-5': { marginLeft: spacing[5] },
+  'mr-3': { marginRight: spacing[3] },
+  'mr-5': { marginRight: spacing[5] },
+  'mx-1': { marginHorizontal: spacing[1] },
   'mx-2': { marginHorizontal: spacing[2] },
+  'mx-2.5': { marginHorizontal: spacing[2.5] },
   'mx-4': { marginHorizontal: spacing[4] },
   'my-2': { marginVertical: spacing[2] },
   'my-4': { marginVertical: spacing[4] },
+  'my-5': { marginVertical: spacing[5] },
   
   // Paddings
   'p-1': { padding: spacing[1] },
+  'p-1.5': { padding: spacing[1.5] },
   'p-2': { padding: spacing[2] },
   'p-4': { padding: spacing[4] },
   'px-2': { paddingHorizontal: spacing[2] },
   'px-4': { paddingHorizontal: spacing[4] },
+  'px-5': { paddingHorizontal: spacing[5] },
   'py-2': { paddingVertical: spacing[2] },
+  'py-3': { paddingVertical: spacing[3] },
   'py-4': { paddingVertical: spacing[4] },
+  'pb-5': { paddingBottom: spacing[5] },
   
   // Border radius
   'rounded': { borderRadius: 4 },
   'rounded-md': { borderRadius: 6 },
   'rounded-lg': { borderRadius: 8 },
   'rounded-xl': { borderRadius: 12 },
+  'rounded-2xl': { borderRadius: 16 },
+  'rounded-3xl': { borderRadius: 24 },
   'rounded-full': { borderRadius: 9999 },
   
   // Text alignment
@@ -186,6 +228,13 @@ export const tw = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
+  },
+  'shadow-lg': {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
 });
 

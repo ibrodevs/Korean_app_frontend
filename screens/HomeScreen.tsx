@@ -9,12 +9,14 @@ import {
   RefreshControl,
   ScrollView,
   StatusBar,
+  StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import ProductCard from '../components/ProductCard';
 import Text from '../components/Text';
+import { Spacing, Typography } from '../constants/theme';
 import { useCart } from '../contexts/CartContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -149,7 +151,238 @@ export default function HomeScreen() {
   ];
   const infiniteBannerImages = bannerImages.concat(bannerImages);
 
-  // Remove StyleSheet - using Tailwind classes instead
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      backgroundColor: '#1779F3',
+      paddingTop: (StatusBar.currentHeight || 0) + 10,
+      paddingHorizontal: 20,
+      paddingBottom: 20,
+      borderBottomLeftRadius: 25,
+      borderBottomRightRadius: 25,
+      elevation: 8,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+    },
+    headerTop: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: Spacing.md,
+    },
+    logo: {
+      color: '#FFFFFF',
+      fontWeight: '700',
+      fontSize: 28,
+      letterSpacing: 0.5,
+    },
+    logoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    logoIcon: {
+      marginLeft: 8,
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      borderRadius: 8,
+      padding: 6,
+    },
+    headerIcons: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    iconButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 0,
+    },
+    searchContainer: {
+      marginTop: 15,
+      paddingHorizontal: 0,
+    },
+    searchInputWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#FFFFFF',
+      borderRadius: 25,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    searchIcon: {
+      marginRight: 12,
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: 16,
+      color: '#374151',
+      paddingVertical: 0,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    section: {
+      paddingHorizontal: Spacing.lg,
+      marginBottom: Spacing.xl,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: Spacing.md,
+    },
+    sectionTitle: {
+      ...Typography.h3,
+      color: colors.text,
+      fontWeight: 'bold',
+    },
+    seeAllButton: {
+      ...Typography.body,
+      color: colors.primary,
+      fontWeight: '600',
+    },
+    bannerContainer: {
+      height: 200,
+      marginBottom: 20,
+      marginTop: 20,
+    },
+    banner: {
+      flex: 1,
+      borderRadius: 20,
+      marginHorizontal: 20,
+      overflow: 'hidden',
+    },
+    bannerLeft: {
+      flex: 1,
+    },
+    bannerRight: {
+      width: 120,
+      height: 120,
+      borderRadius: 15,
+      backgroundColor: '#F59E0B',
+      marginLeft: 15,
+      overflow: 'hidden',
+    },
+    discountText: {
+      color: '#FFFFFF',
+      fontSize: 18,
+      fontWeight: '600',
+      marginBottom: 4,
+    },
+    discountPercent: {
+      color: '#FFFFFF',
+      fontSize: 36,
+      fontWeight: '800',
+      marginBottom: 4,
+    },
+    discountSubtitle: {
+      color: '#FFFFFF',
+      fontSize: 14,
+      marginBottom: 12,
+      opacity: 0.9,
+    },
+    seeDetailButton: {
+      backgroundColor: '#F59E0B',
+      borderRadius: 20,
+      paddingHorizontal: 20,
+      paddingVertical: 8,
+    },
+    seeDetailText: {
+      color: '#FFFFFF',
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    bannerImage: {
+      width: bannerWidth,
+      height: 200,
+      borderRadius: 20,
+      marginHorizontal: 10,
+    },
+    sliderIndicators: {
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      marginTop: 12,
+      marginLeft: 20,
+    },
+    indicator: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginHorizontal: 4,
+    },
+    activeIndicator: {
+      backgroundColor: '#1779F3',
+      width: 20,
+    },
+    inactiveIndicator: {
+      backgroundColor: '#D1D5DB',
+    },
+    bannerText: {
+      color: colors.heading,
+      fontWeight: '700',
+      textAlign: 'center',
+      textShadow: '1px 1px 2px rgba(0, 0, 0, 0.1)',
+    },
+    categoriesContainer: {
+      paddingLeft: Spacing.lg,
+    },
+    categoryCard: {
+      width: 80,
+      alignItems: 'center',
+      marginRight: 20,
+    },
+    categoryIconContainer: {
+      width: 64,
+      height: 64,
+      borderRadius: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 8,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    categoryIcon: {
+      fontSize: 32,
+    },
+    categoryName: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: '#374151',
+      textAlign: 'center',
+      lineHeight: 14,
+    },
+    categoryCount: {
+      ...Typography.caption,
+      color: colors.textSecondary,
+      fontSize: 10,
+    },
+    productsGrid: {
+      paddingHorizontal: 8,
+      paddingTop: 4,
+    },
+    productRow: {
+      justifyContent: 'space-between',
+      paddingHorizontal: 0,
+    },
+    productColumn: {
+      flex: 1,
+    },
+  });
 
   useEffect(() => {
     loadFeaturedProducts();
@@ -205,7 +438,7 @@ export default function HomeScreen() {
     navigation.navigate('CartTab' as never);
   };
 
-  const handleScrollEnd = (event: any) => {
+  const handleScrollEnd = (event) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / (bannerWidth + 20));
     let realIndex = index % bannerImages.length;
     setCurrentBannerIndex(realIndex);
@@ -221,23 +454,20 @@ export default function HomeScreen() {
 
   const renderCategory = ({ item }: { item: Category }) => (
     <TouchableOpacity
-      className="w-20 items-center mr-5"
+      style={styles.categoryCard}
       onPress={() => handleCategoryPress(item)}
     >
-      <View 
-        className="w-16 h-16 rounded-2xl justify-center items-center mb-2 shadow-sm"
-        style={{ backgroundColor: item.color }}
-      >
-        <Text className="text-3xl">{item.icon}</Text>
+      <View style={[styles.categoryIconContainer, { backgroundColor: item.color }]}>
+        <Text style={styles.categoryIcon}>{item.icon}</Text>
       </View>
-      <Text className="text-xs font-semibold text-gray-700 text-center leading-3.5" numberOfLines={2}>
+      <Text style={styles.categoryName} numberOfLines={2}>
         {item.name}
       </Text>
     </TouchableOpacity>
   );
 
   const renderProduct = ({ item, index }: { item: Product; index: number }) => (
-    <View className="flex-1">
+    <View style={styles.productColumn}>
       <ProductCard
         product={item}
         onPress={handleProductPress}
@@ -249,23 +479,18 @@ export default function HomeScreen() {
   );
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <View 
-        className="bg-primary px-5 pb-5 rounded-b-3xl shadow-lg"
-        style={{ 
-          paddingTop: (StatusBar.currentHeight || 0) + 10,
-        }}
-      >
-        <View className="flex-row justify-between items-center mb-4">
-          <View className="flex-row items-center">
-            <Text className="text-white font-bold text-3xl tracking-wide">Korean Shop</Text>
-            <View className="ml-2 bg-white/20 rounded-lg p-1.5">
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <View style={styles.logoContainer}>
+            <Text style={styles.logo}>Korean Shop</Text>
+            <View style={styles.logoIcon}>
               <Ionicons name="business-outline" size={18} color="white" />
             </View>
           </View>
-          <View className="flex-row items-center">
+          <View style={styles.headerIcons}>
             <TouchableOpacity 
-              className="w-10 h-10 rounded-full justify-center items-center bg-white/20" 
+              style={[styles.iconButton, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]} 
               onPress={handleCartPress}
             >
               <Ionicons name="cart-outline" size={24} color="white" />
@@ -273,11 +498,11 @@ export default function HomeScreen() {
           </View>
         </View>
         
-        <View className="mt-4">
-          <View className="flex-row items-center bg-white rounded-3xl px-4 py-3 shadow-sm">
-            <Ionicons name="search" size={20} color="#9CA3AF" className="mr-3" />
+        <View style={styles.searchContainer}>
+          <View style={styles.searchInputWrapper}>
+            <Ionicons name="search" size={20} color="#9CA3AF" style={styles.searchIcon} />
             <TextInput
-              className="flex-1 text-base text-gray-700"
+              style={styles.searchInput}
               placeholder="Search for fruits, vegetables, groce..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
@@ -289,13 +514,13 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView
-        className="flex-1"
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        <View className="h-50 my-5">
+        <View style={styles.bannerContainer}>
           <ScrollView
             ref={flatListRef}
             horizontal
@@ -307,32 +532,26 @@ export default function HomeScreen() {
             decelerationRate="fast"
           >
             {infiniteBannerImages.map((item, index) => (
-              <Image 
-                key={index} 
-                source={{ uri: item }} 
-                className="rounded-2xl mx-2.5"
-                style={{ width: bannerWidth, height: 200 }}
-              />
+              <Image key={index} source={{ uri: item }} style={styles.bannerImage} />
             ))}
           </ScrollView>
-          <View className="flex-row justify-start mt-3 ml-5">
+          <View style={styles.sliderIndicators}>
             {bannerImages.map((_, index) => (
               <View
                 key={index}
-                className={`w-2 h-2 rounded mx-1 ${
-                  index === currentBannerIndex 
-                    ? 'bg-primary w-5' 
-                    : 'bg-gray-300'
-                }`}
+                style={[
+                  styles.indicator,
+                  index === currentBannerIndex ? styles.activeIndicator : styles.inactiveIndicator,
+                ]}
               />
             ))}
           </View>
         </View>
 
         {/* Categories */}
-        <View className="px-5 mb-6">
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-gray-700 text-xl font-bold">Categories</Text>
+        <View style={[styles.section, { paddingHorizontal: 20 }]}>
+          <View style={[styles.sectionHeader, { marginBottom: 15 }]}>
+            <Text style={[styles.sectionTitle, { color: '#374151', fontSize: 22, fontWeight: '700' }]}>Categories</Text>
           </View>
           
           <FlatList
@@ -341,19 +560,19 @@ export default function HomeScreen() {
             keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 20 }}
+            contentContainerStyle={{ paddingLeft: 20 }}
           />
         </View>
 
         {/* Featured Products */}
-        <View className="px-5 mb-6">
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="font-bold text-lg" style={{ color: theme.text }}>{t('home.featured')}</Text>
+        <View style={[styles.section, { paddingHorizontal: 20 }]}>
+          <View style={[styles.sectionHeader, { marginBottom: 15 }]}>
+            <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 20, fontWeight: '700' }]}>{t('home.featured')}</Text>
             <TouchableOpacity onPress={() => {
               const rootNavigation = navigation.getParent();
               rootNavigation?.navigate('Search');
             }}>
-              <Text className="text-sm font-semibold" style={{ color: theme.primary }}>{t('common.seeAll')}</Text>
+              <Text style={[styles.seeAllButton, { color: theme.primary, fontSize: 14, fontWeight: '600' }]}>{t('common.seeAll')}</Text>
             </TouchableOpacity>
           </View>
           
@@ -363,8 +582,8 @@ export default function HomeScreen() {
             keyExtractor={(item) => item.id}
             numColumns={2}
             scrollEnabled={false}
-            contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 4 }}
-            columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 0 }}
+            contentContainerStyle={styles.productsGrid}
+            columnWrapperStyle={styles.productRow}
             ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
           />
         </View>
