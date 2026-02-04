@@ -1,12 +1,11 @@
-import React from 'react';
-import { View, Alert, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../contexts/ThemeContext';
-import { useCart } from '../contexts/CartContext';
-import { useFavorites } from '../contexts/FavoritesContext';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import Button from '../components/Button';
 import Text from '../components/Text';
+import { useCart } from '../contexts/CartContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Mock продукт для тестирования
 const mockProduct = {
@@ -33,19 +32,10 @@ const TestScreen: React.FC = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { addToCart, cartItems, getCartItemsCount } = useCart();
-  const { toggleFavorite, isFavorite } = useFavorites();
 
   const testAddToCart = () => {
     addToCart(mockProduct, 1);
     Alert.alert('Success', `Added ${mockProduct.name} to cart!`);
-  };
-
-  const testToggleFavorite = () => {
-    toggleFavorite(mockProduct.id);
-    const message = isFavorite(mockProduct.id) 
-      ? 'Removed from favorites' 
-      : 'Added to favorites';
-    Alert.alert('Success', message);
   };
 
   const testNavigation = (screen: string) => {
@@ -130,22 +120,6 @@ const TestScreen: React.FC = () => {
         <Button
           title="Go to Cart"
           onPress={() => testNavigation('Cart')}
-          variant="outline"
-          style={styles.button}
-        />
-      </View>
-
-      {/* Favorites Functions */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Favorites Functions</Text>
-        <Button
-          title="Toggle Test Product in Favorites"
-          onPress={testToggleFavorite}
-          style={styles.button}
-        />
-        <Button
-          title="Go to Favorites"
-          onPress={() => testNavigation('Favorites')}
           variant="outline"
           style={styles.button}
         />

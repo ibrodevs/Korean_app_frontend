@@ -8,7 +8,6 @@ import { Platform } from 'react-native';
 
 // Stack Navigators
 import HomeStackNavigator from './stacks/HomeStackNavigator';
-import FavoritesStackNavigator from './stacks/FavoritesStackNavigator';
 import OrdersStackNavigator from './stacks/OrdersStackNavigator';
 import ProfileStackNavigator from './stacks/ProfileStackNavigator';
 import CartStackNavigator from './stacks/CartStackNavigator';
@@ -29,9 +28,6 @@ const MainTabNavigator: React.FC = () => {
     switch (routeName) {
       case 'HomeTab':
         iconName = focused ? 'home' : 'home-outline';
-        break;
-      case 'FavoritesTab':
-        iconName = focused ? 'heart' : 'heart-outline';
         break;
       case 'CartTab':
         iconName = focused ? 'bag' : 'bag-outline';
@@ -92,14 +88,6 @@ const MainTabNavigator: React.FC = () => {
         component={HomeStackNavigator}
         options={{
           title: t('navigation.home'),
-        }}
-      />
-      
-      <Tab.Screen
-        name="FavoritesTab"
-        component={FavoritesStackNavigator}
-        options={{
-          title: 'Favorites',
         }}
       />
       

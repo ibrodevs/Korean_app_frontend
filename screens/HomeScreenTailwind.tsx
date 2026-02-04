@@ -1,24 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import 'nativewind';
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  StatusBar,
-  TextInput,
-  TouchableOpacity,
-  View,
+    FlatList,
+    RefreshControl,
+    ScrollView,
+    StatusBar,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import ProductCard from '../components/ProductCard';
-import CategoryCard from '../components/CategoryCard';
 import BannerCarousel from '../components/BannerCarousel';
+import CategoryCard from '../components/CategoryCard';
+import ProductCard from '../components/ProductCard';
 import Text from '../components/Text';
-import { Spacing, Typography } from '../constants/theme';
 import { useCart } from '../contexts/CartContext';
-import { useFavorites } from '../contexts/FavoritesContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { MainTabScreenProps } from '../types/navigation';
 import { Category, Product } from '../types/product';
@@ -131,7 +129,6 @@ export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenProps['navigation']>();
   const { t } = useTranslation();
   const { colors, theme } = useTheme();
-  const { toggleFavorite, isFavorite } = useFavorites();
   const { addToCart } = useCart();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -160,10 +157,6 @@ export default function HomeScreen() {
     const rootNavigation = navigation.getParent();
     rootNavigation?.navigate('ProductDetail', { product });
   }, [navigation]);
-
-  const handleToggleWishlist = useCallback((product: Product) => {
-    toggleFavorite(product.id);
-  }, [toggleFavorite]);
 
   const handleAddToCart = useCallback((product: Product) => {
     addToCart(product, 1);
@@ -202,12 +195,10 @@ export default function HomeScreen() {
       <ProductCard
         product={item}
         onPress={handleProductPress}
-        onToggleWishlist={handleToggleWishlist}
-        isWishlisted={isFavorite(item.id)}
         onAddToCart={handleAddToCart}
       />
     </View>
-  ), [handleProductPress, handleToggleWishlist, isFavorite, handleAddToCart]);
+  ), [handleProductPress, handleAddToCart]);
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Product } from '../types/product';
 
 export interface CartItem {
@@ -87,7 +87,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const removeFromCart = (id: string) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+    console.log('Removing item with id:', id);
+    setCartItems(prevItems => {
+      const newItems = prevItems.filter(item => item.id !== id);
+      console.log('Cart items after removal:', newItems.length);
+      return newItems;
+    });
   };
 
   const updateQuantity = (id: string, quantity: number) => {

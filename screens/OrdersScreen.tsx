@@ -1,29 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  View,
-  StyleSheet,
+  Alert,
   FlatList,
   RefreshControl,
-  Alert,
+  StyleSheet,
+  View,
 } from 'react-native';
-import Text from '../components/Text';
-import { useTailwind } from '../utils/tailwindUtilities';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from '../contexts/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  OrderHistory,
-  OrderFilter,
-  OrderSort,
-  OrderStats,
-  MOCK_ORDERS,
-} from '../types/order';
-import OrdersHeader from '../components/orders/OrdersHeader';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import EmptyOrders from '../components/orders/EmptyOrders';
 import OrderCard from '../components/orders/OrderCard';
 import OrderDetailsModal from '../components/orders/OrderDetailsModal';
-import EmptyOrders from '../components/orders/EmptyOrders';
-import LoadingSpinner from '../components/common/LoadingSpinner';
-import { useNavigation } from '@react-navigation/native';
+import OrdersHeader from '../components/orders/OrdersHeader';
+import Text from '../components/Text';
+import { useTheme } from '../contexts/ThemeContext';
+import {
+  MOCK_ORDERS,
+  OrderFilter,
+  OrderHistory,
+  OrderSort,
+  OrderStats,
+} from '../types/order';
+import { useTailwind } from '../utils/tailwindUtilities';
 
 import { NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../types/navigation';
@@ -125,14 +125,6 @@ const goToProfile = () => {
     // Применение фильтров
     if (filter.status && filter.status.length > 0) {
       result = result.filter(order => filter.status?.includes(order.status));
-    }
-
-    if (filter.searchQuery) {
-      const query = filter.searchQuery.toLowerCase();
-      result = result.filter(order =>
-        order.orderNumber.toLowerCase().includes(query) ||
-        order.items.some(item => item.product.name.toLowerCase().includes(query))
-      );
     }
 
     // Применение сортировки
@@ -268,7 +260,6 @@ const goToProfile = () => {
         sort={sort}
         onFilterChange={setFilter}
         onSortChange={setSort}
-        onSearch={(query) => setFilter(prev => ({ ...prev, searchQuery: query }))}
       />
       
       {renderContent()}

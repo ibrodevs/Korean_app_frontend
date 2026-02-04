@@ -3,9 +3,11 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Animated,
   Dimensions,
   FlatList,
   Image,
+  Platform,
   RefreshControl,
   ScrollView,
   StatusBar,
@@ -16,113 +18,102 @@ import {
 } from 'react-native';
 import ProductCard from '../components/ProductCard';
 import Text from '../components/Text';
-import { Spacing, Typography } from '../constants/theme';
 import { useCart } from '../contexts/CartContext';
-import { useFavorites } from '../contexts/FavoritesContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { MainTabScreenProps } from '../types/navigation';
 import { Category, Product } from '../types/product';
 
 type HomeScreenProps = MainTabScreenProps<'HomeTab'>;
 
-// Mock data
+// Modern categories with better icons
 const mockCategories: Category[] = [
-  { id: '1', name: 'category', icon: '📱', color: '#4A90E2', productCount: 150 },
-  { id: '2', name: 'category', icon: '📱', color: '#4A90E2', productCount: 89 },
-  { id: '3', name: 'category', icon: '📱', color: '#4A90E2', productCount: 200 },
-  { id: '4', name: 'category', icon: '📱', color: '#4A90E2', productCount: 75 },
-  { id: '5', name: 'categ', icon: '📱', color: '#4A90E2', productCount: 45 },
+  { id: '1', name: 'Electronics', icon: '📱', color: '#6366F1', productCount: 150 },
+  { id: '2', name: 'Fashion', icon: '👕', color: '#EC4899', productCount: 89 },
+  { id: '3', name: 'Home & Living', icon: '🏠', color: '#10B981', productCount: 200 },
+  { id: '4', name: 'Beauty', icon: '💄', color: '#F59E0B', productCount: 75 },
+  { id: '5', name: 'Sports', icon: '⚽', color: '#3B82F6', productCount: 45 },
+  { id: '6', name: 'Books', icon: '📚', color: '#8B5CF6', productCount: 120 },
 ];
 
 const mockProducts: Product[] = [
   {
     id: '1',
-    name: 'Fresh Organic Tomatoes',
-    description: 'Premium quality organic tomatoes from local farms',
-    price: 400,
-    originalPrice: 700,
-    discount: 43,
-    currency: 'SOM',
-    category: 'Vegetables',
-    images: ['https://picsum.photos/300/300?random=1'],
+    name: 'iPhone 15 Pro',
+    description: 'Latest Apple smartphone with advanced camera',
+    price: 999,
+    originalPrice: 1199,
+    discount: 17,
+    currency: 'USD',
+    category: 'Electronics',
+    images: ['https://picsum.photos/400/400?random=1'],
     rating: 4.9,
-    reviewCount: 245,
+    reviewCount: 1245,
     stock: 50,
-    isNew: false,
+    isNew: true,
     isFeatured: true,
     isBestSeller: true,
-    tags: ['organic', 'fresh', 'vegetables'],
-    seller: {
-      id: 'seller1',
-      name: 'name of thing'
-    },
+    tags: ['apple', 'premium', 'smartphone'],
+    seller: { id: 'apple', name: 'Apple Store' },
     inStock: true,
   },
   {
     id: '2',
-    name: 'Sweet Red Apples',
-    description: 'Crispy and sweet red apples perfect for snacking',
-    price: 350,
-    originalPrice: 500,
-    discount: 30,
-    currency: 'SOM',
-    category: 'Fruits',
-    images: ['https://picsum.photos/300/300?random=2'],
+    name: 'Air Jordan 1',
+    description: 'Classic basketball sneakers',
+    price: 150,
+    originalPrice: 180,
+    discount: 17,
+    currency: 'USD',
+    category: 'Fashion',
+    images: ['https://picsum.photos/400/400?random=2'],
     rating: 4.8,
-    reviewCount: 189,
+    reviewCount: 892,
     stock: 100,
-    isNew: true,
+    isNew: false,
     isFeatured: true,
-    isBestSeller: false,
-    tags: ['fresh', 'sweet', 'fruits'],
-    seller: {
-      id: 'seller2',
-      name: 'name of thing'
-    },
+    isBestSeller: true,
+    tags: ['nike', 'sneakers', 'limited'],
+    seller: { id: 'nike', name: 'Nike Official' },
     inStock: true,
   },
   {
     id: '3',
-    name: 'Premium Beef Steak',
-    description: 'High-quality beef steak, perfect for grilling',
-    price: 1200,
-    originalPrice: 1500,
-    discount: 20,
-    currency: 'SOM',
-    category: 'Meat & Eggs',
-    images: ['https://picsum.photos/300/300?random=3'],
-    rating: 4.7,
-    reviewCount: 156,
+    name: 'MacBook Air M2',
+    description: 'Ultra-thin and powerful laptop',
+    price: 1299,
+    originalPrice: 1499,
+    discount: 13,
+    currency: 'USD',
+    category: 'Electronics',
+    images: ['https://picsum.photos/400/400?random=3'],
+    rating: 4.9,
+    reviewCount: 2156,
     stock: 25,
-    isNew: false,
+    isNew: true,
     isFeatured: true,
-    isBestSeller: true,
-    tags: ['meat', 'premium', 'beef'],
-    seller: {
-      id: 'seller3',
-      name: 'name of thing'
-    },
+    isBestSeller: false,
+    tags: ['apple', 'laptop', 'm2'],
+    seller: { id: 'apple', name: 'Apple Store' },
     inStock: true,
   },
   {
     id: '4',
-    name: 'Fresh Milk',
-    description: 'Pure and fresh milk from local dairy farms',
-    price: 150,
-    currency: 'SOM',
-    category: 'Drinks',
-    images: ['https://picsum.photos/300/300?random=4'],
-    rating: 4.6,
-    reviewCount: 98,
+    name: 'Wireless Headphones',
+    description: 'Noise cancelling premium headphones',
+    price: 299,
+    originalPrice: 399,
+    discount: 25,
+    currency: 'USD',
+    category: 'Electronics',
+    images: ['https://picsum.photos/400/400?random=4'],
+    rating: 4.7,
+    reviewCount: 987,
     stock: 200,
     isNew: false,
     isFeatured: true,
-    isBestSeller: false,
-    tags: ['milk', 'fresh', 'dairy'],
-    seller: {
-      id: 'seller4',
-      name: 'Dairy Farm'
-    },
+    isBestSeller: true,
+    tags: ['audio', 'wireless', 'premium'],
+    seller: { id: 'sony', name: 'Sony Electronics' },
     inStock: true,
   },
 ];
@@ -131,25 +122,40 @@ export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenProps['navigation']>();
   const { t } = useTranslation();
   const { colors, theme } = useTheme();
-  const { toggleFavorite, isFavorite } = useFavorites();
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>(mockProducts);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
-
+  
+  const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<ScrollView>(null);
   const { width } = Dimensions.get('window');
-  const bannerWidth = width - 40;
-
+  const bannerWidth = width - 48;
+  
   const bannerImages = [
-    'https://picsum.photos/300/300?random=1',
-    'https://picsum.photos/300/300?random=2',
-    'https://picsum.photos/300/300?random=3',
-    'https://picsum.photos/300/300?random=4',
+    'https://picsum.photos/400/300?random=10',
+    'https://picsum.photos/400/300?random=11',
+    'https://picsum.photos/400/300?random=12',
   ];
-  const infiniteBannerImages = bannerImages.concat(bannerImages);
+  
+  const infiniteBannerImages = [...bannerImages, ...bannerImages];
+  
+  // Animated header background
+  const headerBackgroundColor = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: ['rgba(23, 121, 243, 1)', 'rgba(23, 121, 243, 0.95)'],
+    extrapolate: 'clamp',
+  });
+  
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, 80, 100],
+    outputRange: [1, 0.9, 0.8],
+    extrapolate: 'clamp',
+  });
+  
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const styles = StyleSheet.create({
     container: {
@@ -157,69 +163,86 @@ export default function HomeScreen() {
       backgroundColor: colors.background,
     },
     header: {
-      backgroundColor: '#1779F3',
-      paddingTop: (StatusBar.currentHeight || 0) + 10,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 100,
+      paddingTop: Platform.OS === 'ios' ? 60 : StatusBar.currentHeight! + 20,
       paddingHorizontal: 20,
       paddingBottom: 20,
       borderBottomLeftRadius: 25,
       borderBottomRightRadius: 25,
-      elevation: 8,
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
+      shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.15,
-      shadowRadius: 12,
+      shadowRadius: 20,
+      elevation: 10,
     },
-    headerTop: {
+    headerContent: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: Spacing.md,
-    },
-    logo: {
-      color: '#FFFFFF',
-      fontWeight: '700',
-      fontSize: 28,
-      letterSpacing: 0.5,
     },
     logoContainer: {
       flexDirection: 'row',
       alignItems: 'center',
+      gap: 10,
     },
-    logoIcon: {
-      marginLeft: 8,
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-      borderRadius: 8,
-      padding: 6,
+    logo: {
+      color: '#FFFFFF',
+      fontWeight: '800',
+      fontSize: 24,
+      letterSpacing: -0.5,
+    },
+    logoHighlight: {
+      color: '#FFD700',
     },
     headerIcons: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 8,
+      gap: 12,
     },
     iconButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
+      width: 44,
+      height: 44,
+      borderRadius: 22,
       justifyContent: 'center',
       alignItems: 'center',
-      marginLeft: 0,
+      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    },
+    cartBadge: {
+      position: 'absolute',
+      top: -4,
+      right: -4,
+      backgroundColor: '#EF4444',
+      borderRadius: 10,
+      minWidth: 20,
+      height: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 4,
+    },
+    cartBadgeText: {
+      color: 'white',
+      fontSize: 10,
+      fontWeight: '700',
     },
     searchContainer: {
       marginTop: 15,
-      paddingHorizontal: 0,
     },
     searchInputWrapper: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#FFFFFF',
-      borderRadius: 25,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      borderRadius: 30,
+      paddingHorizontal: 20,
+      paddingVertical: 14,
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
+      shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      shadowRadius: 12,
+      elevation: 5,
     },
     searchIcon: {
       marginRight: 12,
@@ -227,160 +250,116 @@ export default function HomeScreen() {
     searchInput: {
       flex: 1,
       fontSize: 16,
-      color: '#374151',
-      paddingVertical: 0,
+      color: '#1F2937',
+      fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-medium',
     },
     scrollView: {
       flex: 1,
     },
+    contentContainer: {
+      paddingTop: Platform.OS === 'ios' ? 180 : 160,
+    },
     section: {
-      paddingHorizontal: Spacing.lg,
-      marginBottom: Spacing.xl,
+      marginBottom: 32,
     },
     sectionHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: Spacing.md,
+      marginBottom: 20,
+      paddingHorizontal: 24,
     },
     sectionTitle: {
-      ...Typography.h3,
+      fontSize: 22,
+      fontWeight: '700',
       color: colors.text,
-      fontWeight: 'bold',
+      letterSpacing: -0.5,
     },
     seeAllButton: {
-      ...Typography.body,
-      color: colors.primary,
-      fontWeight: '600',
-    },
-    bannerContainer: {
-      height: 200,
-      marginBottom: 20,
-      marginTop: 20,
-    },
-    banner: {
-      flex: 1,
-      borderRadius: 20,
-      marginHorizontal: 20,
-      overflow: 'hidden',
-    },
-    bannerLeft: {
-      flex: 1,
-    },
-    bannerRight: {
-      width: 120,
-      height: 120,
-      borderRadius: 15,
-      backgroundColor: '#F59E0B',
-      marginLeft: 15,
-      overflow: 'hidden',
-    },
-    discountText: {
-      color: '#FFFFFF',
-      fontSize: 18,
-      fontWeight: '600',
-      marginBottom: 4,
-    },
-    discountPercent: {
-      color: '#FFFFFF',
-      fontSize: 36,
-      fontWeight: '800',
-      marginBottom: 4,
-    },
-    discountSubtitle: {
-      color: '#FFFFFF',
       fontSize: 14,
-      marginBottom: 12,
+      fontWeight: '600',
+      color: colors.primary,
       opacity: 0.9,
     },
-    seeDetailButton: {
-      backgroundColor: '#F59E0B',
-      borderRadius: 20,
-      paddingHorizontal: 20,
-      paddingVertical: 8,
+    bannerContainer: {
+      marginBottom: 32,
     },
-    seeDetailText: {
-      color: '#FFFFFF',
-      fontSize: 14,
-      fontWeight: '600',
+    banner: {
+      width: bannerWidth,
+      height: 160,
+      borderRadius: 24,
+      overflow: 'hidden',
+      marginHorizontal: 24,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.15,
+      shadowRadius: 20,
+      elevation: 8,
     },
     bannerImage: {
-      width: bannerWidth,
-      height: 200,
-      borderRadius: 20,
-      marginHorizontal: 10,
+      width: '100%',
+      height: '100%',
     },
-    sliderIndicators: {
+    bannerOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    },
+    bannerPagination: {
       flexDirection: 'row',
-      justifyContent: 'flex-start',
-      marginTop: 12,
-      marginLeft: 20,
+      justifyContent: 'center',
+      marginTop: 16,
+      paddingHorizontal: 24,
     },
-    indicator: {
+    paginationDot: {
       width: 8,
       height: 8,
       borderRadius: 4,
       marginHorizontal: 4,
     },
-    activeIndicator: {
-      backgroundColor: '#1779F3',
-      width: 20,
-    },
-    inactiveIndicator: {
-      backgroundColor: '#D1D5DB',
-    },
-    bannerText: {
-      color: colors.heading,
-      fontWeight: '700',
-      textAlign: 'center',
-      textShadow: '1px 1px 2px rgba(0, 0, 0, 0.1)',
-    },
     categoriesContainer: {
-      paddingLeft: Spacing.lg,
+      paddingLeft: 24,
     },
     categoryCard: {
-      width: 80,
       alignItems: 'center',
       marginRight: 20,
     },
     categoryIconContainer: {
-      width: 64,
-      height: 64,
-      borderRadius: 16,
+      width: 72,
+      height: 72,
+      borderRadius: 20,
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 8,
+      marginBottom: 12,
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 5,
     },
     categoryIcon: {
       fontSize: 32,
     },
     categoryName: {
-      fontSize: 12,
+      fontSize: 13,
       fontWeight: '600',
-      color: '#374151',
+      color: colors.text,
       textAlign: 'center',
-      lineHeight: 14,
+      maxWidth: 80,
     },
     categoryCount: {
-      ...Typography.caption,
+      fontSize: 11,
       color: colors.textSecondary,
-      fontSize: 10,
+      marginTop: 2,
     },
     productsGrid: {
-      paddingHorizontal: 8,
-      paddingTop: 4,
+      paddingHorizontal: 20,
     },
     productRow: {
       justifyContent: 'space-between',
-      paddingHorizontal: 0,
     },
     productColumn: {
       flex: 1,
+      maxWidth: '48%',
     },
   });
 
@@ -393,12 +372,15 @@ export default function HomeScreen() {
       setCurrentBannerIndex((prev) => {
         const next = (prev + 1) % bannerImages.length;
         const infiniteNext = (prev + 1) % infiniteBannerImages.length;
-        flatListRef.current?.scrollTo({ x: infiniteNext * (bannerWidth + 20), animated: true });
+        flatListRef.current?.scrollTo({
+          x: infiniteNext * (bannerWidth + 48),
+          animated: true,
+        });
         return next;
       });
-    }, 3000);
+    }, 4000);
     return () => clearInterval(interval);
-  }, [bannerImages.length, infiniteBannerImages.length, bannerWidth]);
+  }, [bannerImages.length]);
 
   const loadFeaturedProducts = async () => {
     // Simulate API call
@@ -412,50 +394,45 @@ export default function HomeScreen() {
   };
 
   const handleProductPress = (product: Product) => {
-    // Навигация на уровне Root Navigator
-    const rootNavigation = navigation.getParent();
-    rootNavigation?.navigate('ProductDetail', { product });
-  };
-
-  const handleToggleWishlist = (product: Product) => {
-    toggleFavorite(product.id);
+    navigation.getParent()?.navigate('ProductDetail', { product });
   };
 
   const handleAddToCart = (product: Product) => {
     addToCart(product, 1);
-    // Можно добавить Toast или Alert для подтверждения
-    console.log('Added to cart:', product.name);
+    // Here you could add a success notification
   };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      const rootNavigation = navigation.getParent();
-      rootNavigation?.navigate('AdvancedSearch', { query: searchQuery });
+      navigation.getParent()?.navigate('AdvancedSearch', { query: searchQuery });
     }
   };
-  
+
   const handleCartPress = () => {
     navigation.navigate('CartTab' as never);
   };
 
-  const handleScrollEnd = (event) => {
-    const index = Math.round(event.nativeEvent.contentOffset.x / (bannerWidth + 20));
+  const handleScrollEnd = (event: any) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / (bannerWidth + 48));
     let realIndex = index % bannerImages.length;
     setCurrentBannerIndex(realIndex);
     if (index >= bannerImages.length) {
-      flatListRef.current?.scrollTo({ x: realIndex * (bannerWidth + 20), animated: false });
+      flatListRef.current?.scrollTo({
+        x: realIndex * (bannerWidth + 48),
+        animated: false,
+      });
     }
   };
 
   const handleCategoryPress = (category: Category) => {
-    const rootNavigation = navigation.getParent();
-    rootNavigation?.navigate('AdvancedSearch', { category: category.id });
+    navigation.getParent()?.navigate('AdvancedSearch', { category: category.id });
   };
 
   const renderCategory = ({ item }: { item: Category }) => (
     <TouchableOpacity
       style={styles.categoryCard}
       onPress={() => handleCategoryPress(item)}
+      activeOpacity={0.7}
     >
       <View style={[styles.categoryIconContainer, { backgroundColor: item.color }]}>
         <Text style={styles.categoryIcon}>{item.icon}</Text>
@@ -463,16 +440,17 @@ export default function HomeScreen() {
       <Text style={styles.categoryName} numberOfLines={2}>
         {item.name}
       </Text>
+      <Text style={styles.categoryCount}>
+        {item.productCount} items
+      </Text>
     </TouchableOpacity>
   );
 
   const renderProduct = ({ item, index }: { item: Product; index: number }) => (
-    <View style={styles.productColumn}>
+    <View style={[styles.productColumn, { marginLeft: index % 2 === 1 ? 8 : 0 }]}>
       <ProductCard
         product={item}
         onPress={handleProductPress}
-        onToggleWishlist={handleToggleWishlist}
-        isWishlisted={isFavorite(item.id)}
         onAddToCart={handleAddToCart}
       />
     </View>
@@ -480,68 +458,99 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+      
+      {/* Animated Header */}
+      <Animated.View style={[styles.header, {
+        backgroundColor: headerBackgroundColor,
+        opacity: headerOpacity,
+      }]}>
+        <View style={styles.headerContent}>
           <View style={styles.logoContainer}>
-            <Text style={styles.logo}>Korean Shop</Text>
-            <View style={styles.logoIcon}>
-              <Ionicons name="business-outline" size={18} color="white" />
-            </View>
+            <Text style={styles.logo}>
+              Korean<Text style={styles.logoHighlight}>Shop</Text>
+            </Text>
           </View>
+          
           <View style={styles.headerIcons}>
-            <TouchableOpacity 
-              style={[styles.iconButton, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]} 
-              onPress={handleCartPress}
-            >
-              <Ionicons name="cart-outline" size={24} color="white" />
+            <TouchableOpacity style={styles.iconButton} onPress={handleCartPress}>
+              <Ionicons name="cart-outline" size={22} color="white" />
+              {cartItemCount > 0 && (
+                <View style={styles.cartBadge}>
+                  <Text style={styles.cartBadgeText}>
+                    {cartItemCount > 99 ? '99+' : cartItemCount}
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
         </View>
         
         <View style={styles.searchContainer}>
-          <View style={styles.searchInputWrapper}>
-            <Ionicons name="search" size={20} color="#9CA3AF" style={styles.searchIcon} />
+          <TouchableOpacity style={styles.searchInputWrapper} onPress={handleSearch}>
+            <Ionicons name="search" size={20} color="#6B7280" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search for fruits, vegetables, groce..."
+              placeholder="Search products, brands, and categories..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
               onChangeText={setSearchQuery}
               onSubmitEditing={handleSearch}
+              editable={false}
             />
-          </View>
+            <Ionicons name="options-outline" size={20} color="#6B7280" />
+          </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
 
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.primary}
+          />
         }
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
       >
+        {/* Banner Slider */}
         <View style={styles.bannerContainer}>
           <ScrollView
             ref={flatListRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={handleScrollEnd}
-            contentContainerStyle={{ paddingHorizontal: 20 }}
-            snapToInterval={bannerWidth + 20}
+            snapToInterval={bannerWidth + 48}
             snapToAlignment="center"
             decelerationRate="fast"
+            scrollEventThrottle={16}
           >
             {infiniteBannerImages.map((item, index) => (
-              <Image key={index} source={{ uri: item }} style={styles.bannerImage} />
+              <View key={index} style={styles.banner}>
+                <Image source={{ uri: item }} style={styles.bannerImage} />
+                <View style={styles.bannerOverlay} />
+              </View>
             ))}
           </ScrollView>
-          <View style={styles.sliderIndicators}>
+          <View style={styles.bannerPagination}>
             {bannerImages.map((_, index) => (
               <View
                 key={index}
                 style={[
-                  styles.indicator,
-                  index === currentBannerIndex ? styles.activeIndicator : styles.inactiveIndicator,
+                  styles.paginationDot,
+                  {
+                    backgroundColor: index === currentBannerIndex
+                      ? colors.primary
+                      : colors.textSecondary + '40',
+                    width: index === currentBannerIndex ? 24 : 8,
+                  },
                 ]}
               />
             ))}
@@ -549,9 +558,12 @@ export default function HomeScreen() {
         </View>
 
         {/* Categories */}
-        <View style={[styles.section, { paddingHorizontal: 20 }]}>
-          <View style={[styles.sectionHeader, { marginBottom: 15 }]}>
-            <Text style={[styles.sectionTitle, { color: '#374151', fontSize: 22, fontWeight: '700' }]}>Categories</Text>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Browse Categories</Text>
+            <TouchableOpacity>
+              <Text style={styles.seeAllButton}>View All</Text>
+            </TouchableOpacity>
           </View>
           
           <FlatList
@@ -560,19 +572,18 @@ export default function HomeScreen() {
             keyExtractor={(item) => item.id}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingLeft: 20 }}
+            contentContainerStyle={styles.categoriesContainer}
           />
         </View>
 
         {/* Featured Products */}
-        <View style={[styles.section, { paddingHorizontal: 20 }]}>
-          <View style={[styles.sectionHeader, { marginBottom: 15 }]}>
-            <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 20, fontWeight: '700' }]}>{t('home.featured')}</Text>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Featured Products</Text>
             <TouchableOpacity onPress={() => {
-              const rootNavigation = navigation.getParent();
-              rootNavigation?.navigate('Search');
+              navigation.getParent()?.navigate('Search');
             }}>
-              <Text style={[styles.seeAllButton, { color: theme.primary, fontSize: 14, fontWeight: '600' }]}>{t('common.seeAll')}</Text>
+              <Text style={styles.seeAllButton}>See All</Text>
             </TouchableOpacity>
           </View>
           
@@ -583,11 +594,9 @@ export default function HomeScreen() {
             numColumns={2}
             scrollEnabled={false}
             contentContainerStyle={styles.productsGrid}
-            columnWrapperStyle={styles.productRow}
-            ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
           />
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }

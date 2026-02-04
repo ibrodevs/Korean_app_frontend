@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  ScrollView,
-} from 'react-native';
-import Text from '../Text';
-import { useTailwind } from '../../utils/tailwindUtilities';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../contexts/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { OrderStats, OrderFilter, OrderSort } from '../../types/order';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+    Modal,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext';
+import { OrderFilter, OrderSort, OrderStats } from '../../types/order';
+import { useTailwind } from '../../utils/tailwindUtilities';
+import Text from '../Text';
 
 interface OrdersHeaderProps {
   stats: OrderStats;
@@ -19,7 +19,6 @@ interface OrdersHeaderProps {
   sort: OrderSort;
   onFilterChange: (filter: OrderFilter) => void;
   onSortChange: (sort: OrderSort) => void;
-  onSearch: (query: string) => void;
 }
 
 const OrdersHeader: React.FC<OrdersHeaderProps> = ({
@@ -28,7 +27,6 @@ const OrdersHeader: React.FC<OrdersHeaderProps> = ({
   sort,
   onFilterChange,
   onSortChange,
-  onSearch,
 }) => {
   const tailwind = useTailwind();
   const { t } = useTranslation();
@@ -36,11 +34,6 @@ const OrdersHeader: React.FC<OrdersHeaderProps> = ({
 
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showSortModal, setShowSortModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleSearch = () => {
-    onSearch(searchQuery);
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -97,36 +90,6 @@ const OrdersHeader: React.FC<OrdersHeaderProps> = ({
 
       {/* Панель фильтров и поиска */}
       <View style={styles.controls}>
-        {/* Поиск */}
-        <View style={[styles.searchContainer, { backgroundColor: theme.card }]}>
-          <Ionicons
-            name="search-outline"
-            size={20}
-            color={theme.textSecondary}
-            style={tailwind('ml-2')}
-          />
-          <TextInput
-            style={[styles.searchInput, { color: theme.text }]}
-            placeholder={t('orders.search')}
-            placeholderTextColor={theme.textSecondary}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onSubmitEditing={handleSearch}
-            returnKeyType="search"
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity
-              onPress={() => {
-                setSearchQuery('');
-                onSearch('');
-              }}
-              style={tailwind('mr-2')}
-            >
-              <Ionicons name="close-circle" size={20} color={theme.textSecondary} />
-            </TouchableOpacity>
-          )}
-        </View>
-
         {/* Кнопки фильтра и сортировки */}
         <View style={styles.controlButtons}>
           <TouchableOpacity
@@ -152,24 +115,9 @@ const OrdersHeader: React.FC<OrdersHeaderProps> = ({
       </View>
 
       {/* Активные фильтры */}
-      {(filter.status?.length || filter.searchQuery) && (
+      {filter.status?.length && (
         <View style={styles.activeFilters}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {filter.searchQuery && (
-              <View style={[styles.filterChip, { backgroundColor: theme.primary }]}>
-                <Text style={[styles.filterChipText, { color: theme.heading }]}>
-                  Search: {filter.searchQuery}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    onFilterChange({ ...filter, searchQuery: undefined });
-                    setSearchQuery('');
-                  }}
-                >
-                  <Ionicons name="close" size={16} color={theme.heading} />
-                </TouchableOpacity>
-              </View>
-            )}
             
             {filter.status?.map((status) => (
               <View
@@ -190,12 +138,11 @@ const OrdersHeader: React.FC<OrdersHeaderProps> = ({
               </View>
             ))}
             
-            {(filter.status?.length || filter.searchQuery) && (
+            {filter.status?.length && (
               <TouchableOpacity
                 style={styles.clearAllButton}
                 onPress={() => {
                   onFilterChange({});
-                  setSearchQuery('');
                 }}
               >
                 <Text style={[styles.clearAllText, { color: theme.primary }]}>
@@ -522,18 +469,6 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 12,
   },
-  searchContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    padding: 12,
-  },
   controlButtons: {
     flexDirection: 'row',
     gap: 8,
@@ -671,5 +606,4 @@ const styles = StyleSheet.create({
   },
 });
 
-import { TextInput } from 'react-native';
 export default OrdersHeader;
