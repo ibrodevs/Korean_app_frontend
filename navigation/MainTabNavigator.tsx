@@ -67,12 +67,13 @@ const MainTabNavigator: React.FC = () => {
       shadowOffset: { width: 0, height: -2 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
+      marginTop: -10,
     },
     tabBarLabelStyle: {
       fontSize: 11,
       fontWeight: '600' as const,
       marginBottom: 2,
-      marginTop: -2,
+      marginTop: -5,
     },
     tabBarItemStyle: {
       paddingVertical: 6,
