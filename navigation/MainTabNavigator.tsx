@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
 import { useCart } from '../contexts/CartContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Platform } from 'react-native';
+import { Platform, Animated, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 
 // Stack Navigators
 import HomeStackNavigator from './stacks/HomeStackNavigator';
-import FavoritesStackNavigator from './stacks/FavoritesStackNavigator';
 import OrdersStackNavigator from './stacks/OrdersStackNavigator';
 import ProfileStackNavigator from './stacks/ProfileStackNavigator';
 import CartStackNavigator from './stacks/CartStackNavigator';
@@ -18,98 +19,268 @@ import { MainTabParamList } from '../types/navigation';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-const MainTabNavigator: React.FC = () => {
-  const { t } = useTranslation();
-  const { theme } = useTheme();
-  const { getCartItemsCount } = useCart();
+interface TabBarIconProps {
+  routeName: string;
+  focused: boolean;
+  color: string;
+  size: number;
+  badgeCount?: number;
+}
 
-  const getTabBarIcon = (routeName: string, focused: boolean, color: string, size: number) => {
-    let iconName: string;
-    
+const TabBarIcon: React.FC<TabBarIconProps> = ({ 
+  routeName, 
+  focused, 
+  color, 
+  size, 
+  badgeCount 
+}) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  
+  const getIconName = () => {
     switch (routeName) {
       case 'HomeTab':
-        iconName = focused ? 'home' : 'home-outline';
-        break;
-      case 'FavoritesTab':
-        iconName = focused ? 'heart' : 'heart-outline';
-        break;
+        return focused ? 'home' : 'home-outline';
       case 'CartTab':
-        iconName = focused ? 'bag' : 'bag-outline';
-        break;
+        return focused ? 'bag' : 'bag-outline';
       case 'OrdersTab':
-        iconName = focused ? 'list' : 'list-outline';
-        break;
+        return focused ? 'list' : 'list-outline';
       case 'ProfileTab':
-        iconName = focused ? 'person' : 'person-outline';
-        break;
+        return focused ? 'person' : 'person-outline';
       default:
-        iconName = 'help-circle-outline';
+        return 'help-circle-outline';
     }
-
-    return <Ionicons name={iconName as any} size={size} color={color} />;
   };
+
+  useEffect(() => {
+    if (focused) {
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 1.2,
+          tension: 200,
+          friction: 5,
+          useNativeDriver: true,
+        }),
+        Animated.spring(rotateAnim, {
+          toValue: 1,
+          tension: 200,
+          friction: 5,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: 200,
+        friction: 5,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [focused]);
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  return (
+    <View style={styles.iconContainer}>
+      <Animated.View style={{ transform: [{ scale: scaleAnim }, { rotate }] }}>
+        <Ionicons 
+          name={getIconName() as any} 
+          size={focused ? size + 2 : size} 
+          color={color}
+        />
+      </Animated.View>
+      
+      {/* Бейдж для корзины */}
+      {badgeCount && badgeCount > 0 && (
+        <View style={[
+          styles.badge,
+          { 
+            backgroundColor: '#FF3B30',
+            borderColor: '#FFFFFF',
+          }
+        ]}>
+          <Animated.Text style={styles.badgeText}>
+            {badgeCount > 99 ? '99+' : badgeCount}
+          </Animated.Text>
+        </View>
+      )}
+      
+      {/* Активный индикатор */}
+      {focused && (
+        <View style={[
+          styles.activeIndicator,
+          { backgroundColor: color }
+        ]} />
+      )}
+    </View>
+  );
+};
+
+interface TabBarButtonProps {
+  children: React.ReactNode;
+  onPress: () => void;
+  accessibilityState: { selected: boolean };
+}
+
+const TabBarButton: React.FC<TabBarButtonProps> = ({ 
+  children, 
+  onPress, 
+  accessibilityState 
+}) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.9,
+      tension: 200,
+      friction: 5,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      tension: 200,
+      friction: 5,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  return (
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      style={styles.tabBarButton}
+    >
+      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+        {children}
+      </Animated.View>
+    </TouchableOpacity>
+  );
+};
+
+const MainTabNavigator: React.FC = () => {
+  const { t } = useTranslation();
+  const { theme, isDark } = useTheme();
+  const { getCartItemsCount } = useCart();
 
   const screenOptions = ({ route }: any) => ({
     headerShown: false,
-    tabBarIcon: ({ focused, color, size }: any) =>
-      getTabBarIcon(route.name, focused, color, size),
+    tabBarIcon: ({ focused, color, size }: any) => {
+      const badgeCount = route.name === 'CartTab' ? getCartItemsCount() : undefined;
+      return (
+        <TabBarIcon
+          routeName={route.name}
+          focused={focused}
+          color={color}
+          size={size}
+          badgeCount={badgeCount}
+        />
+      );
+    },
     tabBarActiveTintColor: theme.primary,
     tabBarInactiveTintColor: theme.textHint,
+    tabBarBackground: () => {
+      if (Platform.OS === 'ios') {
+        return (
+          <BlurView
+            intensity={90}
+            tint={isDark ? 'dark' : 'light'}
+            style={StyleSheet.absoluteFill}
+          />
+        );
+      }
+      
+      return (
+        <LinearGradient
+          colors={[
+            theme.background + 'FF',
+            theme.background + 'F0',
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+      );
+    },
     tabBarStyle: {
-      backgroundColor: theme.background,
+      backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.background,
       borderTopColor: theme.border,
-      borderTopWidth: 1,
-      height: 70,
+      borderTopWidth: Platform.OS === 'ios' ? 0.5 : 1,
+      height: Platform.OS === 'ios' ? 85 : 70,
       paddingTop: 8,
-      paddingBottom: Platform.OS === 'ios' ? 25 : 8,
+      paddingBottom: Platform.OS === 'ios' ? 30 : 8,
       elevation: 12,
       shadowColor: '#000000',
-      shadowOffset: { width: 0, height: -2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      marginTop: -10,
+      shadowOffset: { width: 0, height: -4 },
+      shadowOpacity: isDark ? 0.3 : 0.1,
+      shadowRadius: 16,
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
     },
     tabBarLabelStyle: {
       fontSize: 11,
       fontWeight: '600' as const,
-      marginBottom: 2,
-      marginTop: -5,
+      marginBottom: 4,
+      marginTop: -2,
+      letterSpacing: 0.2,
     },
     tabBarItemStyle: {
       paddingVertical: 6,
       minHeight: 50,
     },
     tabBarHideOnKeyboard: true,
+    tabBarButton: (props: any) => <TabBarButton {...props} />,
   });
+
+  // Анимированный компонент для градиента при нажатии
+  const TabBarBackground = () => {
+    if (Platform.OS === 'ios') {
+      return (
+        <BlurView
+          intensity={90}
+          tint={isDark ? 'dark' : 'light'}
+          style={StyleSheet.absoluteFill}
+        />
+      );
+    }
+
+    return (
+      <LinearGradient
+        colors={[
+          theme.background + 'FF',
+          theme.background + 'F0',
+        ]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+    );
+  };
 
   return (
     <Tab.Navigator
       initialRouteName="HomeTab"
       screenOptions={screenOptions}
       backBehavior="history"
+      sceneContainerStyle={{
+        backgroundColor: theme.background,
+      }}
     >
       <Tab.Screen
         name="HomeTab"
         component={HomeStackNavigator}
         options={{
           title: t('navigation.home'),
-        }}
-      />
-      
-      <Tab.Screen
-        name="FavoritesTab"
-        component={FavoritesStackNavigator}
-        options={{
-          title: 'Favorites',
-        }}
-      />
-      
-      <Tab.Screen
-        name="CartTab"
-        component={CartStackNavigator}
-        options={{
-          title: t('navigation.cart'),
-          tabBarBadge: getCartItemsCount() > 0 ? getCartItemsCount() : undefined,
+          tabBarAccessibilityLabel: t('navigation.home'),
         }}
       />
       
@@ -118,6 +289,27 @@ const MainTabNavigator: React.FC = () => {
         component={OrdersStackNavigator}
         options={{
           title: t('navigation.orders'),
+          tabBarAccessibilityLabel: t('navigation.orders'),
+        }}
+      />
+      
+      <Tab.Screen
+        name="CartTab"
+        component={CartStackNavigator}
+        options={{
+          title: t('navigation.cart'),
+          tabBarAccessibilityLabel: t('navigation.cart'),
+          tabBarBadgeStyle: {
+            backgroundColor: '#FF3B30',
+            color: '#FFFFFF',
+            fontSize: 10,
+            fontWeight: 'bold',
+            minWidth: 18,
+            height: 18,
+            borderRadius: 9,
+            marginLeft: 10,
+            marginBottom: Platform.OS === 'ios' ? 30 : 15,
+          },
         }}
       />
       
@@ -126,10 +318,47 @@ const MainTabNavigator: React.FC = () => {
         component={ProfileStackNavigator}
         options={{
           title: t('navigation.profile'),
+          tabBarAccessibilityLabel: t('navigation.profile'),
         }}
       />
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    paddingTop: 4,
+    marginRight: -4,
+  },
+  badge: {
+    position: 'absolute',
+    top: -2,
+    right: -8,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: 'bold',
+    paddingHorizontal: 8,
+  },
+  tabBarButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabBarBackground: {
+    ...StyleSheet.absoluteFillObject,
+  },
+});
 
 export default MainTabNavigator;

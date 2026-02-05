@@ -1,19 +1,21 @@
-import React from 'react';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  View,
+  Animated,
+  Dimensions,
+  Image,
+  Modal,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Image,
-  Linking,
-  Alert,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
-import Text from '../Text';
-import { useTailwind } from '../../utils/tailwindUtilities';
-import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { OrderHistory } from '../../types/order';
+import Text from '../Text';
 
 interface OrderDetailsModalProps {
   order: OrderHistory | null;
@@ -21,7 +23,11 @@ interface OrderDetailsModalProps {
   onClose: () => void;
   onTrackOrder: (orderId: string) => void;
   onReorder: (orderId: string) => void;
+  onCancelOrder?: (orderId: string) => void;
+  onWriteReview?: (orderId: string) => void;
 }
+
+const { width, height } = Dimensions.get('window');
 
 const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   order,
@@ -29,30 +35,84 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   onClose,
   onTrackOrder,
   onReorder,
+  onCancelOrder,
+  onWriteReview,
 }) => {
-  const tailwind = useTailwind();
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  if (!order || !visible) return null;
+  const slideAnim = useRef(new Animated.Value(height)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const formatDate = (dateString: string) => {
+  useEffect(() => {
+    if (visible) {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          tension: 70,
+          friction: 12,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: height,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [visible]);
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) {
+      return '-';
+    }
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
       year: 'numeric',
     });
   };
 
-  const getStatusColor = () => {
-    switch (order.status) {
+  const formatTime = (dateString?: string) => {
+    if (!dateString) {
+      return '';
+    }
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const formatCurrency = (amount?: number, currency?: string) => {
+    if (amount === undefined || amount === null) {
+      return '-';
+    }
+    const symbol = currency === 'USD' ? '$' : '';
+    return `${symbol}${amount.toFixed(2)}`;
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
       case 'delivered':
         return theme.secondary;
       case 'cancelled':
       case 'returned':
-      case 'refunded':
         return theme.error;
       case 'shipped':
       case 'outForDelivery':
@@ -62,510 +122,729 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     }
   };
 
-  const getStatusDescription = () => {
-    switch (order.status) {
-      case 'pending':
-        return t('orderDetails.statusPending');
-      case 'confirmed':
-        return t('orderDetails.statusConfirmed');
-      case 'processing':
-        return t('orderDetails.statusProcessing');
-      case 'shipped':
-        return order.estimatedDelivery
-          ? `${t('orderDetails.statusShipped')} - ${t('orders.estimatedDelivery')}: ${order.estimatedDelivery}`
-          : t('orderDetails.statusShipped');
+  const getStatusIcon = (status: string) => {
+    switch (status) {
       case 'delivered':
-        return order.actualDelivery
-          ? `${t('orders.deliveredOn')}: ${order.actualDelivery}`
-          : t('orderDetails.statusDelivered');
+        return 'checkmark-circle';
+      case 'shipped':
+      case 'outForDelivery':
+        return 'rocket';
       case 'cancelled':
-        return t('orderDetails.statusCancelled');
+        return 'close-circle';
       case 'returned':
-        return t('orderDetails.statusReturned');
+        return 'refresh-circle';
+      case 'refunded':
+        return 'cash';
       default:
-        return '';
+        return 'time';
     }
   };
 
-  const handleDownloadInvoice = async () => {
-    if (order.invoiceUrl) {
-      try {
-        const supported = await Linking.canOpenURL(order.invoiceUrl);
-        if (supported) {
-          await Linking.openURL(order.invoiceUrl);
-        } else {
-          Alert.alert(t('common.error'), t('orderDetails.cannotOpenInvoice'));
-        }
-      } catch (error) {
-        Alert.alert(t('common.error'), t('orderDetails.invoiceError'));
-      }
-    }
+  const canTrack = order
+    ? ['shipped', 'outForDelivery', 'delivered'].includes(order.status)
+    : false;
+  const canReorder = order ? order.canReorder && order.status !== 'cancelled' : false;
+  const canCancel = order ? ['pending', 'confirmed', 'processing'].includes(order.status) : false;
+  const canWriteReview = order ? order.status === 'delivered' : false;
+
+  const handleBackdropPress = () => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: height,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      onClose();
+    });
   };
 
-  const handleContactSupport = () => {
-    Alert.alert(
-      t('orders.contactSupport'),
-      t('orderDetails.supportMessage'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('common.call'), onPress: () => Linking.openURL('tel:+1234567890') },
-        { text: t('common.email'), onPress: () => Linking.openURL('mailto:support@koreanstore.com') },
-      ]
-    );
-  };
+  if (!visible) {
+    return null;
+  }
 
   return (
-    <View style={styles.modalOverlay}>
-      <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
-        {/* Заголовок */}
-        <View style={styles.modalHeader}>
-          <Text style={[styles.modalTitle, { color: theme.heading }]}>
-            {t('orders.order')} #{order.orderNumber}
-          </Text>
-          <TouchableOpacity onPress={onClose}>
-            <Ionicons name="close" size={24} color={theme.text} />
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      onRequestClose={handleBackdropPress}
+    >
+      <TouchableWithoutFeedback onPress={handleBackdropPress}>
+        <Animated.View style={[styles.backdrop, { opacity: fadeAnim }]} />
+      </TouchableWithoutFeedback>
+
+      <Animated.View
+        style={[
+          styles.sheet,
+          {
+            backgroundColor: theme.card,
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
+        {/* Swipe Handle */}
+        <TouchableWithoutFeedback onPress={handleBackdropPress}>
+          <View style={styles.handleContainer}>
+            <View style={[styles.handle, { backgroundColor: `${theme.border}80` }]} />
+          </View>
+        </TouchableWithoutFeedback>
+
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <Text style={[styles.title, { color: theme.heading }]}>
+              {t('orderDetails.title')}
+            </Text>
+            {order && (
+              <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+                #{order.orderNumber}
+              </Text>
+            )}
+          </View>
+          <TouchableOpacity
+            onPress={handleBackdropPress}
+            style={[styles.closeButton, { backgroundColor: `${theme.border}20` }]}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="close" size={22} color={theme.textSecondary} />
           </TouchableOpacity>
         </View>
 
-        <ScrollView style={styles.scrollContent}>
-          {/* Статус заказа */}
-          <View style={styles.section}>
-            <View style={styles.statusHeader}>
-              <View style={styles.statusBadgeContainer}>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    { backgroundColor: getStatusColor() + '20' },
-                  ]}
-                >
-                  <Ionicons
-                    name="time"
-                    size={20}
-                    color={getStatusColor()}
-                  />
-                  <Text style={[styles.statusText, { color: getStatusColor() }]}>
-                    {t(`orderStatus.${order.status}`)}
+        {!order ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="document-outline" size={64} color={`${theme.textSecondary}40`} />
+            <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
+              {t('orderDetails.noOrderSelected')}
+            </Text>
+          </View>
+        ) : (
+          <ScrollView
+            style={styles.content}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.contentContainer}
+            bounces={false}
+          >
+            {/* Order Status Banner */}
+            <LinearGradient
+              colors={[`${getStatusColor(order.status)}20`, `${getStatusColor(order.status)}05`]}
+              style={[styles.statusBanner, { borderColor: `${getStatusColor(order.status)}30` }]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.statusContent}>
+                <View style={styles.statusLeft}>
+                  <View style={[styles.statusIconContainer, { backgroundColor: getStatusColor(order.status) }]}>
+                    <Ionicons name={getStatusIcon(order.status) as any} size={20} color="#FFFFFF" />
+                  </View>
+                  <View>
+                    <Text style={[styles.statusTitle, { color: theme.heading }]}>
+                      {t(`orderStatus.${order.status}`)}
+                    </Text>
+                    <Text style={[styles.statusSubtitle, { color: theme.textSecondary }]}>
+                      {t(`orderStatus.${order.status}Description`)}
+                    </Text>
+                  </View>
+                </View>
+                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) }]}>
+                  <Text style={[styles.statusBadgeText, { color: '#FFFFFF' }]}>
+                    {order.status === 'delivered' ? '✓' : '→'}
                   </Text>
                 </View>
               </View>
-              <Text style={[styles.statusDescription, { color: theme.text }]}>
-                {getStatusDescription()}
-              </Text>
-            </View>
-          </View>
+            </LinearGradient>
 
-          {/* Информация о заказе */}
-          <View style={[styles.section, styles.infoGrid]}>
-            <View style={styles.infoItem}>
-              <Text style={[styles.infoLabel, { color: theme.textSecondary }]}>
-                {t('orders.orderPlaced')}
-              </Text>
-              <Text style={[styles.infoValue, { color: theme.text }]}>
-                {formatDate(order.orderDate)}
-              </Text>
-            </View>
-            
-            <View style={styles.infoItem}>
-              <Text style={[styles.infoLabel, { color: theme.textSecondary }]}>
-                {t('orders.orderTotal')}
-              </Text>
-              <Text style={[styles.infoValue, { color: theme.heading }]}>
-                {order.currency} {order.totalAmount.toFixed(2)}
-              </Text>
-            </View>
-          </View>
+            {/* Order Summary */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="receipt-outline" size={20} color={theme.primary} />
+                <Text style={[styles.sectionTitle, { color: theme.heading }]}>
+                  {t('orderDetails.summary')}
+                </Text>
+              </View>
+              
+              <View style={styles.summaryGrid}>
+                <View style={styles.summaryItem}>
+                  <Text style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+                    {t('orderDetails.orderDate')}
+                  </Text>
+                  <Text style={[styles.summaryValue, { color: theme.heading }]}>
+                    {formatDate(order.orderDate)}
+                  </Text>
+                  <Text style={[styles.summaryMeta, { color: theme.textSecondary }]}>
+                    {formatTime(order.orderDate)}
+                  </Text>
+                </View>
 
-          {/* Товары */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.heading }]}>
-              {t('orders.items')} ({order.items.length})
-            </Text>
-            {order.items.map((item) => (
-              <View key={item.id} style={styles.productItem}>
-                <Image
-                  source={{ uri: item.image }}
-                  style={styles.productImage}
-                />
-                <View style={styles.productInfo}>
-                  <Text style={[styles.productName, { color: theme.text }]} numberOfLines={2}>
-                    {item.name}
+                <View style={styles.summaryItem}>
+                  <Text style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+                    {t('orderDetails.total')}
                   </Text>
-                  <Text style={[styles.productVariant, { color: theme.textSecondary }]}>
-                    {item.variant}
+                  <Text style={[styles.summaryValue, { color: theme.heading }]}>
+                    {formatCurrency(order.totalAmount, order.currency)}
                   </Text>
-                  <View style={styles.productBottom}>
-                    <Text style={[styles.productPrice, { color: theme.heading }]}>
-                      {order.currency} {item.price.toFixed(2)}
+                  <Text style={[styles.summaryMeta, { color: theme.textSecondary }]}>
+                    {order.items.length} {t('orderDetails.items')}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Order Items */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="cube-outline" size={20} color={theme.secondary} />
+                <Text style={[styles.sectionTitle, { color: theme.heading }]}>
+                  {t('orderDetails.items')}
+                </Text>
+                <View style={styles.itemsCount}>
+                  <Text style={[styles.itemsCountText, { color: theme.textSecondary }]}>
+                    {order.items.length}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.itemsList}>
+                {order.items.map((item, index) => (
+                  <View
+                    key={item.id}
+                    style={[
+                      styles.itemCard,
+                      { 
+                        backgroundColor: theme.navBackground,
+                        borderColor: `${theme.border}30`,
+                        marginTop: index > 0 ? 10 : 0,
+                      }
+                    ]}
+                  >
+                    {item.image ? (
+                      <Image 
+                        source={{ uri: item.image }} 
+                        style={styles.itemImage} 
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <View style={[styles.imagePlaceholder, { backgroundColor: `${theme.border}40` }]}>
+                        <Ionicons name="cube-outline" size={24} color={theme.textSecondary} />
+                      </View>
+                    )}
+                    
+                    <View style={styles.itemInfo}>
+                      <Text style={[styles.itemName, { color: theme.heading }]} numberOfLines={2}>
+                        {item.name || item.product?.name}
+                      </Text>
+                      <View style={styles.itemMeta}>
+                        <Text style={[styles.itemQuantity, { color: theme.textSecondary }]}>
+                          {t('orderDetails.quantity')}: {item.quantity}
+                        </Text>
+                        {item.size && (
+                          <Text style={[styles.itemSize, { color: theme.textSecondary }]}>
+                            • {item.size}
+                          </Text>
+                        )}
+                      </View>
+                      {item.color && (
+                        <View style={styles.colorIndicator}>
+                          <View style={[styles.colorDot, { backgroundColor: item.color }]} />
+                          <Text style={[styles.colorText, { color: theme.textSecondary }]}>
+                            {item.color}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                    
+                    <View style={styles.itemPrice}>
+                      <Text style={[styles.priceValue, { color: theme.heading }]}>
+                        {formatCurrency(item.price, order.currency)}
+                      </Text>
+                      <Text style={[styles.priceSubtotal, { color: theme.textSecondary }]}>
+                        {formatCurrency((item.price || 0) * (item.quantity || 1), order.currency)}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+
+              {/* Total Amount */}
+              <View style={[styles.totalContainer, { borderTopColor: `${theme.border}30` }]}>
+                <Text style={[styles.totalLabel, { color: theme.heading }]}>
+                  {t('orderDetails.total')}
+                </Text>
+                <View style={styles.totalValueContainer}>
+                  <Text style={[styles.totalValue, { color: theme.primary }]}>
+                    {formatCurrency(order.totalAmount, order.currency)}
+                  </Text>
+                  <Text style={[styles.totalCurrency, { color: theme.textSecondary }]}>
+                    {order.currency}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Shipping Address */}
+            {order.shippingAddress && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Ionicons name="location-outline" size={20} color={theme.primary} />
+                  <Text style={[styles.sectionTitle, { color: theme.heading }]}>
+                    {t('orderDetails.shippingAddress')}
+                  </Text>
+                </View>
+                
+                <View style={[styles.addressCard, { backgroundColor: theme.navBackground }]}>
+                  <Ionicons name="home-outline" size={20} color={theme.primary} />
+                  <View style={styles.addressInfo}>
+                    <Text style={[styles.addressName, { color: theme.heading }]}>
+                      {order.shippingAddress.fullName || order.shippingAddress.name}
                     </Text>
-                    <Text style={[styles.productQuantity, { color: theme.textSecondary }]}>
-                      ×{item.quantity}
+                    <Text style={[styles.addressText, { color: theme.textSecondary }]}>
+                      {order.shippingAddress.street}
+                    </Text>
+                    <Text style={[styles.addressText, { color: theme.textSecondary }]}>
+                      {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
+                    </Text>
+                    <Text style={[styles.addressText, { color: theme.textSecondary }]}>
+                      {order.shippingAddress.country}
                     </Text>
                   </View>
                 </View>
               </View>
-            ))}
-          </View>
+            )}
 
-          {/* Адрес доставки */}
-          {order.shippingAddress && (
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: theme.heading }]}>
-                {t('orders.shippingAddress')}
-              </Text>
-              <View style={styles.addressCard}>
-                <Ionicons name="location" size={20} color={theme.primary} />
-                <View style={styles.addressText}>
-                  <Text style={[styles.addressName, { color: theme.text }]}>
-                    {order.shippingAddress.fullName}
+            {/* Tracking Info */}
+            {order.trackingNumber && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Ionicons name="navigate-outline" size={20} color={theme.secondary} />
+                  <Text style={[styles.sectionTitle, { color: theme.heading }]}>
+                    {t('orderDetails.tracking')}
                   </Text>
-                  <Text style={[styles.addressLine, { color: theme.text }]}>
-                    {order.shippingAddress.street}
-                  </Text>
-                  <Text style={[styles.addressLine, { color: theme.text }]}>
-                    {order.shippingAddress.city}, {order.shippingAddress.state}{' '}
-                    {order.shippingAddress.zipCode}
-                  </Text>
-                  <Text style={[styles.addressLine, { color: theme.text }]}>
-                    {order.shippingAddress.country}
-                  </Text>
-                  <Text style={[styles.addressPhone, { color: theme.textSecondary }]}>
-                    📞 {order.shippingAddress.phone}
-                  </Text>
+                </View>
+                
+                <View style={[styles.trackingCard, { backgroundColor: theme.navBackground }]}>
+                  <View style={styles.trackingInfo}>
+                    <Text style={[styles.trackingNumber, { color: theme.heading }]}>
+                      #{order.trackingNumber}
+                    </Text>
+                    <Text style={[styles.trackingCarrier, { color: theme.textSecondary }]}>
+                      {typeof order.carrier === 'string'
+                        ? order.carrier
+                        : order.carrier?.name || order.carrier?.id || t('orderDetails.standardShipping')}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
+            )}
+          </ScrollView>
+        )}
 
-          {/* Способ оплаты */}
-          {order.paymentMethod && (
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: theme.heading }]}>
-                {t('orders.paymentMethod')}
-              </Text>
-              <View style={styles.paymentCard}>
-                <Ionicons name="card" size={20} color={theme.primary} />
-                <View style={styles.paymentText}>
-                  <Text style={[styles.paymentType, { color: theme.text }]}>
-                    {order.paymentMethod.type === 'card'
-                      ? `${order.paymentMethod.brand} •••• ${order.paymentMethod.last4}`
-                      : t(`payment.${order.paymentMethod.type}`)}
-                  </Text>
-                  <Text style={[styles.paymentStatus, { color: theme.textSecondary }]}>
-                    {t('payment.paid')} {order.currency} {order.totalAmount.toFixed(2)}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          )}
+        {/* Action Buttons */}
+        {order && (
+          <View style={[styles.actionsContainer, { borderTopColor: `${theme.border}30` }]}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.actionsScroll}
+            >
 
-          {/* Номер отслеживания */}
-          {order.trackingNumber && (
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: theme.heading }]}>
-                {t('orderDetails.tracking')}
-              </Text>
-              <View style={styles.trackingCard}>
-                <Ionicons name="cube" size={20} color={theme.primary} />
-                <View style={styles.trackingText}>
-                  <Text style={[styles.trackingNumber, { color: theme.text }]}>
-                    {order.trackingNumber}
-                  </Text>
-                  <Text style={[styles.trackingCarrier, { color: theme.textSecondary }]}>
-                    {order.carrier?.name || 'Unknown carrier'}
-                  </Text>
-                </View>
+              {canCancel && onCancelOrder && (
                 <TouchableOpacity
-                  style={[styles.trackButton, { backgroundColor: theme.primary }]}
-                  onPress={() => onTrackOrder(order.id)}
+                  style={[styles.actionButton, { backgroundColor: `${theme.error}15` }]}
+                  onPress={() => onCancelOrder(order.id)}
+                  activeOpacity={0.8}
                 >
-                  <Text style={[styles.trackButtonText, { color: theme.heading }]}>
-                    {t('orders.trackOrder')}
+                  <Ionicons name="close-circle" size={18} color={theme.error} />
+                  <Text style={[styles.actionButtonText, { color: theme.error }]}>
+                    {t('orders.cancel')}
                   </Text>
                 </TouchableOpacity>
-              </View>
-            </View>
-          )}
+              )}
 
-          {/* Примечания */}
-          {order.notes && (
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: theme.heading }]}>
-                {t('orderDetails.notes')}
-              </Text>
-              <View style={[styles.notesCard, { backgroundColor: theme.navBackground + '50' }]}>
-                <Text style={[styles.notesText, { color: theme.text }]}>
-                  {order.notes}
-                </Text>
-              </View>
-            </View>
-          )}
-        </ScrollView>
-
-        {/* Нижние кнопки */}
-        <View style={[styles.footer, { borderTopColor: theme.border }]}>
-          <View style={styles.footerButtons}>
-            {order.invoiceUrl && (
               <TouchableOpacity
-                style={[styles.footerButton, styles.secondaryButton, { borderColor: theme.border }]}
-                onPress={handleDownloadInvoice}
+                style={[styles.actionButton, styles.supportButton, { backgroundColor: `${theme.border}20` }]}
+                activeOpacity={0.8}
               >
-                <Ionicons name="document-text" size={18} color={theme.primary} />
-                <Text style={[styles.footerButtonText, { color: theme.primary }]}>
-                  {t('orders.downloadInvoice')}
+                <Ionicons name="help-circle-outline" size={18} color={theme.textSecondary} />
+                <Text style={[styles.actionButtonText, { color: theme.textSecondary }]}>
+                  {t('orders.support')}
                 </Text>
               </TouchableOpacity>
-            )}
-
-            {order.canReorder && (
-              <TouchableOpacity
-                style={[styles.footerButton, styles.primaryButton, { backgroundColor: theme.primary }]}
-                onPress={() => {
-                  onClose();
-                  onReorder(order.id);
-                }}
-              >
-                <Ionicons name="repeat" size={18} color={theme.heading} />
-                <Text style={[styles.footerButtonText, { color: theme.heading }]}>
-                  {t('orders.reorder')}
-                </Text>
-              </TouchableOpacity>
-            )}
-
-            <TouchableOpacity
-              style={[styles.footerButton, styles.helpButton]}
-              onPress={handleContactSupport}
-            >
-              <Ionicons name="help-circle" size={18} color={theme.textSecondary} />
-              <Text style={[styles.footerButtonText, { color: theme.textSecondary }]}>
-                {t('orders.needHelp')}
-              </Text>
-            </TouchableOpacity>
+            </ScrollView>
           </View>
-        </View>
-      </View>
-    </View>
+        )}
+      </Animated.View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  modalOverlay: {
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+  },
+  sheet: {
     position: 'absolute',
-    top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    zIndex: 1000,
+    maxHeight: height * 0.88,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -8,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 20,
+    overflow: 'hidden',
   },
-  modalContent: {
-    flex: 1,
-    marginTop: 50,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+  handleContainer: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignItems: 'center',
   },
-  modalHeader: {
+  handle: {
+    width: 36,
+    height: 5,
+    borderRadius: 2.5,
+  },
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    paddingBottom: 16,
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-  },
-  scrollContent: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  section: {
-    marginTop: 24,
-  },
-  statusHeader: {
-    alignItems: 'center',
-  },
-  statusBadgeContainer: {
-    marginBottom: 12,
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 8,
-  },
-  statusText: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  statusDescription: {
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  infoGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  infoItem: {
+  headerLeft: {
     flex: 1,
   },
-  infoLabel: {
-    fontSize: 12,
-    fontWeight: '500',
+  title: {
+    fontSize: 24,
+    fontWeight: '800',
+    letterSpacing: -0.5,
     marginBottom: 4,
   },
-  infoValue: {
+  subtitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    opacity: 0.7,
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12,
+  },
+  emptyState: {
+    paddingVertical: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '500',
+    marginTop: 16,
+    opacity: 0.7,
+  },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+  },
+  statusBanner: {
+    borderRadius: 18,
+    borderWidth: 1.5,
+    marginBottom: 24,
+    overflow: 'hidden',
+  },
+  statusContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  statusLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  statusIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  statusTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  statusSubtitle: {
+    fontSize: 13,
+    fontWeight: '400',
+    opacity: 0.8,
+  },
+  statusBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12,
+  },
+  statusBadgeText: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  section: {
+    marginBottom: 28,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    gap: 10,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    marginBottom: 16,
-  },
-  productItem: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  productImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    marginRight: 16,
-  },
-  productInfo: {
     flex: 1,
-    justifyContent: 'space-between',
   },
-  productName: {
-    fontSize: 16,
+  itemsCount: {
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  itemsCountText: {
+    fontSize: 12,
     fontWeight: '600',
+  },
+  summaryGrid: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  summaryItem: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.03)',
+    borderRadius: 16,
+    padding: 16,
+  },
+  summaryLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 8,
+    opacity: 0.7,
+  },
+  summaryValue: {
+    fontSize: 20,
+    fontWeight: '800',
     marginBottom: 4,
   },
-  productVariant: {
-    fontSize: 14,
-    marginBottom: 8,
+  summaryMeta: {
+    fontSize: 13,
+    fontWeight: '400',
+    opacity: 0.7,
   },
-  productBottom: {
+  itemsList: {
+    gap: 10,
+  },
+  itemCard: {
+    flexDirection: 'row',
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 14,
+    alignItems: 'center',
+  },
+  itemImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    marginRight: 14,
+  },
+  imagePlaceholder: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    marginRight: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  itemInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+  itemName: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 6,
+    lineHeight: 20,
+  },
+  itemMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+    gap: 8,
+  },
+  itemQuantity: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  itemSize: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  colorIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  colorDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  colorText: {
+    fontSize: 11,
+    fontWeight: '500',
+    textTransform: 'capitalize',
+  },
+  itemPrice: {
+    alignItems: 'flex-end',
+  },
+  priceValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  priceSubtotal: {
+    fontSize: 12,
+    fontWeight: '500',
+    opacity: 0.7,
+  },
+  totalContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingTop: 20,
+    borderTopWidth: 1,
+    marginTop: 20,
   },
-  productPrice: {
-    fontSize: 16,
+  totalLabel: {
+    fontSize: 18,
     fontWeight: '700',
   },
-  productQuantity: {
-    fontSize: 14,
+  totalValueContainer: {
+    alignItems: 'flex-end',
+  },
+  totalValue: {
+    fontSize: 26,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  totalCurrency: {
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    marginTop: 2,
+    opacity: 0.7,
   },
   addressCard: {
     flexDirection: 'row',
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#F8F9FA',
-    gap: 12,
+    borderRadius: 16,
+    padding: 18,
+    alignItems: 'flex-start',
+    gap: 14,
   },
-  addressText: {
+  addressInfo: {
     flex: 1,
   },
   addressName: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 6,
   },
-  addressLine: {
+  addressText: {
     fontSize: 14,
+    fontWeight: '400',
     lineHeight: 20,
-  },
-  addressPhone: {
-    fontSize: 14,
-    marginTop: 4,
-  },
-  paymentCard: {
-    flexDirection: 'row',
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#F8F9FA',
-    gap: 12,
-  },
-  paymentText: {
-    flex: 1,
-  },
-  paymentType: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  paymentStatus: {
-    fontSize: 14,
+    opacity: 0.8,
   },
   trackingCard: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#F8F9FA',
-    gap: 12,
+    borderRadius: 16,
+    padding: 18,
   },
-  trackingText: {
+  trackingInfo: {
     flex: 1,
   },
   trackingNumber: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 4,
   },
   trackingCarrier: {
-    fontSize: 14,
+    fontSize: 13,
+    fontWeight: '400',
+    opacity: 0.7,
   },
   trackButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingVertical: 10,
+    borderRadius: 12,
+    gap: 6,
+    marginLeft: 12,
   },
   trackButtonText: {
     fontSize: 14,
     fontWeight: '600',
   },
-  notesCard: {
-    padding: 16,
-    borderRadius: 12,
-  },
-  notesText: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontStyle: 'italic',
-  },
-  footer: {
+  actionsContainer: {
     borderTopWidth: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 24,
   },
-  footerButtons: {
+  actionsScroll: {
     gap: 12,
   },
-  footerButton: {
+  actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 14,
     gap: 8,
   },
-  primaryButton: {},
-  secondaryButton: {
-    borderWidth: 1,
+  supportButton: {
+    paddingHorizontal: 20,
   },
-  helpButton: {},
-  footerButtonText: {
-    fontSize: 16,
+  actionButtonText: {
+    fontSize: 14,
     fontWeight: '600',
   },
 });

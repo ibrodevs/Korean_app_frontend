@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  Alert,
-} from 'react-native';
-import Text from '../components/Text';
-import { useTheme } from '../contexts/ThemeContext';
-import { useCurrency } from '../contexts/CurrencyContext';
-import { useCart } from '../contexts/CartContext';
-import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Text from '../components/Text';
+import { CartItem, useCart } from '../contexts/CartContext';
+import { useCurrency } from '../contexts/CurrencyContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const CartScreen: React.FC = () => {
   const { theme, isDark } = useTheme();
@@ -37,19 +36,7 @@ const CartScreen: React.FC = () => {
   };
 
   const handleRemove = (id: string) => {
-    Alert.alert(
-      t('cart.removeItem'),
-      t('cart.removeItemConfirm'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.confirm'),
-          onPress: () => {
-            removeFromCart(id);
-          },
-        },
-      ]
-    );
+    removeFromCart(id);
   };
 
   const handleCheckout = () => {
@@ -95,6 +82,7 @@ const CartScreen: React.FC = () => {
       <TouchableOpacity
         style={styles.removeButton}
         onPress={() => handleRemove(item.id)}
+        activeOpacity={0.7}
       >
         <Ionicons name="trash-outline" size={20} color="#F76C6C" />
       </TouchableOpacity>
@@ -210,7 +198,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   removeButton: {
-    padding: 8,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   emptyCart: {
     flex: 1,

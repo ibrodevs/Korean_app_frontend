@@ -30,6 +30,7 @@
     "warning": "Warning",
     "unsavedChanges": "You have unsaved changes",
     "clear": "Clear",
+    "clearAll": "Clear All",
     "apply": "Apply"
   },
   "appName": "Korean Store",
@@ -290,7 +291,9 @@
     "writeReview": "Write Review",
     "cancelConfirm": "Are you sure you want to cancel this order?",
     "title": "My Orders",
+    "allOrders": "orders",
     "all": "orders",
+    "totalSpent": "Total Spent",
     "orderTotal": "Order Total",
     "search": "Search orders...",
     "filter": "Filter",

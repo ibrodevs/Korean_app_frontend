@@ -1,21 +1,28 @@
-import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  View,
-  StyleSheet,
-  ScrollView,
+  Animated,
+  Dimensions,
+  Image,
+  Platform,
   Pressable,
   StatusBar,
-  Image,
+  StyleSheet,
   TouchableWithoutFeedback,
+  View
 } from 'react-native';
+import Svg, { Ellipse } from 'react-native-svg';
+import SettingItem from '../components/profile/SettingItem';
 import Text from '../components/Text';
-import { Ionicons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
+import { CurrencyType, useCurrency } from '../contexts/CurrencyContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { useCurrency, CurrencyType } from '../contexts/CurrencyContext';
 import { ProfileStackParamList } from '../types/navigation';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import BlueBg from '../assets/Ellipse.svg';
+
+const { width } = Dimensions.get('window');
 
 type ProfileScreenProps = NativeStackScreenProps<ProfileStackParamList, 'ProfileMain'>;
 
@@ -26,26 +33,68 @@ type ProfileData = {
   email: string;
   birthDate?: string;
   gender?: string;
+  tier?: 'basic' | 'premium' | 'vip';
 };
 
 export default function ProfileScreen({ navigation }: ProfileScreenProps) {
   const { t } = useTranslation();
   const { theme, isDark, setTheme } = useTheme();
   const { currency, setCurrency } = useCurrency();
-  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
-  const [showThemeDropdown, setShowThemeDropdown] = useState(false);
+  
+  
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   const [profile, setProfile] = useState<ProfileData>({
     id: '1',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face',
     fullName: 'Albert Flores',
     email: 'albertflores@mail.com',
     birthDate: '01/01/1988',
     gender: 'Male',
+    tier: 'premium',
+  });
+
+  // Анимация фона при скролле
+  const bgTranslateY = scrollY.interpolate({
+    inputRange: [0, 300],
+    outputRange: [0, -150],
+    extrapolate: 'clamp',
+  });
+
+  const bgScale = scrollY.interpolate({
+    inputRange: [0, 300],
+    outputRange: [1, 1.5],
+    extrapolate: 'clamp',
+  });
+
+  const bgOpacity = scrollY.interpolate({
+    inputRange: [0, 200, 300],
+    outputRange: [1, 0.7, 0.5],
+    extrapolate: 'clamp',
+  });
+
+  // Анимация header при скролле
+  const headerScale = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [1, 0.95],
+    extrapolate: 'clamp',
+  });
+
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [1, 0.9],
+    extrapolate: 'clamp',
+  });
+
+  const avatarScale = scrollY.interpolate({
+    inputRange: [0, 150],
+    outputRange: [1, 0.8],
+    extrapolate: 'clamp',
   });
 
   const handleEditProfile = () => {
-    console.log('Edit Profile pressed');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('EditProfile', {
       profile,
       onSave: (updatedProfile: ProfileData) => setProfile(updatedProfile),
@@ -53,254 +102,208 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
   };
 
   const handleSettings = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('Settings' as never);
   };
 
   const handlePaymentMethods = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate('PaymentMethods');
   };
 
   const handleCurrencySelect = (selectedCurrency: CurrencyType) => {
-    console.log('Selecting currency:', selectedCurrency);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setCurrency(selectedCurrency);
-    setShowCurrencyDropdown(false);
   };
 
   const handleThemeSelect = (isDarkTheme: boolean) => {
-    console.log('Selecting theme:', isDarkTheme ? 'Dark' : 'Light');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setTheme(isDarkTheme);
-    setShowThemeDropdown(false);
   };
 
   const currencies: CurrencyType[] = ['Som', 'USD', 'EUR', 'RUB', 'KRW'];
   const themes = [
-    { label: t('profile.light'), value: false },
-    { label: t('profile.dark'), value: true }
+    { label: t('profile.light'), value: false, icon: 'sunny' },
+    { label: t('profile.dark'), value: true, icon: 'moon' },
   ];
 
-  const closeAllDropdowns = () => {
-    setShowCurrencyDropdown(false);
-    setShowThemeDropdown(false);
-  };
-
-  const blueBgSource = typeof BlueBg === 'string' ? { uri: BlueBg } : BlueBg;
+  const selectedThemeLabel = themes.find((item) => item.value === isDark)?.label;
 
   return (
-    <TouchableWithoutFeedback onPress={closeAllDropdowns}>
-      <View style={[styles.container]}>
-        <StatusBar barStyle="light-content" />
-        <Image source={blueBgSource} style={styles.blueimg} resizeMode="cover" />
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar barStyle="light-content" />
+      
+      {/* Анимированный синий фон */}
+      <Animated.View 
+        style={[
+          styles.blueBgContainer,
+          {
+            transform: [
+              { translateY: bgTranslateY },
+              { scale: bgScale },
+            ],
+            opacity: bgOpacity,
+          },
+        ]}
+      >
+        <Svg width={width} height={400} viewBox="0 0 375 377">
+          <Ellipse cx="140" cy="132.5" rx="298" ry="244.5" fill="#1779F3" />
+        </Svg>
+      </Animated.View>
 
-        {/* Header like screenshot */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>{t('profile.title')}</Text>
-
-          {/* User Profile Section */}
-          <View style={styles.profileSection}>
-            <View style={styles.avatarContainer}>
-              <Image
-                source={{
-                  uri: profile.avatar,
-                }}
-                style={styles.avatar}
-              />
-            </View>
-
-            <Text style={styles.userName}>{profile.fullName}</Text>
-
-            <View style={styles.emailContainer}>
-              <Text style={styles.userEmail}>{profile.email}</Text>
-              <Ionicons name="checkmark-circle" size={20} color="#10B981" style={styles.verifiedIcon} />
-            </View>
-
-            <Pressable
+      {/* Спиннер для всей страницы */}
+      <Animated.ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        onScrollBeginDrag={() => undefined}
+      >
+        {/* Header секция */}
+        <Animated.View 
+          style={[
+            styles.header,
+            {
+              opacity: headerOpacity,
+              transform: [{ scale: headerScale }],
+            },
+          ]}
+        >
+          <View style={styles.headerContent}>
+            <Animated.View 
               style={[
-                styles.editButton,
-                {
-                  backgroundColor: isDark ? 'rgba(45, 55, 72, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                  borderColor: 'transparent',
-                },
+                styles.avatarContainer,
+                { transform: [{ scale: avatarScale }] },
               ]}
-              onPress={handleEditProfile}
             >
-              <Text
-                style={[
-                  styles.editButtonText,
-                  { color: isDark ? '#E5E7EB' : '#6B7280' },
-                ]}
-              >
-                {t('profile.editProfile')}
-              </Text>
-              <Ionicons name="chevron-down" size={16} color={isDark ? '#E5E7EB' : '#6B7280'} />
-            </Pressable>
+              <TouchableWithoutFeedback onPress={handleEditProfile}>
+                <View>
+                  <Image
+                    source={{ uri: profile.avatar }}
+                    style={styles.avatar}
+                  />
+                  <View style={[styles.editAvatarButton, { backgroundColor: theme.primary }]}>
+                    <Ionicons name="camera" size={16} color="#FFFFFF" />
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </Animated.View>
+
+            <View style={styles.profileInfo}>
+              <View style={styles.nameRow}>
+                <Text style={styles.userName} numberOfLines={1}>
+                  {profile.fullName}
+                </Text>
+              </View>
+
+              <View style={styles.emailContainer}>
+                <Text style={styles.userEmail} numberOfLines={1}>
+                  {profile.email}
+                </Text>
+                <View style={styles.verifiedBadge}>
+                  <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                </View>
+              </View>
+            </View>
           </View>
 
-          <View style={styles.waveContainer}>
-            <View style={styles.wave} />
+          <TouchableWithoutFeedback onPress={handleEditProfile}>
+            <LinearGradient
+              colors={['#FFFFFF', '#F3F4F6']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.editProfileButton}
+            >
+              <Ionicons name="create-outline" size={20} color="#4F46E5" />
+              <Text style={styles.editProfileText}>Edit Profile</Text>
+            </LinearGradient>
+          </TouchableWithoutFeedback>
+        </Animated.View>
+
+        {/* Карточка статистики */}
+        <View style={[styles.statsCard, { backgroundColor: theme.card }]}>
+          <View style={[styles.statsContainer, { borderTopColor: theme.border }]}>
+            <Pressable style={styles.statItem} onPress={handlePaymentMethods}>
+              <Text style={[styles.statValue, { color: theme.text }]}>12</Text>
+              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Orders</Text>
+            </Pressable>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={[styles.statValue, { color: theme.text }]}>$2,849</Text>
+              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Spent</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={[styles.statValue, { color: theme.text }]}>258</Text>
+              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Points</Text>
+            </View>
           </View>
         </View>
 
-        {/* Settings Section */}
-        <ScrollView 
-          style={styles.settingsContainer}
-          showsVerticalScrollIndicator={false}
-          onScrollBeginDrag={closeAllDropdowns}
-          scrollEventThrottle={16}
-        >
-          {/* Currency Setting */}
-          <View style={[styles.dropdownContainer, showCurrencyDropdown && styles.activeDropdownContainer]}>
-            <View style={[styles.glassRow, {
-              backgroundColor: 'transparent',
-              borderColor: 'transparent',
-            }]}>
-              <Pressable 
-                style={styles.settingRowContent}
-                onPress={(e) => {
-                  e.stopPropagation();
-                  setShowThemeDropdown(false);
-                  setShowCurrencyDropdown(!showCurrencyDropdown);
-                }}
-              >
-                <Text style={[styles.settingLabel, { color: isDark ? '#FFFFFF' : '#1A202C' }]}>{t('profile.currency')}</Text>
-                <View style={[styles.dropdown, { 
-                  backgroundColor: 'transparent',
-                  borderColor: 'transparent'
-                }]}>
-                  <Text style={[styles.dropdownText, { color: isDark ? '#FFFFFF' : '#2D3748' }]}>{currency}</Text>
-                  <Ionicons 
-                    name={showCurrencyDropdown ? "chevron-up" : "chevron-down"} 
-                    size={16} 
-                    color={isDark ? '#A0AEC0' : '#718096'} 
-                  />
-                </View>
-              </Pressable>
-            </View>
-            {showCurrencyDropdown && (
-              <View style={[styles.dropdownMenu, { 
-                backgroundColor: isDark ? 'rgba(45, 55, 72, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                borderColor: isDark ? 'rgba(74, 85, 104, 0.8)' : 'rgba(226, 232, 240, 0.8)',
-              }]}>
-                {currencies.map((curr) => (
-                  <Pressable
-                    key={curr}
-                    style={[styles.dropdownOption, {
-                      backgroundColor: currency === curr 
-                        ? (isDark ? '#4A90E240' : '#EBF4FF') 
-                        : 'transparent'
-                    }]}
-                    onPress={(e) => {
-                      e.stopPropagation();
-                      handleCurrencySelect(curr);
-                    }}
-                  >
-                    <Text style={[styles.dropdownOptionText, {
-                      color: currency === curr 
-                        ? '#4A90E2' 
-                        : (isDark ? '#FFFFFF' : '#2D3748'),
-                      fontWeight: currency === curr ? '600' : '500'
-                    }]}>
-                      {curr}
-                    </Text>
-                    {currency === curr && (
-                      <Ionicons name="checkmark" size={16} color="#4A90E2" />
-                    )}
-                  </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
-          <View style={[styles.separator, { backgroundColor: isDark ? 'rgba(74, 85, 104, 0.3)' : 'rgba(226, 232, 240, 0.3)' }]} />
+        {/* Настройки */}
+        <View style={styles.settingsSection}>
           
-          {/* Theme Setting */}
-          <View style={[styles.dropdownContainer, showThemeDropdown && styles.activeDropdownContainer]}>
-            <View style={[styles.glassRow, {
-              backgroundColor: 'transparent',
-              borderColor: 'transparent',
-            }]}>
-              <Pressable 
-                style={styles.settingRowContent}
-                onPress={(e) => {
-                  e.stopPropagation();
-                  setShowCurrencyDropdown(false);
-                  setShowThemeDropdown(!showThemeDropdown);
-                }}
-              >
-                <Text style={[styles.settingLabel, { color: isDark ? '#FFFFFF' : '#1A202C' }]}>{t('profile.theme')}</Text>
-                <View style={[styles.dropdown, { 
-                  backgroundColor: 'transparent',
-                  borderColor: 'transparent'
-                }]}>
-                  <Text style={[styles.dropdownText, { color: isDark ? '#FFFFFF' : '#2D3748' }]}>{isDark ? t('profile.dark') : t('profile.light')}</Text>
-                  <Ionicons 
-                    name={showThemeDropdown ? "chevron-up" : "chevron-down"} 
-                    size={16} 
-                    color={isDark ? '#A0AEC0' : '#718096'} 
-                  />
-                </View>
-              </Pressable>
-            </View>
-            {showThemeDropdown && (
-              <View style={[styles.dropdownMenu, { 
-                backgroundColor: isDark ? 'rgba(45, 55, 72, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                borderColor: isDark ? 'rgba(74, 85, 104, 0.8)' : 'rgba(226, 232, 240, 0.8)',
-              }]}>
-                {themes.map((themeOption) => (
-                  <Pressable
-                    key={themeOption.label}
-                    style={[styles.dropdownOption, {
-                      backgroundColor: isDark === themeOption.value 
-                        ? (isDark ? '#4A90E240' : '#EBF4FF') 
-                        : 'transparent'
-                    }]}
-                    onPress={(e) => {
-                      e.stopPropagation();
-                      handleThemeSelect(themeOption.value);
-                    }}
-                  >
-                    <Text style={[styles.dropdownOptionText, {
-                      color: isDark === themeOption.value 
-                        ? '#4A90E2' 
-                        : (isDark ? '#FFFFFF' : '#2D3748'),
-                      fontWeight: isDark === themeOption.value ? '600' : '500'
-                    }]}>
-                      {themeOption.label}
-                    </Text>
-                    {isDark === themeOption.value && (
-                      <Ionicons name="checkmark" size={16} color="#4A90E2" />
-                    )}
-                  </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
-          
-          <View style={[styles.separator, { backgroundColor: isDark ? 'rgba(74, 85, 104, 0.3)' : 'rgba(226, 232, 240, 0.3)' }]} />
-          
-          {/* Settings */}
-          <View style={[styles.glassRow, {
-            backgroundColor: 'transparent',
-            borderColor: 'transparent',
-          }]}>
-            <Pressable style={styles.settingRowContent} onPress={handleSettings}>
-              <Text style={[styles.settingLabel, { color: isDark ? '#FFFFFF' : '#1A202C' }]}>{t('profile.settings')}</Text>
-              <Ionicons name="chevron-forward" size={16} color={isDark ? '#A0AEC0' : '#718096'} />
-            </Pressable>
-          </View>
-          <View style={[styles.separator, { backgroundColor: isDark ? 'rgba(74, 85, 104, 0.3)' : 'rgba(226, 232, 240, 0.3)' }]} />
-          
-          {/* Payment Methods */}
-          <View style={[styles.glassRow, {
-            backgroundColor: 'transparent',
-            borderColor: 'transparent',
-          }]}>
-            <Pressable style={styles.settingRowContent} onPress={handlePaymentMethods}>
-              <Text style={[styles.settingLabel, { color: isDark ? '#FFFFFF' : '#1A202C' }]}>{t('profile.paymentMethods')}</Text>
-              <Ionicons name="chevron-forward" size={16} color={isDark ? '#A0AEC0' : '#718096'} />
-            </Pressable>
-          </View>
-        </ScrollView>
-      </View>
-    </TouchableWithoutFeedback>
+          {/* Валюта */}
+          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <SettingItem
+              title="Currency"
+              description="Select your preferred currency"
+              type="select"
+              value={currency}
+              options={currencies.map(curr => ({ label: curr, value: curr }))}
+              onValueChange={handleCurrencySelect}
+              selectedValue={currency}
+              icon="cash"
+              accentColor="#10B981"
+            />
+          </Animated.View>
+
+          {/* Тема */}
+          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <SettingItem
+              title="Theme"
+              description="Choose your app appearance"
+              type="select"
+              value={isDark}
+              options={themes}
+              onValueChange={handleThemeSelect}
+              selectedValue={selectedThemeLabel}
+              icon="color-palette"
+              accentColor="#F59E0B"
+            />
+          </Animated.View>
+
+          {/* Настройки */}
+          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <SettingItem
+              title="Settings"
+              description="Manage your app settings"
+              type="action"
+              onPress={handleSettings}
+              icon="settings"
+              accentColor="#6366F1"
+            />
+          </Animated.View>
+
+          {/* Методы оплаты */}
+          <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+            <SettingItem
+              title="Payment Methods"
+              description="Manage your payment options"
+              type="action"
+              onPress={handlePaymentMethods}
+              icon="card"
+              accentColor="#EC4899"
+            />
+          </Animated.View>
+        </View>
+      </Animated.ScrollView>
+
+    </View>
   );
 }
 
@@ -308,223 +311,216 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  blueimg:{
+  blueBgContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-    marginBottom: 400,
+    height: 400,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 40,
   },
   header: {
-    backgroundColor: 'transparent',
-    paddingTop: 64,
-    paddingBottom: 72,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  headerTitle: {
-    fontSize: 34,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    letterSpacing: 0.5,
-    textAlign: 'left',
-    marginLeft: 24,
-    marginBottom: 28,
-  },
-  profileSection: {
-    alignItems: 'center',
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingBottom: 32,
     paddingHorizontal: 24,
-    marginTop: 0,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
   },
   avatarContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#EAF2FF',
-    padding: 4,
-    marginBottom: 16,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    marginRight: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 10,
   },
   avatar: {
-    width: 112,
-    height: 112,
-    borderRadius: 56,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 4,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  editAvatarButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    flexWrap: 'wrap',
   },
   userName: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#FFFFFF',
-    marginBottom: 8,
+    marginRight: 12,
+    marginBottom: 4,
+    textShadowColor: 'rgba(0,0,0,0.2)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  tierBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  tierText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   emailContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 8,
   },
   userEmail: {
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.9)',
     marginRight: 8,
   },
-  verifiedIcon: {
-    marginLeft: 4,
-  },
-  editButton: {
-    backgroundColor: '#FFFFFF',
+  verifiedBadge: {
+    width: 20,
+    height: 20,
     borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    backgroundColor: '#10B981',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  memberSince: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
+  editProfileButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 230,
-    borderWidth: 0,
-    borderColor: 'transparent',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  editButtonText: {
+  editProfileText: {
+    color: '#4F46E5',
     fontSize: 16,
     fontWeight: '600',
-    color: '#6B7280',
-    marginRight: 8,
   },
-  waveContainer: {
-    position: 'absolute',
-    bottom: -1,
-    left: 0,
-    right: 0,
-    height: 70,
-    overflow: 'hidden',
+  statsCard: {
+    marginHorizontal: 20,
+    marginBottom: 24,
+    borderRadius: 24,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 8,
   },
-  wave: {
-    position: 'absolute',
-    bottom: 0,
-    left: -40,
-    right: -40,
-    height: 120,
-    backgroundColor: 'transparent',
-    borderTopLeftRadius: 180,
-    borderTopRightRadius: 180,
-  },
-  settingsContainer: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    zIndex: 1,
-  },
-  glassRow: {
-    borderRadius: 12,
-    borderWidth: 0,
-    marginVertical: 8,
-    overflow: 'hidden',
-    shadowColor: 'transparent',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0,
-    shadowRadius: 0,
-    elevation: 0,
-  },
-  settingRowContent: {
+  statsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 18,
-    paddingHorizontal: 4,
-    backgroundColor: 'transparent',
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 20,
-  },
-
-  settingLabel: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  dropdown: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderWidth: 0,
-    borderColor: 'transparent',
-    minWidth: 96,
-  },
-  dropdownText: {
-    fontSize: 16,
-    color: '#6B7280',
-    marginRight: 8,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#E5E7EB',
-    marginLeft: 0,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: 24,
-    paddingBottom: 34,
+    justifyContent: 'space-around',
+    borderTopWidth: 1,
     paddingTop: 20,
   },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  statItem: {
     alignItems: 'center',
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-    marginBottom: 16,
+    flex: 1,
   },
-  modalTitle: {
-    fontSize: 20,
+  statValue: {
+    fontSize: 24,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
     fontWeight: '600',
-    color: '#1F2937',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  modalOption: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 4,
-    borderRadius: 8,
+  statDivider: {
+    width: 1,
+    backgroundColor: '#E5E7EB',
+    marginHorizontal: 10,
   },
-  selectedOption: {
-    backgroundColor: '#EBF4FF',
+  settingsSection: {
+    paddingHorizontal: 20,
   },
-  modalOptionText: {
+  sectionTitle: {
     fontSize: 18,
-    color: '#1F2937',
-    fontWeight: '500',
+    fontWeight: '700',
+    marginBottom: 16,
+    letterSpacing: 0.5,
   },
-  selectedOptionText: {
-    color: '#4A90E2',
+  securityCard: {
+    marginHorizontal: 20,
+    marginTop: 24,
+    padding: 24,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  securityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  securityTitle: {
+    fontSize: 18,
     fontWeight: '600',
+    flex: 1,
   },
-  dropdownContainer: {
-    position: 'relative',
-    zIndex: 1,
-    elevation: 1,
-    marginBottom: 8,
+  securityDescription: {
+    fontSize: 14,
+    lineHeight: 20,
   },
-  activeDropdownContainer: {
-    zIndex: 1000,
-    elevation: 1000,
+  spacer: {
+    height: 40,
   },
   dropdownOverlay: {
     position: 'absolute',
@@ -532,38 +528,45 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 999,
-    elevation: 999,
+    zIndex: 1000,
+    justifyContent: 'flex-end',
   },
-  dropdownMenu: {
-    position: 'absolute',
-    top: 72,
-    left: 0,
-    right: 0,
-    borderRadius: 12,
-    borderWidth: 1,
-    paddingVertical: 8,
+  dropdownContent: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
+    maxHeight: '80%',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
     shadowRadius: 16,
-    elevation: 100,
-    zIndex: 100,
-    maxHeight: 200,
-    overflow: 'hidden',
+    elevation: 20,
+  },
+  dropdownTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   dropdownOption: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 4,
-    marginHorizontal: 4,
-    marginVertical: 1,
+    justifyContent: 'space-between',
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  dropdownOptionSelected: {
+    backgroundColor: 'rgba(59, 130, 246, 0.05)',
   },
   dropdownOptionText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
+    flex: 1,
+    marginLeft: 16,
+  },
+  dropdownOptionTextSelected: {
+    fontWeight: '600',
   },
 });
