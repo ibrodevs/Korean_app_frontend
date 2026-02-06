@@ -16,55 +16,15 @@ export const colors = {
     800: '#1f2937',
     900: '#111827',
   },
-  blue: {
-    50: '#eff6ff',
-    100: '#dbeafe',
-    200: '#bfdbfe',
-    300: '#93c5fd',
-    400: '#60a5fa',
-    500: '#3b82f6',
-    600: '#2563eb',
-    700: '#1d4ed8',
-    800: '#1e40af',
-    900: '#1e3a8a',
-  },
-  red: {
-    50: '#fef2f2',
-    100: '#fee2e2',
-    200: '#fecaca',
-    300: '#fca5a5',
-    400: '#f87171',
-    500: '#ef4444',
-    600: '#dc2626',
-    700: '#b91c1c',
-    800: '#991b1b',
-    900: '#7f1d1d',
-  },
-  green: {
-    50: '#f0fdf4',
-    100: '#dcfce7',
-    200: '#bbf7d0',
-    300: '#86efac',
-    400: '#4ade80',
-    500: '#22c55e',
-    600: '#16a34a',
-    700: '#15803d',
-    800: '#166534',
-    900: '#14532d',
-  },
-  primary: '#1774F3', // Добавляем primary цвет
+  primary: '#1774F3',
 };
 
 // Размеры
 export const spacing = {
   0: 0,
-  0.5: 2,
   1: 4,
-  1.5: 6,
   2: 8,
-  2.5: 10,
   3: 12,
-  3.5: 14,
   4: 16,
   5: 20,
   6: 24,
@@ -75,7 +35,7 @@ export const spacing = {
   20: 80,
   24: 96,
   32: 128,
-  50: 200, // h-50
+  50: 200,
 };
 
 // Размеры шрифтов
@@ -96,40 +56,24 @@ export const tw = StyleSheet.create({
   // Flex
   'flex-1': { flex: 1 },
   'flex-row': { flexDirection: 'row' },
-  'flex-col': { flexDirection: 'column' },
-  
+
   // Alignment
   'items-center': { alignItems: 'center' },
-  'items-start': { alignItems: 'flex-start' },
-  'items-end': { alignItems: 'flex-end' },
   'justify-center': { justifyContent: 'center' },
-  'justify-start': { justifyContent: 'flex-start' },
   'justify-end': { justifyContent: 'flex-end' },
-  'justify-between': { justifyContent: 'space-between' },
-  
+
   // Background colors
   'bg-white': { backgroundColor: colors.white },
-  'bg-black': { backgroundColor: colors.black },
   'bg-primary': { backgroundColor: colors.primary },
   'bg-gray-100': { backgroundColor: colors.gray[100] },
-  'bg-gray-200': { backgroundColor: colors.gray[200] },
-  'bg-gray-300': { backgroundColor: colors.gray[300] },
-  'bg-blue-50': { backgroundColor: colors.blue[50] },
-  'bg-blue-100': { backgroundColor: colors.blue[100] },
-  'bg-blue-500': { backgroundColor: colors.blue[500] },
-  'bg-white/20': { backgroundColor: 'rgba(255, 255, 255, 0.2)' },
-  
+
   // Text colors
   'text-white': { color: colors.white },
-  'text-black': { color: colors.black },
   'text-gray-500': { color: colors.gray[500] },
   'text-gray-600': { color: colors.gray[600] },
   'text-gray-700': { color: colors.gray[700] },
-  'text-blue-500': { color: colors.blue[500] },
-  'text-blue-600': { color: colors.blue[600] },
-  'text-red-500': { color: colors.red[500] },
-  'text-green-500': { color: colors.green[500] },
-  
+  'text-primary': { color: colors.primary },
+
   // Font sizes
   'text-xs': { fontSize: fontSizes.xs },
   'text-sm': { fontSize: fontSizes.sm },
@@ -138,96 +82,88 @@ export const tw = StyleSheet.create({
   'text-xl': { fontSize: fontSizes.xl },
   'text-2xl': { fontSize: fontSizes['2xl'] },
   'text-3xl': { fontSize: fontSizes['3xl'] },
-  
+  'text-4xl': { fontSize: fontSizes['4xl'] },
+
   // Font weights
   'font-normal': { fontWeight: '400' },
   'font-medium': { fontWeight: '500' },
   'font-semibold': { fontWeight: '600' },
   'font-bold': { fontWeight: '700' },
-  
+
   // Letter spacing
   'tracking-wide': { letterSpacing: 0.5 },
-  
-  // Line height
-  'leading-3.5': { lineHeight: 14 },
-  
+
   // Width & Height
-  'w-2': { width: spacing[2] },
-  'w-5': { width: spacing[5] },
-  'w-10': { width: spacing[10] },
-  'w-16': { width: spacing[16] },
   'w-20': { width: spacing[20] },
-  'h-2': { height: spacing[2] },
-  'h-10': { height: spacing[10] },
+  'w-24': { width: spacing[24] },
+  'h-8': { height: spacing[8] },
+  'h-12': { height: spacing[12] },
   'h-16': { height: spacing[16] },
-  'h-50': { height: spacing[50] },
-  
+  'h-20': { height: spacing[20] },
+  'h-24': { height: spacing[24] },
+  'h-px': { height: 1 },
+
   // Margins
-  'm-1': { margin: spacing[1] },
-  'm-2': { margin: spacing[2] },
-  'm-4': { margin: spacing[4] },
-  'mt-1': { marginTop: spacing[1] },
-  'mt-2': { marginTop: spacing[2] },
-  'mt-3': { marginTop: spacing[3] },
-  'mt-4': { marginTop: spacing[4] },
-  'mb-1': { marginBottom: spacing[1] },
   'mb-2': { marginBottom: spacing[2] },
-  'mb-4': { marginBottom: spacing[4] },
   'mb-6': { marginBottom: spacing[6] },
+  'mb-8': { marginBottom: spacing[8] },
   'ml-2': { marginLeft: spacing[2] },
-  'ml-3': { marginLeft: spacing[3] },
-  'ml-5': { marginLeft: spacing[5] },
   'mr-3': { marginRight: spacing[3] },
-  'mr-5': { marginRight: spacing[5] },
-  'mx-1': { marginHorizontal: spacing[1] },
-  'mx-2': { marginHorizontal: spacing[2] },
-  'mx-2.5': { marginHorizontal: spacing[2.5] },
-  'mx-4': { marginHorizontal: spacing[4] },
-  'my-2': { marginVertical: spacing[2] },
-  'my-4': { marginVertical: spacing[4] },
-  'my-5': { marginVertical: spacing[5] },
-  
+  'mt-4': { marginTop: spacing[4] },
+  'my-6': { marginVertical: spacing[6] },
+
   // Paddings
-  'p-1': { padding: spacing[1] },
-  'p-1.5': { padding: spacing[1.5] },
-  'p-2': { padding: spacing[2] },
-  'p-4': { padding: spacing[4] },
-  'px-2': { paddingHorizontal: spacing[2] },
-  'px-4': { paddingHorizontal: spacing[4] },
-  'px-5': { paddingHorizontal: spacing[5] },
-  'py-2': { paddingVertical: spacing[2] },
+  'px-6': { paddingHorizontal: spacing[6] },
   'py-3': { paddingVertical: spacing[3] },
   'py-4': { paddingVertical: spacing[4] },
-  'pb-5': { paddingBottom: spacing[5] },
-  
+  'py-12': { paddingVertical: spacing[12] },
+  'pb-12': { paddingBottom: spacing[12] },
+
   // Border radius
-  'rounded': { borderRadius: 4 },
-  'rounded-md': { borderRadius: 6 },
-  'rounded-lg': { borderRadius: 8 },
   'rounded-xl': { borderRadius: 12 },
   'rounded-2xl': { borderRadius: 16 },
   'rounded-3xl': { borderRadius: 24 },
   'rounded-full': { borderRadius: 9999 },
-  
+
   // Text alignment
   'text-center': { textAlign: 'center' },
-  'text-left': { textAlign: 'left' },
-  'text-right': { textAlign: 'right' },
-  
-  // Shadows (iOS)
-  'shadow-sm': {
+
+  // Border
+  'border-2': { borderWidth: 2 },
+  'border-primary': { borderColor: colors.primary },
+  'border-gray-300': { borderColor: colors.gray[300] },
+
+  // Position
+  'absolute': { position: 'absolute' },
+
+  // Top / Right / Bottom / Left
+  'top-20': { top: spacing[20] },
+  'top-40': { top: spacing[16] * 2.5 },
+  'right-8': { right: spacing[8] },
+  'right-10': { right: spacing[10] },
+  'right-16': { right: spacing[16] },
+  'bottom-20': { bottom: spacing[20] },
+  'bottom-32': { bottom: spacing[32] },
+  'bottom-40': { bottom: spacing[16] * 2.5 },
+  'left-6': { left: spacing[6] },
+  'left-10': { left: spacing[10] },
+  'left-12': { left: spacing[12] },
+  'left-20': { left: spacing[20] },
+
+  // Opacity
+  'text-white/70': { color: 'rgba(255, 255, 255, 0.7)' },
+  'text-white/80': { color: 'rgba(255, 255, 255, 0.8)' },
+  'text-white/90': { color: 'rgba(255, 255, 255, 0.9)' },
+  'bg-white/10': { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
+  'bg-primary/10': { backgroundColor: 'rgba(23, 116, 243, 0.1)' },
+
+  // Shadows
+  'shadow-md': {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  'shadow': {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
   },
   'shadow-lg': {
     shadowColor: '#000',

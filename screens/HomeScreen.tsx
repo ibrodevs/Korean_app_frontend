@@ -6,7 +6,6 @@ import {
   Animated,
   Dimensions,
   FlatList,
-  Image,
   Platform,
   RefreshControl,
   ScrollView,
@@ -27,25 +26,25 @@ type HomeScreenProps = MainTabScreenProps<'HomeTab'>;
 
 // Modern categories with better icons
 const mockCategories: Category[] = [
-  { id: '1', name: 'Electronics', icon: '📱', color: '#6366F1', productCount: 150 },
-  { id: '2', name: 'Fashion', icon: '👕', color: '#EC4899', productCount: 89 },
-  { id: '3', name: 'Home & Living', icon: '🏠', color: '#10B981', productCount: 200 },
-  { id: '4', name: 'Beauty', icon: '💄', color: '#F59E0B', productCount: 75 },
-  { id: '5', name: 'Sports', icon: '⚽', color: '#3B82F6', productCount: 45 },
-  { id: '6', name: 'Books', icon: '📚', color: '#8B5CF6', productCount: 120 },
+  { id: '1', name: 'Электроника', icon: '📱', color: '#6366F1', productCount: 150 },
+  { id: '2', name: 'Одежда', icon: '👕', color: '#EC4899', productCount: 89 },
+  { id: '3', name: 'Дом и сад', icon: '🏠', color: '#10B981', productCount: 200 },
+  { id: '4', name: 'Красота', icon: '💄', color: '#F59E0B', productCount: 75 },
+  { id: '5', name: 'Спорт', icon: '⚽', color: '#3B82F6', productCount: 45 },
+  { id: '6', name: 'Книги', icon: '📚', color: '#8B5CF6', productCount: 120 },
 ];
 
 const mockProducts: Product[] = [
   {
     id: '1',
     name: 'iPhone 15 Pro',
-    description: 'Latest Apple smartphone with advanced camera',
+    description: 'Последний смартфон Apple с продвинутой камерой',
     price: 999,
     originalPrice: 1199,
     discount: 17,
     currency: 'USD',
     category: 'Electronics',
-    images: ['https://picsum.photos/400/400?random=1'],
+    images: [],
     rating: 4.9,
     reviewCount: 1245,
     stock: 50,
@@ -59,13 +58,13 @@ const mockProducts: Product[] = [
   {
     id: '2',
     name: 'Air Jordan 1',
-    description: 'Classic basketball sneakers',
+    description: 'Классические баскетбольные кроссовки',
     price: 150,
     originalPrice: 180,
     discount: 17,
     currency: 'USD',
     category: 'Fashion',
-    images: ['https://picsum.photos/400/400?random=2'],
+    images: [],
     rating: 4.8,
     reviewCount: 892,
     stock: 100,
@@ -79,13 +78,13 @@ const mockProducts: Product[] = [
   {
     id: '3',
     name: 'MacBook Air M2',
-    description: 'Ultra-thin and powerful laptop',
+    description: 'Ультратонкий и мощный ноутбук',
     price: 1299,
     originalPrice: 1499,
     discount: 13,
     currency: 'USD',
     category: 'Electronics',
-    images: ['https://picsum.photos/400/400?random=3'],
+    images: [],
     rating: 4.9,
     reviewCount: 2156,
     stock: 25,
@@ -98,14 +97,14 @@ const mockProducts: Product[] = [
   },
   {
     id: '4',
-    name: 'Wireless Headphones',
-    description: 'Noise cancelling premium headphones',
+    name: 'Беспроводные наушники',
+    description: 'Премиальные наушники с шумоподавлением',
     price: 299,
     originalPrice: 399,
     discount: 25,
     currency: 'USD',
     category: 'Electronics',
-    images: ['https://picsum.photos/400/400?random=4'],
+    images: [],
     rating: 4.7,
     reviewCount: 987,
     stock: 200,
@@ -123,38 +122,38 @@ export default function HomeScreen() {
   const { t } = useTranslation();
   const { colors, theme } = useTheme();
   const { addToCart, cartItems } = useCart();
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>(mockProducts);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
-  
+
   const scrollY = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<ScrollView>(null);
   const { width } = Dimensions.get('window');
   const bannerWidth = width - 48;
-  
-  const bannerImages = [
-    'https://picsum.photos/400/300?random=10',
-    'https://picsum.photos/400/300?random=11',
-    'https://picsum.photos/400/300?random=12',
+
+  const bannerColors = [
+    '#6366F1',
+    '#EC4899',
+    '#10B981',
   ];
-  
-  const infiniteBannerImages = [...bannerImages, ...bannerImages];
-  
+
+  const infiniteBannerColors = [...bannerColors, ...bannerColors];
+
   // Animated header background
   const headerBackgroundColor = scrollY.interpolate({
     inputRange: [0, 100],
     outputRange: ['rgba(23, 121, 243, 1)', 'rgba(23, 121, 243, 0.95)'],
     extrapolate: 'clamp',
   });
-  
+
   const headerOpacity = scrollY.interpolate({
     inputRange: [0, 80, 100],
     outputRange: [1, 0.9, 0.8],
     extrapolate: 'clamp',
   });
-  
+
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const styles = StyleSheet.create({
@@ -300,6 +299,25 @@ export default function HomeScreen() {
       width: '100%',
       height: '100%',
     },
+    bannerContent: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 24,
+    },
+    bannerTitle: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: '#FFFFFF',
+      textAlign: 'center',
+      marginBottom: 8,
+    },
+    bannerSubtitle: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: 'rgba(255, 255, 255, 0.9)',
+      textAlign: 'center',
+    },
     bannerOverlay: {
       ...StyleSheet.absoluteFillObject,
       backgroundColor: 'rgba(0, 0, 0, 0.2)',
@@ -370,8 +388,8 @@ export default function HomeScreen() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentBannerIndex((prev) => {
-        const next = (prev + 1) % bannerImages.length;
-        const infiniteNext = (prev + 1) % infiniteBannerImages.length;
+        const next = (prev + 1) % bannerColors.length;
+        const infiniteNext = (prev + 1) % infiniteBannerColors.length;
         flatListRef.current?.scrollTo({
           x: infiniteNext * (bannerWidth + 48),
           animated: true,
@@ -380,7 +398,7 @@ export default function HomeScreen() {
       });
     }, 4000);
     return () => clearInterval(interval);
-  }, [bannerImages.length]);
+  }, [bannerColors.length]);
 
   const loadFeaturedProducts = async () => {
     // Simulate API call
@@ -414,9 +432,9 @@ export default function HomeScreen() {
 
   const handleScrollEnd = (event: any) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / (bannerWidth + 48));
-    let realIndex = index % bannerImages.length;
+    let realIndex = index % bannerColors.length;
     setCurrentBannerIndex(realIndex);
-    if (index >= bannerImages.length) {
+    if (index >= bannerColors.length) {
       flatListRef.current?.scrollTo({
         x: realIndex * (bannerWidth + 48),
         animated: false,
@@ -441,7 +459,7 @@ export default function HomeScreen() {
         {item.name}
       </Text>
       <Text style={styles.categoryCount}>
-        {item.productCount} items
+        {item.productCount} товаров
       </Text>
     </TouchableOpacity>
   );
@@ -491,7 +509,7 @@ export default function HomeScreen() {
             <Ionicons name="search" size={20} color="#6B7280" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search products, brands, and categories..."
+              placeholder="Поиск товаров, брендов и категорий..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -532,23 +550,25 @@ export default function HomeScreen() {
             decelerationRate="fast"
             scrollEventThrottle={16}
           >
-            {infiniteBannerImages.map((item, index) => (
-              <View key={index} style={styles.banner}>
-                <Image source={{ uri: item }} style={styles.bannerImage} />
-                <View style={styles.bannerOverlay} />
+            {infiniteBannerColors.map((color, index) => (
+              <View key={index} style={[styles.banner, { backgroundColor: color }]}>
+                <View style={styles.bannerContent}>
+                  <Text style={styles.bannerTitle}>Специальные предложения</Text>
+                  <Text style={styles.bannerSubtitle}>Скидки до 70%</Text>
+                </View>
               </View>
             ))}
           </ScrollView>
           <View style={styles.bannerPagination}>
-            {bannerImages.map((_, index) => (
+            {bannerColors.map((_, index) => (
               <View
                 key={index}
                 style={[
                   styles.paginationDot,
                   {
                     backgroundColor: index === currentBannerIndex
-                      ? colors.primary
-                      : colors.textSecondary + '40',
+                      ? '#FFFFFF'
+                      : 'rgba(255, 255, 255, 0.4)',
                     width: index === currentBannerIndex ? 24 : 8,
                   },
                 ]}
@@ -560,9 +580,9 @@ export default function HomeScreen() {
         {/* Categories */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Browse Categories</Text>
+            <Text style={styles.sectionTitle}>Категории</Text>
             <TouchableOpacity>
-              <Text style={styles.seeAllButton}>View All</Text>
+              <Text style={styles.seeAllButton}>Все</Text>
             </TouchableOpacity>
           </View>
           
@@ -579,11 +599,11 @@ export default function HomeScreen() {
         {/* Featured Products */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Featured Products</Text>
+            <Text style={styles.sectionTitle}>Рекомендуемые товары</Text>
             <TouchableOpacity onPress={() => {
               navigation.getParent()?.navigate('Search');
             }}>
-              <Text style={styles.seeAllButton}>See All</Text>
+              <Text style={styles.seeAllButton}>Все</Text>
             </TouchableOpacity>
           </View>
           

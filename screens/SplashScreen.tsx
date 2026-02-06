@@ -1,21 +1,12 @@
+import { View as StyledView, Text } from '@/components/styled';
+import { useTheme } from '@/contexts/ThemeContext';
 import React, { useEffect, useRef } from 'react';
-import {
-  Image,
-  View,
-  ActivityIndicator,
-  StyleSheet,
-  StatusBar,
-  TouchableOpacity,
-  Animated,
-} from 'react-native';
-import Text from '../components/Text';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../contexts/ThemeContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import BlueImg from '../assets/Ellipse.svg'
-import ShopImg from '../assets/Shoppingbag.png'
-import WelcomeImg from '../assets/Welcome.png'
-import SplashGif from '../assets/splash.gif'
+import {
+  ActivityIndicator,
+  Animated,
+  StatusBar
+} from 'react-native';
 interface SplashScreenProps {
   onFinish?: () => Promise<void> | void;
   navigation?: any; 
@@ -27,6 +18,8 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish, navigation }) => 
   const hasNavigated = useRef(false);
   const slideAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -35,22 +28,37 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish, navigation }) => 
       }
 
       try {
-        await new Promise(resolve => setTimeout(resolve, 4000));
-        
+        // Анимация появления
+        Animated.parallel([
+          Animated.timing(scaleAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ]).start();
+
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        // Анимация исчезновения
         Animated.parallel([
           Animated.timing(slideAnim, {
-            toValue: 500,
-            duration: 1000,
+            toValue: -100,
+            duration: 800,
             useNativeDriver: true,
           }),
           Animated.timing(opacityAnim, {
             toValue: 0,
-            duration: 1000,
+            duration: 800,
             useNativeDriver: true,
           }),
         ]).start(() => {
           hasNavigated.current = true;
-          
+
           if (typeof onFinish === 'function') {
             const result = onFinish();
             if (result instanceof Promise) {
@@ -70,89 +78,70 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish, navigation }) => 
     };
 
     initializeApp();
-  }, [onFinish, slideAnim, opacityAnim]);
+  }, [onFinish, slideAnim, opacityAnim, scaleAnim, rotateAnim]);
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
   return (
-    <View style={[
-      { backgroundColor: theme.background }
-    ]}>
+    <StyledView className="flex-1 bg-primary">
       <StatusBar
-        barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={theme.background}
+        barStyle="light-content"
+        backgroundColor="#1779F3"
       />
-                  <Text style={styles.headerTitle}>Korean Shop</Text>
-      
-      <View style={styles.shopbag}>
-                <Image style={styles.blueimg} source={BlueImg} />
-                <Image style={styles.WelcomePhoto} source={WelcomeImg} />
-      </View>
 
-      <Animated.View style={[styles.loadingContainer, { transform: [{ translateY: slideAnim }], opacity: opacityAnim }]}>
-        <Image source={SplashGif} style={styles.logo} />
-      </Animated.View>
-    </View>
+      <StyledView className="flex-1 justify-center items-center px-8">
+        {/* Основной контент */}
+        <Animated.View
+          style={{
+            transform: [
+              { scale: scaleAnim },
+              { rotate: rotate }
+            ],
+            opacity: opacityAnim,
+          }}
+          className="items-center"
+        >
+          {/* Логотип/Иконка */}
+          <StyledView className="w-24 h-24 bg-white rounded-full justify-center items-center mb-8 shadow-lg">
+            <Text className="text-4xl">🛒</Text>
+          </StyledView>
+
+          {/* Название приложения */}
+          <Text className="text-3xl font-bold text-white mb-2 tracking-wide">
+            Korean Shop
+          </Text>
+
+          {/* Подзаголовок */}
+          <Text className="text-lg text-white/80 text-center mb-8">
+            Лучшие товары из Кореи
+          </Text>
+
+          {/* Анимированный индикатор загрузки */}
+          <Animated.View
+            style={{
+              transform: [{ translateY: slideAnim }],
+              opacity: opacityAnim,
+            }}
+            className="items-center"
+          >
+            <ActivityIndicator size="large" color="#FFFFFF" />
+            <Text className="text-white/70 mt-4 text-sm">
+              Загрузка...
+            </Text>
+          </Animated.View>
+        </Animated.View>
+
+        {/* Декоративные элементы */}
+        <StyledView className="absolute top-20 left-10 w-16 h-16 bg-white/10 rounded-full" />
+        <StyledView className="absolute top-40 right-16 w-8 h-8 bg-white/10 rounded-full" />
+        <StyledView className="absolute bottom-32 left-20 w-12 h-12 bg-white/10 rounded-full" />
+        <StyledView className="absolute bottom-20 right-10 w-6 h-6 bg-white/10 rounded-full" />
+      </StyledView>
+    </StyledView>
   );
 };
-
-const styles = StyleSheet.create({
-  logo: {
-    width: 300,
-    height: 300,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '900',
-    color: '#FFFFFF',
-    letterSpacing: 1,
-    backgroundColor: '#1779F3',
-    textAlign: 'center',
-    paddingTop: 120,
-  },
-  loadingContainer:{
-    width: '100%',
-    height: 200,
-    justifyContent: 'center', 
-    alignItems: 'center', 
-  },
-  logoInner: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-  },
-  appNameContainer: {
-    marginTop: 24,
-  },
-  appName: {
-    fontSize: 32,
-    marginTop: -250,
-    fontWeight: '700',
-    textAlign: 'center',
-    color: '#fff'
-  },
-  welcomeImg: {
-    width: 430,
-    height: 300,
-    marginTop: -150
-  },
-  indicator: {
-    marginBottom: 12,
-  },
-  loadingText: {
-    fontSize: 16,
-    fontWeight: '500',
-    letterSpacing: 0.5,
-  },
-  shopbag:{
-    flex: 1
-  },
-  blueimg:{
-    marginBottom: -300
-  },
-  WelcomePhoto:{
-
-  },
-});
 
 export default SplashScreen;

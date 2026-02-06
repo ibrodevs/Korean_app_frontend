@@ -1,24 +1,17 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-  Animated,
-  Image,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Text from '../components/Text';
-import { useTheme } from '../contexts/ThemeContext';
+import { View as StyledView, Text } from '@/components/styled';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useEffect, useRef } from 'react';
+import {
+  Animated,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity
+} from 'react-native';
 import { AuthStackParamList } from '../types/navigation';
-import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import BlueImg from '../assets/Ellipse.svg'
-import ShopImg from '../assets/Shoppingbag.png'
-import WelcomeImg from '../assets/Welcome.png'
 
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
@@ -27,13 +20,21 @@ const AuthScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
 
   const slideUpAnim = useRef(new Animated.Value(300)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(slideUpAnim, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.timing(slideUpAnim, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
   }, []);
 
   const handleLogin = () => {
@@ -48,47 +49,78 @@ const AuthScreen: React.FC = () => {
     console.log('Google login pressed');
   };
 
-
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
 
-            <Text style={styles.headerTitle}>Korean Shop</Text>
-            {/* <img style={styles.shopbag} src={ShopImg} alt="" /> */}
-          <View style={styles.shopbag}>
-          <Image style={styles.blueimg} source={BlueImg} />
-          <Image style={styles.WelcomePhoto} source={WelcomeImg} />
-          </View>
+      {/* Header с градиентом */}
+      <StyledView style={styles.header}>
+        <Animated.View
+          style={{ opacity: fadeAnim }}
+        >
+          {/* Логотип */}
+          <StyledView style={styles.logoContainer}>
+            <Text style={styles.logoText}>🛒</Text>
+          </StyledView>
 
-        <View style={styles.content}>
-          <Animated.View style={[styles.buttonsContainer, { transform: [{ translateY: slideUpAnim }] }]}>
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={handleLogin}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.loginButtonText}>Login</Text>
-            </TouchableOpacity>
+          {/* Заголовок */}
+          <Text style={styles.title}>
+            Korean Shop
+          </Text>
 
-            <TouchableOpacity
-              style={styles.registerButton}
-              onPress={handleRegister}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.registerButtonText}>Register</Text>
-            </TouchableOpacity>
+          {/* Подзаголовок */}
+          <Text style={styles.subtitle}>
+            Добро пожаловать!
+          </Text>
+        </Animated.View>
+      </StyledView>
 
-            <View style={styles.dividerSection}>
-              <View style={styles.divider} />
-              <Text style={styles.dividerText}>Or login with</Text>
-              <View style={styles.divider} />
-            </View>
+      {/* Основной контент */}
+      <StyledView style={styles.content}>
+        <Animated.View
+          style={{ transform: [{ translateY: slideUpAnim }] }}
+        >
+          {/* Кнопка входа */}
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLogin}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.loginButtonText}>Войти</Text>
+          </TouchableOpacity>
 
-            <View style={styles.socialPlaceholder}>
-              <View style={styles.socialLine} />
-            </View>
-          </Animated.View>
-        </View>
+          {/* Кнопка регистрации */}
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={handleRegister}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.registerButtonText}>Регистрация</Text>
+          </TouchableOpacity>
+
+          {/* Разделитель */}
+          <StyledView style={styles.separator}>
+            <StyledView style={styles.separatorLine} />
+            <Text style={styles.separatorText}>или</Text>
+            <StyledView style={styles.separatorLine} />
+          </StyledView>
+
+          {/* Социальный вход */}
+          <TouchableOpacity
+            style={styles.googleButton}
+            onPress={handleGoogleLogin}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="logo-google" size={20} color="#333" style={styles.googleIcon} />
+            <Text style={styles.googleButtonText}>Войти через Google</Text>
+          </TouchableOpacity>
+
+          {/* Декоративные элементы */}
+          <StyledView style={styles.decorative1} />
+          <StyledView style={styles.decorative2} />
+          <StyledView style={styles.decorative3} />
+        </Animated.View>
+      </StyledView>
     </SafeAreaView>
   );
 };
@@ -96,119 +128,146 @@ const AuthScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
   },
-  shopbag:{
-    flex: 1
+  header: {
+    backgroundColor: '#1774F3',
+    paddingHorizontal: 24,
+    paddingVertical: 48,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  gradient: {
-    flex: 1,
+  logoContainer: {
+    width: 80,
+    height: 80,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  logoText: {
+    fontSize: 36,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: '700',
+    color: '#ffffff',
+    marginBottom: 8,
+    letterSpacing: 0.5,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 18,
+    color: 'rgba(255, 255, 255, 0.9)',
+    textAlign: 'center',
   },
   content: {
     flex: 1,
     paddingHorizontal: 24,
-  },
-  WelcomePhoto:{
-    marginBottom: 320
-  },
-  blueimg:{
-    marginBottom: -300
-
-  },
-  header: {
-    paddingTop: 130,
-    fontSize: 32,
-    fontWeight: '700',
-    backgroundColor: '#1779F3',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '900',
-    color: '#FFFFFF',
-    letterSpacing: 1,
-    backgroundColor: '#1779F3',
-    textAlign: 'center',
-    paddingTop: 120,
-  },
-  boldSampleText: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    letterSpacing: 4,
-    marginBottom: 8,
-  },
-  dividerLine: {
-    height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    width: '100%',
-    marginVertical: 20,
-  },
-  buttonsContainer: {
-    paddingBottom: 40,
+    justifyContent: 'flex-end',
+    paddingBottom: 48,
   },
   loginButton: {
-    backgroundColor: '#1779F3',
-    borderRadius: 8,
+    backgroundColor: '#1774F3',
     paddingVertical: 16,
+    borderRadius: 12,
     alignItems: 'center',
-    marginTop: 100,
-    marginBottom: 16,
-    elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
+    marginBottom: 16,
   },
   loginButtonText: {
+    color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
-    color: '#fff',
   },
   registerButton: {
-    fontWeight: 800,
-    backgroundColor: 'transparent',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginBottom: 32,
+    backgroundColor: '#ffffff',
     borderWidth: 2,
-    borderColor: '#1779F3',
+    borderColor: '#1774F3',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 24,
   },
   registerButtonText: {
+    color: '#1774F3',
     fontSize: 18,
     fontWeight: '600',
-    color: '#1779F3',
   },
-  dividerSection: {
+  separator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginVertical: 24,
   },
-  divider: {
+  separatorLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#333333',
+    backgroundColor: '#d1d5db',
   },
-  dividerText: {
-    color: '#333333',
-    fontSize: 14,
+  separatorText: {
+    color: '#6b7280',
     marginHorizontal: 16,
+    fontSize: 14,
     fontWeight: '500',
   },
-  socialPlaceholder: {
+  googleButton: {
+    backgroundColor: '#f3f4f6',
+    paddingVertical: 16,
+    borderRadius: 12,
     alignItems: 'center',
-    height: 38,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
-  socialLine: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#BDBDBD',
-  }
+  googleIcon: {
+    marginRight: 12,
+  },
+  googleButtonText: {
+    color: '#374151',
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  decorative1: {
+    position: 'absolute',
+    top: 80,
+    right: 32,
+    width: 48,
+    height: 48,
+    backgroundColor: 'rgba(23, 116, 243, 0.1)',
+    borderRadius: 24,
+  },
+  decorative2: {
+    position: 'absolute',
+    bottom: 160,
+    left: 24,
+    width: 32,
+    height: 32,
+    backgroundColor: 'rgba(23, 116, 243, 0.1)',
+    borderRadius: 16,
+  },
+  decorative3: {
+    position: 'absolute',
+    top: 160,
+    left: 48,
+    width: 24,
+    height: 24,
+    backgroundColor: 'rgba(23, 116, 243, 0.1)',
+    borderRadius: 12,
+  },
 });
 
 export default AuthScreen;

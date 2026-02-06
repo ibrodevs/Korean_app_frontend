@@ -1,33 +1,29 @@
-import React, { useState } from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-  TextInput,
-  Image,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Text from '../components/Text';
-import { useTheme } from '../contexts/ThemeContext';
-import { useNavigation, CommonActions } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '../types/navigation';
+import { Text } from '@/components/styled';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import BlueImg from '../assets/Ellipse.svg'
-import Loginimg from '../assets/Login.png'
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { AuthStackParamList } from '../types/navigation';
 
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 const LoginScreen: React.FC = () => {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -57,7 +53,7 @@ const LoginScreen: React.FC = () => {
     try {
       // Simulate login process
       await AsyncStorage.setItem('authToken', 'demo-token');
-      
+
       // Navigate to main app using reset to clear auth stack
       navigation.dispatch(
         CommonActions.reset({
@@ -83,86 +79,105 @@ const LoginScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.keyboardAvoidingView}
-        ><View>
-          <View style={styles.header}>
-          </View>
-          <View>
-          <Image style={styles.blueimg} source={BlueImg} />
-          <Image style={styles.loginimg} source={Loginimg} />
-            <Text style={styles.headerTitle}>Login</Text>
+
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={handleBack}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Вход</Text>
+        <View style={{ width: 24 }} /> {/* Spacer for alignment */}
+      </View>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}
+      >
+        {/* Welcome Text */}
+        <Text style={styles.welcomeText}>Добро пожаловать обратно!</Text>
+
+        {/* Form Section */}
+        <View style={styles.formSection}>
+          {/* Email Field */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="yourmail@mail.com"
+              placeholderTextColor="rgba(255, 255, 255, 0.6)"
+              value={formData.email}
+              onChangeText={(value) => handleInputChange('email', value)}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              selectionColor="#FFFFFF"
+            />
           </View>
 
-          {/* Form Section */}
-          <View style={styles.formSection}>
-            {/* Email Field */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>email</Text>
+          {/* Password Field */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Пароль</Text>
+            <View style={styles.passwordContainer}>
               <TextInput
-                style={styles.input}
-                placeholder="yourgmail@gmail.com"
-                placeholderTextColor="#BDBDBD"
-                value={formData.email}
-                onChangeText={(value) => handleInputChange('email', value)}
-                keyboardType="email-address"
+                style={styles.passwordInput}
+                placeholder="Ваш пароль"
+                placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                value={formData.password}
+                onChangeText={(value) => handleInputChange('password', value)}
+                secureTextEntry={!isPasswordVisible}
                 autoCapitalize="none"
                 autoCorrect={false}
-                selectionColor="#BDBDBD"
+                selectionColor="#FFFFFF"
               />
-            </View>
-
-            {/* Password Field */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>password</Text>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="your password"
-                  placeholderTextColor="#BDBDBD"
-                  value={formData.password}
-                  onChangeText={(value) => handleInputChange('password', value)}
-                  secureTextEntry={!isPasswordVisible}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  selectionColor="#BDBDBD"
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={togglePasswordVisibility}
+              >
+                <Ionicons
+                  name={isPasswordVisible ? "eye-off" : "eye"}
+                  size={24}
+                  color="rgba(255, 255, 255, 0.6)"
                 />
-                <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
-                  <Ionicons name={isPasswordVisible ? "eye-off" : "eye"} size={24} color="#BDBDBD" />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Forgot Password Link */}
-            <TouchableOpacity
-              style={styles.forgotPasswordContainer}
-              onPress={handleForgotPassword}
-            >
-              <Text style={styles.forgotPasswordText}>Forgot Password</Text>
-            </TouchableOpacity>
-
-            {/* Login Button */}
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={handleLogin}
-              disabled={isLoading}
-            >
-              <Text style={styles.loginButtonText}>
-                {isLoading ? 'Logging in...' : 'Login'}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Register Link */}
-            <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Not have an account? </Text>
-              <TouchableOpacity onPress={handleRegister}>
-                <Text style={styles.registerLink}>Register</Text>
               </TouchableOpacity>
             </View>
           </View>
+
+          {/* Forgot Password Link */}
+          <TouchableOpacity
+            style={styles.forgotPasswordContainer}
+            onPress={handleForgotPassword}
+          >
+            <Text style={styles.forgotPasswordText}>Забыли пароль?</Text>
+          </TouchableOpacity>
+
+          {/* Login Button */}
+          <TouchableOpacity
+            style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            <Text style={styles.loginButtonText}>
+              {isLoading ? 'Вход...' : 'Войти'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Register Link */}
+          <View style={styles.registerContainer}>
+            <Text style={styles.registerText}>Нет аккаунта? </Text>
+            <TouchableOpacity onPress={handleRegister}>
+              <Text style={styles.registerLink}>Регистрация</Text>
+            </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
+        </View>
+      </KeyboardAvoidingView>
+
+      {/* Декоративные элементы */}
+      <View style={styles.decorative1} />
+      <View style={styles.decorative2} />
+      <View style={styles.decorative3} />
     </SafeAreaView>
   );
 };
@@ -170,117 +185,151 @@ const LoginScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#1774F3',
   },
-  header:{
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 40,
-    backgroundColor: '#1779F3',
-    height: 80,
-  },
-  keyboardAvoidingView: {
-    flex: 1,
+    paddingTop: 16,
+    paddingBottom: 24,
   },
   backButton: {
     padding: 4,
   },
   headerTitle: {
-    fontSize: 38,
-    fontWeight: '700',
-    marginTop: -35,
-    marginBottom: 50,
-    marginLeft: 20,
+    fontSize: 24,
+    fontWeight: 'bold',
     color: '#FFFFFF',
     letterSpacing: 1,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginTop: 40,
+    marginBottom: 32,
+    letterSpacing: 0.5,
   },
   formSection: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 20,
   },
   inputGroup: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
   inputLabel: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333333',
+    color: '#FFFFFF',
     marginBottom: 8,
-    textTransform: 'none',
     letterSpacing: 0.5,
   },
   input: {
-    backgroundColor: '#F2F2F2',
-    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 16,
     fontSize: 16,
-    color: '#333333',
+    color: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#F2F2F2',
-    paddingRight: 50,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  inputContainer: {
+  passwordContainer: {
     position: 'relative',
+  },
+  passwordInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingRight: 60,
+    fontSize: 16,
+    color: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   eyeIcon: {
     position: 'absolute',
     right: 16,
     top: '50%',
     transform: [{ translateY: -12 }],
+    padding: 4,
   },
   forgotPasswordContainer: {
     alignItems: 'flex-end',
-    marginBottom: 30,
+    marginBottom: 32,
   },
   forgotPasswordText: {
-    marginTop: -15,
-    color: '#1779F3',
+    color: 'rgba(255, 255, 255, 0.8)',
     fontSize: 14,
-    opacity: 0.8,
   },
   loginButton: {
-    backgroundColor: '#1779F3',
-    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
-    marginBottom: 25,
-    elevation: 2,
+    marginBottom: 24,
+    elevation: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+  loginButtonDisabled: {
+    opacity: 0.7,
   },
   loginButtonText: {
     fontSize: 18,
-    fontWeight: '900',
-    color: '#FFFFFF',
+    fontWeight: '700',
+    color: '#1774F3',
   },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 'auto',
-    paddingBottom: 40,
   },
   registerText: {
-    color: '#1779F3',
+    color: 'rgba(255, 255, 255, 0.8)',
     fontSize: 16,
   },
   registerLink: {
-    color: '#1779F3',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
   },
-  loginimg:{
-    marginLeft: 30,
-    width: 430,
-    height: 365,
-    marginTop: -410
-  }
+  decorative1: {
+    position: 'absolute',
+    top: 120,
+    right: 40,
+    width: 60,
+    height: 60,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 30,
+  },
+  decorative2: {
+    position: 'absolute',
+    bottom: 200,
+    left: 30,
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
+  },
+  decorative3: {
+    position: 'absolute',
+    top: 300,
+    right: 60,
+    width: 30,
+    height: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 15,
+  },
 });
 
 export default LoginScreen;
