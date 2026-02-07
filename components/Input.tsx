@@ -1,21 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  TextInputProps,
-  ViewStyle,
-  TouchableOpacity,
-  Animated,
-  Easing,
-  Platform,
-  NativeSyntheticEvent,
-  TextInputFocusEventData,
-} from 'react-native';
-import Text from './Text';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '../contexts/ThemeContext';
 import { BorderRadius, Spacing, Typography } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+    Animated,
+    Easing,
+    NativeSyntheticEvent,
+    Platform,
+    StyleSheet,
+    TextInput,
+    TextInputFocusEventData,
+    TextInputProps,
+    TouchableOpacity,
+    View,
+    ViewStyle,
+} from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
+import Text from './Text';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -277,13 +277,13 @@ export default function Input({
       {/* Анимированный лейбл */}
       {(label || placeholder) && (
         <Animated.View
+          pointerEvents="none"
           style={[
             StyleSheet.absoluteFillObject,
             {
               top: labelTop,
               left: sizes[size].paddingHorizontal + (leftIcon ? sizes[size].iconSize + Spacing.sm : 0),
               zIndex: 1,
-              pointerEvents: 'none',
             },
           ]}
         >

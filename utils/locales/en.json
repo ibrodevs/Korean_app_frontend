@@ -31,7 +31,8 @@
     "unsavedChanges": "You have unsaved changes",
     "clear": "Clear",
     "clearAll": "Clear All",
-    "apply": "Apply"
+    "apply": "Apply",
+    "addToCart": "Add to Cart"
   },
   "appName": "Korean Store",
   "home": {

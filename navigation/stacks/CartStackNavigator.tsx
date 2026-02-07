@@ -1,10 +1,11 @@
-import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 
 // Screens
 import CartScreen from '../../screens/CartScreen';
+import CheckoutScreen from '../../screens/CheckoutScreen';
 
 // Types
 import { CartStackParamList } from '../../types/navigation';
@@ -44,7 +45,7 @@ const CartStackNavigator: React.FC = () => {
       
       <Stack.Screen
         name="Checkout"
-        component={CartScreen}
+        component={CheckoutScreen}
         options={{
           headerShown: false,
         }}

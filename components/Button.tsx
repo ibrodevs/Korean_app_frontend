@@ -1,24 +1,24 @@
-import React, { useRef } from 'react';
-import { 
-  TouchableOpacity, 
-  StyleSheet, 
-  ViewStyle, 
-  TextStyle, 
-  ActivityIndicator,
-  Animated,
-  Platform,
-  View,
-} from 'react-native';
-import Text from './Text';
-import { useTheme } from '../contexts/ThemeContext';
-import { BorderRadius, Spacing, Typography } from '@/constants/theme';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import React, { useRef } from 'react';
+import {
+    ActivityIndicator,
+    Animated,
+    Platform,
+    StyleSheet,
+    TextStyle,
+    TouchableOpacity,
+    View,
+    ViewStyle
+} from 'react-native';
+import { BorderRadius } from '../constants/theme';
+import { useTheme } from '../contexts/ThemeContext';
+import Text from './Text';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
   size?: 'small' | 'medium' | 'large' | 'xlarge';
   disabled?: boolean;
   loading?: boolean;
@@ -46,7 +46,7 @@ export default function Button({
   textStyle,
   children,
 }: ButtonProps) {
-  const { colors, isDark } = useTheme();
+  const { theme, isDark } = useTheme();
   
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
@@ -108,39 +108,46 @@ export default function Button({
   const getButtonColors = () => {
     const colorsMap = {
       primary: {
-        background: colors.primary,
-        text: colors.navBackground,
-        border: colors.primary,
-        gradient: ['#4F46E5', '#7C3AED'],
-        shadow: '#4F46E5',
+        background: theme.primary,
+        text: '#FFFFFF',
+        border: theme.primary,
+        gradient: [theme.primary, theme.primaryHover],
+        shadow: theme.primary,
       },
       secondary: {
-        background: colors.secondary,
-        text: colors.text,
-        border: colors.secondary,
-        gradient: ['#10B981', '#059669'],
-        shadow: '#10B981',
+        background: theme.card,
+        text: theme.text,
+        border: theme.border,
+        gradient: [theme.card, theme.cardHover || theme.card],
+        shadow: theme.shadow,
       },
       outline: {
         background: 'transparent',
-        text: colors.primary,
-        border: colors.primary,
-        gradient: [colors.primary, colors.primary],
-        shadow: colors.primary,
+        text: theme.primary,
+        border: theme.primary,
+        gradient: [theme.primary, theme.primary],
+        shadow: theme.primary,
       },
       ghost: {
         background: 'transparent',
-        text: colors.text,
+        text: theme.text,
         border: 'transparent',
         gradient: ['transparent', 'transparent'],
         shadow: 'transparent',
       },
       danger: {
-        background: '#EF4444',
+        background: theme.error,
         text: '#FFFFFF',
-        border: '#EF4444',
-        gradient: ['#EF4444', '#DC2626'],
-        shadow: '#EF4444',
+        border: theme.error,
+        gradient: [theme.error, theme.error + 'DD'],
+        shadow: theme.error,
+      },
+      success: {
+        background: theme.success,
+        text: '#FFFFFF',
+        border: theme.success,
+        gradient: [theme.success, theme.success + 'DD'],
+        shadow: theme.success,
       },
     };
 

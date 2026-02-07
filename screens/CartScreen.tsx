@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -13,12 +14,13 @@ import Text from '../components/Text';
 import { CartItem, useCart } from '../contexts/CartContext';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { CartStackParamList } from '../types/navigation';
 
 const CartScreen: React.FC = () => {
   const { theme, isDark } = useTheme();
   const { currency, getCurrencySymbol } = useCurrency();
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<CartStackParamList>>();
   const { cartItems, updateQuantity, removeFromCart, getCartTotal } = useCart();
 
   const handleIncrement = (id: string) => {
@@ -41,10 +43,7 @@ const CartScreen: React.FC = () => {
 
   const handleCheckout = () => {
     if (cartItems.length > 0) {
-      const parentNavigation = navigation.getParent();
-      if (parentNavigation) {
-        parentNavigation.navigate('Checkout');
-      }
+      navigation.navigate('Checkout');
     }
   };
 

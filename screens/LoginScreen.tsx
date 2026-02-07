@@ -1,4 +1,3 @@
-import { Text } from '@/components/styled';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,15 +5,16 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Text as RNText,
+    SafeAreaView,
+    StatusBar,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { AuthStackParamList } from '../types/navigation';
 
@@ -88,7 +88,7 @@ const LoginScreen: React.FC = () => {
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Вход</Text>
+        <RNText style={styles.headerTitle}>Вход</RNText>
         <View style={{ width: 24 }} /> {/* Spacer for alignment */}
       </View>
 
@@ -97,13 +97,13 @@ const LoginScreen: React.FC = () => {
         style={styles.keyboardAvoidingView}
       >
         {/* Welcome Text */}
-        <Text style={styles.welcomeText}>Добро пожаловать обратно!</Text>
+        <RNText style={styles.welcomeText}>Добро пожаловать обратно!</RNText>
 
         {/* Form Section */}
         <View style={styles.formSection}>
           {/* Email Field */}
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email</Text>
+            <RNText style={styles.inputLabel}>Email</RNText>
             <TextInput
               style={styles.input}
               placeholder="yourmail@mail.com"
@@ -119,7 +119,7 @@ const LoginScreen: React.FC = () => {
 
           {/* Password Field */}
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Пароль</Text>
+            <RNText style={styles.inputLabel}>Пароль</RNText>
             <View style={styles.passwordContainer}>
               <TextInput
                 style={styles.passwordInput}
@@ -150,7 +150,7 @@ const LoginScreen: React.FC = () => {
             style={styles.forgotPasswordContainer}
             onPress={handleForgotPassword}
           >
-            <Text style={styles.forgotPasswordText}>Забыли пароль?</Text>
+            <RNText style={styles.forgotPasswordText}>Забыли пароль?</RNText>
           </TouchableOpacity>
 
           {/* Login Button */}
@@ -159,16 +159,16 @@ const LoginScreen: React.FC = () => {
             onPress={handleLogin}
             disabled={isLoading}
           >
-            <Text style={styles.loginButtonText}>
+            <RNText style={styles.loginButtonText}>
               {isLoading ? 'Вход...' : 'Войти'}
-            </Text>
+            </RNText>
           </TouchableOpacity>
 
           {/* Register Link */}
           <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Нет аккаунта? </Text>
+            <RNText style={styles.registerText}>Нет аккаунта? </RNText>
             <TouchableOpacity onPress={handleRegister}>
-              <Text style={styles.registerLink}>Регистрация</Text>
+              <RNText style={styles.registerLink}>Регистрация</RNText>
             </TouchableOpacity>
           </View>
         </View>
