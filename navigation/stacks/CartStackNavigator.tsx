@@ -17,16 +17,7 @@ const CartStackNavigator: React.FC = () => {
   const { theme } = useTheme();
 
   const screenOptions = {
-    headerStyle: {
-      backgroundColor: theme.navBackground,
-    },
-    headerTintColor: theme.heading,
-    headerTitleStyle: {
-      fontWeight: '700' as const,
-      fontSize: 18,
-    },
-    headerBackTitle: t('common.back'),
-    headerShadowVisible: false,
+    headerShown: false,
     contentStyle: {
       backgroundColor: theme.background,
     },

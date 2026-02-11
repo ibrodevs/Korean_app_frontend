@@ -1,35 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Screens
-import SplashScreen from '../screens/SplashScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import SplashScreen from '../screens/SplashScreen';
 
 // Navigators
 import AuthNavigator from './AuthNavigator';
 import MainTabNavigator from './MainTabNavigator';
 
 // Modal/Detail Screens
-import ProductDetailScreen from '../screens/ProductDetailScreen';
+import AdvancedSearchScreen from '../screens/AdvancedSearchScreen';
 import CheckoutScreen from '../screens/CheckoutScreen';
 import OrderTrackingScreen from '../screens/OrderTrackingScreen';
-import AdvancedSearchScreen from '../screens/AdvancedSearchScreen';
+import ProductDetailScreen from '../screens/ProductDetailScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 // Error Screens
-import NoProductsScreen from '../screens/errors/NoProductsScreen';
 import NoInternetScreen from '../screens/errors/NoInternetScreen';
+import NoProductsScreen from '../screens/errors/NoProductsScreen';
 import PaymentErrorScreen from '../screens/errors/PaymentErrorScreen';
 
 // Other Screens
-import SupportScreen from '../screens/SupportScreen';
-import PaymentScreen from '../screens/PaymentScreen';
-import TestScreen from '../screens/TestScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import PaymentScreen from '../screens/PaymentScreen';
+import SupportScreen from '../screens/SupportScreen';
+import TestScreen from '../screens/TestScreen';
 
 // Types
 import { RootStackParamList } from '../types/navigation';
@@ -104,15 +104,7 @@ const RootNavigator: React.FC = () => {
       <Stack.Navigator
         initialRouteName="Splash"
         screenOptions={{
-          headerStyle: {
-            backgroundColor: theme.navBackground,
-          },
-          headerTintColor: theme.heading,
-          headerTitleStyle: {
-            fontWeight: '700' as const,
-            fontSize: 18,
-          },
-          headerShadowVisible: false,
+          headerShown: false,
           contentStyle: {
             backgroundColor: theme.background,
           },
@@ -172,60 +164,37 @@ const RootNavigator: React.FC = () => {
         <Stack.Screen
           name="ProductDetail"
           component={ProductDetailScreen}
-          options={({ route }) => ({
-            title: t('product.details'),
-            headerBackTitle: t('common.back'),
-            presentation: 'card',
-          })}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name="Checkout"
           component={CheckoutScreen}
-          options={{
-            title: t('checkout.title'),
-            headerBackTitle: t('common.back'),
-            presentation: 'card',
-          }}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name="OrderTracking"
           component={OrderTrackingScreen}
-          options={({ route }) => ({
-            title: t('tracking.title'),
-            headerBackTitle: t('common.back'),
-            presentation: 'card',
-          })}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name="AdvancedSearch"
           component={AdvancedSearchScreen}
-          options={{
-            title: t('search.advanced'),
-            headerBackTitle: t('common.back'),
-            presentation: 'modal',
-          }}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
-          options={{
-            title: t('settings.title'),
-            headerBackTitle: t('common.back'),
-            presentation: 'card',
-          }}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name="EditProfile"
           component={EditProfileScreen}
-          options={{
-            headerShown: false,
-            presentation: 'card',
-          }}
+          options={{ headerShown: false }}
         />
 
         {/* Error Screens */}
@@ -260,28 +229,19 @@ const RootNavigator: React.FC = () => {
           <Stack.Screen
             name="Support"
             component={SupportScreen}
-            options={{
-              title: t('support.title'),
-              presentation: 'card',
-            }}
+            options={{ headerShown: false }}
           />
 
           <Stack.Screen
             name="Payment"
             component={PaymentScreen}
-            options={{
-              title: t('payment.title'),
-              presentation: 'card',
-            }}
+            options={{ headerShown: false }}
           />
 
           <Stack.Screen
             name="TestScreen"
             component={TestScreen}
-            options={{
-              title: 'Button Test',
-              presentation: 'card',
-            }}
+            options={{ headerShown: false }}
           />
         </Stack.Group>
       </Stack.Navigator>

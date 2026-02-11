@@ -1,5 +1,5 @@
-import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 
@@ -17,16 +17,7 @@ const HomeStackNavigator: React.FC = () => {
   const { theme } = useTheme();
 
   const screenOptions = {
-    headerStyle: {
-      backgroundColor: theme.navBackground,
-    },
-    headerTintColor: theme.heading,
-    headerTitleStyle: {
-      fontWeight: '700' as const,
-      fontSize: 18,
-    },
-    headerBackTitle: t('common.back'),
-    headerShadowVisible: false,
+    headerShown: false,
     contentStyle: {
       backgroundColor: theme.background,
     },

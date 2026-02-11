@@ -1,14 +1,14 @@
-import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 
 // Screens
-import ProfileScreen from '../../screens/ProfileScreenNew';
 import EditProfileScreen from '../../screens/EditProfileScreen';
-import SettingsStackNavigator from './SettingsStackNavigator';
-import PaymentStackNavigator from './PaymentStackNavigator';
+import ProfileScreen from '../../screens/ProfileScreenNew';
 import SupportScreen from '../../screens/SupportScreen';
+import PaymentStackNavigator from './PaymentStackNavigator';
+import SettingsStackNavigator from './SettingsStackNavigator';
 
 // Types
 import { ProfileStackParamList } from '../../types/navigation';
@@ -20,16 +20,7 @@ const ProfileStackNavigator: React.FC = () => {
   const { theme } = useTheme();
 
   const screenOptions = {
-    headerStyle: {
-      backgroundColor: theme.navBackground,
-    },
-    headerTintColor: theme.heading,
-    headerTitleStyle: {
-      fontWeight: '700' as const,
-      fontSize: 18,
-    },
-    headerBackTitle: t('common.back'),
-    headerShadowVisible: false,
+    headerShown: false,
     contentStyle: {
       backgroundColor: theme.background,
     },

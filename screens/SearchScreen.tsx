@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  StatusBar,
-} from 'react-native';
-import Text from '../components/Text';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../contexts/ThemeContext';
-import { Typography, Spacing } from '../constants/theme';
-import { Product } from '../types/product';
-import ProductCard from '../components/ProductCard';
+import {
+    FlatList,
+    Platform,
+    StatusBar,
+    StyleSheet,
+    View,
+} from 'react-native';
 import Input from '../components/Input';
+import ProductCard from '../components/ProductCard';
+import Text from '../components/Text';
+import { Spacing, Typography } from '../constants/theme';
+import { useTheme } from '../contexts/ThemeContext';
+import { Product } from '../types/product';
 
 const mockProducts: Product[] = [
   {
@@ -57,7 +58,7 @@ export default function SearchScreen() {
       backgroundColor: colors.header,
       paddingHorizontal: Spacing.lg,
       paddingBottom: Spacing.lg,
-      paddingTop: (StatusBar.currentHeight || 0) + Spacing.lg,
+      paddingTop: Platform.OS === 'web' ? Spacing.lg : ((StatusBar.currentHeight || 0) + Spacing.lg),
     },
     searchContainer: {
       marginBottom: Spacing.sm,

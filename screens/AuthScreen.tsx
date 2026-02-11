@@ -9,9 +9,14 @@ import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  Dimensions,
+  Easing,
+  Platform
 } from 'react-native';
 import { AuthStackParamList } from '../types/navigation';
+
+const { width, height } = Dimensions.get('window');
 
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
@@ -19,25 +24,97 @@ const AuthScreen: React.FC = () => {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
 
-  const slideUpAnim = useRef(new Animated.Value(300)).current;
+  // Анимационные значения
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.97)).current;
+  const headerSlideAnim = useRef(new Animated.Value(-50)).current;
+  const button1Anim = useRef(new Animated.Value(50)).current;
+  const button2Anim = useRef(new Animated.Value(50)).current;
+  const button3Anim = useRef(new Animated.Value(50)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // Параллельная анимация появления
     Animated.parallel([
-      Animated.timing(slideUpAnim, {
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.cubic),
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.cubic),
+      }),
+      Animated.timing(headerSlideAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.back(1.2)),
+      }),
+    ]).start();
+
+    // Последовательная анимация кнопок
+    Animated.stagger(200, [
+      Animated.timing(button1Anim, {
         toValue: 0,
         duration: 600,
         useNativeDriver: true,
+        easing: Easing.out(Easing.cubic),
       }),
-      Animated.timing(fadeAnim, {
+      Animated.timing(button2Anim, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.cubic),
+      }),
+      Animated.timing(button3Anim, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.cubic),
+      }),
+    ]).start();
+
+    // Бесконечная пульсация декоративного элемента
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+          easing: Easing.inOut(Easing.sin),
+        }),
+        Animated.timing(rotateAnim, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+          easing: Easing.inOut(Easing.sin),
+        }),
+      ])
+    ).start();
+  }, []);
+
+  const pulseScale = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.1],
+  });
+
+  const handleLogin = () => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 0.98,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
         toValue: 1,
-        duration: 800,
+        duration: 100,
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
-
-  const handleLogin = () => {
     navigation.navigate('Login');
   };
 
@@ -51,76 +128,161 @@ const AuthScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      
 
-      {/* Header с градиентом */}
-      <StyledView style={styles.header}>
-        <Animated.View
-          style={{ opacity: fadeAnim }}
+      <Animated.View 
+        style={[
+          styles.content,
+          {
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }]
+          }
+        ]}
+      >
+        {/* Header с градиентным эффектом через opacity */}
+        <Animated.View 
+          style={[
+            styles.header,
+            {
+              transform: [{ translateY: headerSlideAnim }],
+              opacity: fadeAnim,
+            }
+          ]}
         >
-          {/* Логотип */}
-          <StyledView style={styles.logoContainer}>
-            <Text style={styles.logoText}>🛒</Text>
-          </StyledView>
+          <StyledView style={styles.headerBackground} />
+          
+          {/* Логотип с эффектом */}
+          <Animated.View style={styles.logoWrapper}>
+            <StyledView style={styles.logoContainer}>
+              <Text style={styles.logoText}>K</Text>
+              <StyledView style={styles.logoAccent} />
+            </StyledView>
+          </Animated.View>
 
           {/* Заголовок */}
           <Text style={styles.title}>
-            Korean Shop
+            KOREAN SHOP
           </Text>
 
           {/* Подзаголовок */}
           <Text style={styles.subtitle}>
-            Добро пожаловать!
+            Премиум качество • Быстрая доставка
           </Text>
+          
+          {/* Статистика */}
+          <StyledView style={styles.statsContainer}>
+            <StyledView style={styles.statItem}>
+              <Text style={styles.statNumber}>500+</Text>
+              <Text style={styles.statLabel}>товаров</Text>
+            </StyledView>
+            <StyledView style={styles.statDivider} />
+            <StyledView style={styles.statItem}>
+              <Text style={styles.statNumber}>50k+</Text>
+              <Text style={styles.statLabel}>клиентов</Text>
+            </StyledView>
+            <StyledView style={styles.statDivider} />
+            <StyledView style={styles.statItem}>
+              <Text style={styles.statNumber}>24/7</Text>
+              <Text style={styles.statLabel}>поддержка</Text>
+            </StyledView>
+          </StyledView>
         </Animated.View>
-      </StyledView>
 
-      {/* Основной контент */}
-      <StyledView style={styles.content}>
-        <Animated.View
-          style={{ transform: [{ translateY: slideUpAnim }] }}
-        >
+        {/* Основной контент с кнопками */}
+        <StyledView style={styles.bottomContainer}>
           {/* Кнопка входа */}
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleLogin}
-            activeOpacity={0.8}
+          <Animated.View 
+            style={[
+              styles.buttonWrapper,
+              {
+                transform: [{ translateY: button1Anim }],
+                opacity: fadeAnim,
+              }
+            ]}
           >
-            <Text style={styles.loginButtonText}>Войти</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={handleLogin}
+              activeOpacity={0.9}
+            >
+              <Text style={styles.loginButtonText}>Войти в аккаунт</Text>
+              <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+          </Animated.View>
 
           {/* Кнопка регистрации */}
-          <TouchableOpacity
-            style={styles.registerButton}
-            onPress={handleRegister}
-            activeOpacity={0.8}
+          <Animated.View 
+            style={[
+              styles.buttonWrapper,
+              {
+                transform: [{ translateY: button2Anim }],
+                opacity: fadeAnim,
+              }
+            ]}
           >
-            <Text style={styles.registerButtonText}>Регистрация</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.registerButton}
+              onPress={handleRegister}
+              activeOpacity={0.9}
+            >
+              <Text style={styles.registerButtonText}>Создать аккаунт</Text>
+              <Ionicons name="person-add-outline" size={20} color="#1774F3" />
+            </TouchableOpacity>
+          </Animated.View>
 
           {/* Разделитель */}
-          <StyledView style={styles.separator}>
+          <Animated.View 
+            style={[
+              styles.separator,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: button2Anim }],
+              }
+            ]}
+          >
             <StyledView style={styles.separatorLine} />
             <Text style={styles.separatorText}>или</Text>
             <StyledView style={styles.separatorLine} />
-          </StyledView>
+          </Animated.View>
 
           {/* Социальный вход */}
-          <TouchableOpacity
-            style={styles.googleButton}
-            onPress={handleGoogleLogin}
-            activeOpacity={0.8}
+          <Animated.View 
+            style={[
+              styles.buttonWrapper,
+              {
+                transform: [{ translateY: button3Anim }],
+                opacity: fadeAnim,
+              }
+            ]}
           >
-            <Ionicons name="logo-google" size={20} color="#333" style={styles.googleIcon} />
-            <Text style={styles.googleButtonText}>Войти через Google</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.googleButton}
+              onPress={handleGoogleLogin}
+              activeOpacity={0.9}
+            >
+              <Ionicons name="logo-google" size={20} color="#6b7280" />
+              <Text style={styles.googleButtonText}>Продолжить с Google</Text>
+            </TouchableOpacity>
+          </Animated.View>
 
-          {/* Декоративные элементы */}
-          <StyledView style={styles.decorative1} />
-          <StyledView style={styles.decorative2} />
-          <StyledView style={styles.decorative3} />
-        </Animated.View>
-      </StyledView>
+          {/* Дополнительная информация */}
+          <Animated.View 
+            style={[
+              styles.infoContainer,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: button3Anim }],
+              }
+            ]}
+          >
+            <Text style={styles.infoText}>
+              Нажимая "Войти", вы принимаете{' '}
+              <Text style={styles.infoLink}>условия использования</Text>
+            </Text>
+          </Animated.View>
+        </StyledView>
+      </Animated.View>
     </SafeAreaView>
   );
 };
@@ -128,86 +290,160 @@ const AuthScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
+  },
+  content: {
+    flex: 1,
   },
   header: {
     backgroundColor: '#1774F3',
     paddingHorizontal: 24,
-    paddingVertical: 48,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    paddingTop: 60,
+    paddingBottom: 40,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    position: 'relative',
+    overflow: 'hidden',
+    shadowColor: '#1774F3',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  headerBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#1774F3',
+  },
+  logoWrapper: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  logoContainer: {
+    width: 88,
+    height: 88,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 8,
   },
-  logoContainer: {
-    width: 80,
-    height: 80,
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 4,
-  },
   logoText: {
-    fontSize: 36,
+    fontSize: 40,
+    fontWeight: '800',
+    color: '#1774F3',
+    letterSpacing: 1,
+  },
+  logoAccent: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    width: 24,
+    height: 24,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderWidth: 3,
+    borderColor: '#1774F3',
   },
   title: {
-    fontSize: 30,
-    fontWeight: '700',
-    color: '#ffffff',
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#FFFFFF',
     marginBottom: 8,
-    letterSpacing: 0.5,
+    letterSpacing: 2,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'rgba(255, 255, 255, 0.9)',
     textAlign: 'center',
+    letterSpacing: 0.5,
+    marginBottom: 32,
   },
-  content: {
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 20,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    marginTop: 8,
+  },
+  statItem: {
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontWeight: '500',
+  },
+  statDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  bottomContainer: {
     flex: 1,
     paddingHorizontal: 24,
-    justifyContent: 'flex-end',
-    paddingBottom: 48,
+    justifyContent: 'center',
+    paddingBottom: 40,
+  },
+  buttonWrapper: {
+    marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   loginButton: {
     backgroundColor: '#1774F3',
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: 18,
+    paddingHorizontal: 24,
+    borderRadius: 16,
     alignItems: 'center',
-    shadowColor: '#000',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    shadowColor: '#1774F3',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 4,
-    marginBottom: 16,
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
   },
   loginButtonText: {
-    color: '#ffffff',
-    fontSize: 18,
+    color: '#FFFFFF',
+    fontSize: 17,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
   registerButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
     borderWidth: 2,
     borderColor: '#1774F3',
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: 18,
+    paddingHorizontal: 24,
+    borderRadius: 16,
     alignItems: 'center',
-    marginBottom: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   registerButtonText: {
     color: '#1774F3',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
   separator: {
     flexDirection: 'row',
@@ -227,46 +463,72 @@ const styles = StyleSheet.create({
   },
   googleButton: {
     backgroundColor: '#f3f4f6',
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: 18,
+    paddingHorizontal: 24,
+    borderRadius: 16,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-  },
-  googleIcon: {
-    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
   },
   googleButtonText: {
     color: '#374151',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '500',
+    marginLeft: 12,
   },
-  decorative1: {
-    position: 'absolute',
-    top: 80,
-    right: 32,
-    width: 48,
-    height: 48,
-    backgroundColor: 'rgba(23, 116, 243, 0.1)',
-    borderRadius: 24,
+  infoContainer: {
+    marginTop: 24,
+    alignItems: 'center',
   },
-  decorative2: {
-    position: 'absolute',
-    bottom: 160,
-    left: 24,
-    width: 32,
-    height: 32,
-    backgroundColor: 'rgba(23, 116, 243, 0.1)',
-    borderRadius: 16,
+  infoText: {
+    fontSize: 13,
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: 18,
   },
-  decorative3: {
+  infoLink: {
+    color: '#1774F3',
+    fontWeight: '600',
+  },
+  decorativeCircle: {
     position: 'absolute',
-    top: 160,
-    left: 48,
-    width: 24,
-    height: 24,
+    top: -100,
+    right: -50,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(23, 116, 243, 0.03)',
+    borderWidth: 1,
+    borderColor: 'rgba(23, 116, 243, 0.1)',
+  },
+  decorativeDot1: {
+    position: 'absolute',
+    bottom: 120,
+    left: 30,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: 'rgba(23, 116, 243, 0.1)',
-    borderRadius: 12,
+  },
+  decorativeDot2: {
+    position: 'absolute',
+    top: 250,
+    right: 40,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(23, 116, 243, 0.08)',
+  },
+  decorativeLine: {
+    position: 'absolute',
+    bottom: 200,
+    right: 60,
+    width: 60,
+    height: 2,
+    backgroundColor: 'rgba(23, 116, 243, 0.05)',
+    transform: [{ rotate: '45deg' }],
   },
 });
 

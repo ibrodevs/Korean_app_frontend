@@ -1,17 +1,16 @@
-import type { PropsWithChildren, ReactElement } from 'react';
-import { StyleSheet, ViewStyle, StatusBar, Platform } from 'react-native';
-import Animated, {
-  interpolate,
-  useAnimatedRef,
-  useAnimatedStyle,
-  useScrollOffset,
-  Extrapolation,
-  withSpring,
-  runOnJS,
-  SharedValue,
-} from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import type { PropsWithChildren, ReactElement } from 'react';
+import { Platform, StatusBar, StyleSheet, ViewStyle } from 'react-native';
+import Animated, {
+    Extrapolation,
+    interpolate,
+    SharedValue,
+    useAnimatedRef,
+    useAnimatedStyle,
+    useScrollOffset,
+    withSpring
+} from 'react-native-reanimated';
 
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -364,7 +363,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: Platform.OS === 'ios' ? 44 : StatusBar.currentHeight,
+    height: Platform.OS === 'ios' ? 44 : Platform.OS === 'web' ? 0 : (StatusBar.currentHeight || 0),
     zIndex: 30,
   },
 });

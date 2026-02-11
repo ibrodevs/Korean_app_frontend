@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
   FlatList,
-  Platform,
   RefreshControl,
   StatusBar,
   StyleSheet,
@@ -177,7 +176,8 @@ const bannerData = [
   },
 ];
 
-const CategoryItem = ({ 
+// Memoized Components
+const CategoryItem = memo(({ 
   item, 
   onPress,
   isActive
@@ -214,7 +214,7 @@ const CategoryItem = ({
       {item.productCount}
     </Text>
   </TouchableOpacity>
-);
+));
 
 const BannerItem = ({ item }: { item: typeof bannerData[0] }) => (
   <View style={styles.bannerWrapper}>
@@ -307,15 +307,115 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     </View>
   );
 
+  const renderListHeader = useCallback(() => (
+    <>
+      {/* Banner Carousel */}
+      <Animated.View style={[
+        styles.bannerContainer,
+        { transform: [{ scale: bannerParallax }] }
+      ]}>
+        <FlatList
+          ref={bannerScrollRef}
+          data={bannerData}
+          renderItem={({ item }) => (
+            <BannerItem 
+              item={item} 
+              onPress={() => navigation.navigate('SearchTab')} 
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={screenWidth - Spacing.lg * 2}
+          decelerationRate="fast"
+          onMomentumScrollEnd={(event) => {
+            const index = Math.round(
+              event.nativeEvent.contentOffset.x / (screenWidth - Spacing.lg * 2)
+            );
+            setCurrentBannerIndex(index);
+          }}
+        />
+        <View style={styles.bannerPagination}>
+          {bannerData.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.paginationDot,
+                index === currentBannerIndex && styles.paginationDotActive,
+              ]}
+            />
+          ))}
+        </View>
+      </Animated.View>
+
+      {/* Categories Section */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <View>
+            <Text style={styles.sectionTitle}>
+              Категории
+            </Text>
+            <Text style={styles.sectionSubtitle}>
+              Выберите категорию для поиска
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => setSelectedCategory(null)}>
+            <Text style={styles.resetButton}>
+              Сбросить
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        <FlatList
+          data={mockCategories}
+          renderItem={({ item }) => (
+            <CategoryItem 
+              item={item} 
+              onPress={handleCategoryPress}
+              isActive={selectedCategory === item.name}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesContainer}
+          initialNumToRender={8}
+        />
+      </View>
+
+      {/* Featured Products Header */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <View>
+            <Text style={styles.sectionTitle}>
+              Рекомендуемые товары
+            </Text>
+            <Text style={styles.sectionSubtitle}>
+              {filteredProducts.length} товаров в наличии
+            </Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.seeAllButton}
+            onPress={handleSeeAllProducts}
+          >
+            <Text style={styles.seeAllButtonText}>
+              Все товары
+            </Text>
+            <Ionicons name="arrow-forward" size={16} color={PRIMARY_COLOR} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </>
+  ), [currentBannerIndex, selectedCategory, filteredProducts.length, handleCategoryPress, handleSeeAllProducts, bannerParallax]);
+
   return (
     <View style={styles.container}>
-      {Platform.OS !== 'web' && (
-        <StatusBar 
-          barStyle="light-content" 
-          translucent 
-          backgroundColor="transparent" 
-        />
-      )}
+      <StatusBar 
+        barStyle="light-content" 
+        translucent 
+        backgroundColor="transparent" 
+      />
       
       {/* Простой заголовок */}
       <View style={styles.header}>
@@ -344,7 +444,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.iconButton}
-                onPress={() => navigation.navigate('CartTab', { screen: 'CartMain' })}
+                onPress={() => navigation.navigate('CartTab', { screen: 'Cart' })}
               >
                 <Ionicons name="cart-outline" size={22} color="#FFFFFF" />
                 {cartItemCount > 0 && (
@@ -498,11 +598,10 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: PRIMARY_COLOR,
-    paddingTop: 30,
+    paddingTop: 50,
     paddingBottom: 20,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    marginBottom: 16,
   },
   headerContent: {
     paddingHorizontal: 20,
@@ -672,6 +771,17 @@ const styles = StyleSheet.create({
     color: '#64748B',
   },
   resetButton: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: PRIMARY_COLOR,
+  },
+  seeAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: Spacing.xs,
+  },
+  seeAllButtonText: {
     fontSize: 14,
     fontWeight: '600',
     color: PRIMARY_COLOR,

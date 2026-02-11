@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { useTheme } from '../contexts/ThemeContext';
 import { Product } from '../types/product';
 import Text from './Text';
@@ -18,7 +18,8 @@ interface ProductCardProps {
 
 const { width: screenWidth } = Dimensions.get('window');
 const CARD_WIDTH = (screenWidth - 48) / 2;
-const CARD_HEIGHT = 280;
+const CARD_HEIGHT = 300;
+const PRIMARY_COLOR = '#1774F3';
 
 const ProductCard = memo(function ProductCard({
   product,
@@ -30,8 +31,8 @@ const ProductCard = memo(function ProductCard({
   const { theme } = useTheme();
   const { t } = useTranslation();
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [wishlistPressed, setWishlistPressed] = useState(false);
-  const [cartPressed, setCartPressed] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
 
   const getDiscountPercentage = useCallback(() => {
     if (product.originalPrice && product.price) {
@@ -47,67 +48,129 @@ const ProductCard = memo(function ProductCard({
 
   const discountPercentage = getDiscountPercentage();
   const hasDiscount = discountPercentage > 0;
+  
+  const isNew = useMemo(() => {
+    return product.isNew || false;
+  }, [product.isNew]);
+
+  const isBestSeller = useMemo(() => {
+    return product.isBestSeller || false;
+  }, [product.isBestSeller]);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(false);
   };
 
   const handlePress = () => {
     onPress(product);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: any) => {
+    e.stopPropagation();
     onAddToCart?.(product);
   };
 
-  const handleToggleWishlist = () => {
+  const handleToggleWishlist = (e: any) => {
+    e.stopPropagation();
     onToggleWishlist?.(product);
   };
+
+  const getStockStatus = useMemo(() => {
+    if (product.stock === undefined) return null;
+    if (product.stock > 10) return { label: 'В наличии', color: '#10B981' };
+    if (product.stock > 0) return { label: 'Мало', color: '#F59E0B' };
+    return { label: 'Нет в наличии', color: '#EF4444' };
+  }, [product.stock]);
 
   return (
     <Pressable
       style={({ pressed }) => [
         styles.container,
-        { opacity: pressed ? 0.95 : 1 },
+        pressed && styles.containerPressed,
       ]}
       onPress={handlePress}
-      android_ripple={{ color: 'rgba(0,0,0,0.05)', borderless: false }}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
     >
-      <View style={[styles.card, { backgroundColor: theme.card }]}>
+      <View style={[styles.card, isPressed && styles.cardPressed]}>
         {/* Image Section */}
         <View style={styles.imageContainer}>
-          {product.imageUrl ? (
+          {!imageError && product.images && product.images[0] ? (
             <>
               <Image
                 style={styles.image}
-                source={{ uri: product.imageUrl }}
+                source={{ uri: product.images[0] }}
                 contentFit="cover"
-                onLoadEnd={handleImageLoad}
+                transition={200}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+                cachePolicy="memory-disk"
               />
               {!imageLoaded && (
                 <View style={styles.imagePlaceholder}>
-                  <LinearGradient
-                    colors={['#667EEA', '#764BA2']}
-                    style={StyleSheet.absoluteFill}
-                  />
+                  <View style={styles.placeholderShimmer} />
                 </View>
               )}
             </>
           ) : (
-            <LinearGradient
-              colors={['#667EEA', '#764BA2']}
-              style={styles.gradientBackground}
-            >
-              <Text style={styles.gradientText}>
-                {product.name.charAt(0).toUpperCase()}
+            <View style={styles.placeholderContainer}>
+              <View style={styles.placeholderLogo}>
+                <Text style={styles.placeholderLogoText}>
+                  KS
+                </Text>
+              </View>
+              <Text style={styles.placeholderText}>
+                {product.name.split(' ').map(word => word[0]).join('').slice(0, 3)}
               </Text>
-            </LinearGradient>
+            </View>
           )}
 
-          {/* Discount Badge */}
-          {hasDiscount && (
-            <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>-{discountPercentage}%</Text>
+          {/* Status Badges */}
+          <View style={styles.badgeContainer}>
+            {hasDiscount && (
+              <View style={[styles.badge, styles.discountBadge]}>
+                <Ionicons name="pricetag" size={10} color="#FFFFFF" />
+                <Text style={styles.badgeText}>-{discountPercentage}%</Text>
+              </View>
+            )}
+            
+            {isNew && !hasDiscount && (
+              <View style={[styles.badge, styles.newBadge]}>
+                <Ionicons name="sparkles" size={10} color="#FFFFFF" />
+                <Text style={styles.badgeText}>NEW</Text>
+              </View>
+            )}
+            
+            {isBestSeller && !hasDiscount && !isNew && (
+              <View style={[styles.badge, styles.bestsellerBadge]}>
+                <Ionicons name="trophy" size={10} color="#FFFFFF" />
+                <Text style={styles.badgeText}>TOP</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Stock Status */}
+          {getStockStatus && (
+            <View style={[
+              styles.stockBadge,
+              { backgroundColor: `${getStockStatus.color}15` }
+            ]}>
+              <View style={[
+                styles.stockIndicator,
+                { backgroundColor: getStockStatus.color }
+              ]} />
+              <Text style={[
+                styles.stockText,
+                { color: getStockStatus.color }
+              ]}>
+                {getStockStatus.label}
+              </Text>
             </View>
           )}
 
@@ -116,17 +179,16 @@ const ProductCard = memo(function ProductCard({
             <Pressable
               style={({ pressed }) => [
                 styles.wishlistButton,
-                { transform: [{ scale: pressed ? 0.9 : 1 }] },
+                pressed && styles.wishlistButtonPressed,
+                isWishlisted && styles.wishlistButtonActive,
               ]}
               onPress={handleToggleWishlist}
-              onPressIn={() => setWishlistPressed(true)}
-              onPressOut={() => setWishlistPressed(false)}
               hitSlop={8}
             >
               <Ionicons
                 name={isWishlisted ? 'heart' : 'heart-outline'}
-                size={20}
-                color={isWishlisted ? '#FF3B30' : theme.textSecondary}
+                size={18}
+                color={isWishlisted ? '#FFFFFF' : '#64748B'}
               />
             </Pressable>
           )}
@@ -134,53 +196,90 @@ const ProductCard = memo(function ProductCard({
 
         {/* Content Section */}
         <View style={styles.content}>
-          {/* Category */}
-          <View style={[styles.categoryBadge, { backgroundColor: `${theme.primary}15` }]}>
-            <Text style={[styles.categoryText, { color: theme.primary }]}>
-              {product.category}
-            </Text>
+          {/* Category & Rating */}
+          <View style={styles.metaContainer}>
+            <View style={[styles.categoryBadge]}>
+              <Text style={styles.categoryText} numberOfLines={1}>
+                {product.category}
+              </Text>
+            </View>
+            
+            {product.rating && (
+              <View style={styles.ratingContainer}>
+                <Ionicons name="star" size={12} color="#FFB800" />
+                <Text style={styles.ratingText}>
+                  {product.rating}
+                </Text>
+                {product.reviewCount && (
+                  <Text style={styles.reviewCountText}>
+                    ({product.reviewCount})
+                  </Text>
+                )}
+              </View>
+            )}
           </View>
 
           {/* Product Name */}
           <Text
-            style={[styles.productName, { color: theme.text }]}
+            style={styles.productName}
             numberOfLines={2}
             ellipsizeMode="tail"
           >
             {product.name}
           </Text>
 
-          {/* Price */}
-          <View style={styles.priceSection}>
-            <Text style={[styles.price, { color: theme.primary }]}>
-              {formatPrice(product.price)}
+          {/* Description */}
+          {product.description && (
+            <Text
+              style={styles.productDescription}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {product.description}
             </Text>
-            {product.originalPrice && product.originalPrice > product.price && (
-              <Text style={[styles.originalPrice, { color: theme.textSecondary }]}>
-                {formatPrice(product.originalPrice)}
+          )}
+
+          {/* Price */}
+          <View style={styles.priceContainer}>
+            <View style={styles.priceSection}>
+              <Text style={styles.price}>
+                {formatPrice(product.price)}
               </Text>
-            )}
+              {product.originalPrice && product.originalPrice > product.price && (
+                <Text style={styles.originalPrice}>
+                  {formatPrice(product.originalPrice)}
+                </Text>
+              )}
+            </View>
           </View>
 
           {/* Add to Cart Button */}
-          <Pressable
-            style={({ pressed }) => [
-              styles.addToCartButton,
-              { backgroundColor: theme.primary, opacity: pressed ? 0.9 : 1 },
-            ]}
-            onPress={handleAddToCart}
-            onPressIn={() => setCartPressed(true)}
-            onPressOut={() => setCartPressed(false)}
-            disabled={!onAddToCart}
-          >
-            <Ionicons
-              name="cart-outline"
-              size={16}
-              color="#FFFFFF"
-              style={styles.cartIcon}
-            />
-            <Text style={styles.addToCartText}>{t('common.addToCart')}</Text>
-          </Pressable>
+          {onAddToCart && product.inStock !== false && product.stock !== 0 && (
+            <Pressable
+              style={({ pressed }) => [
+                styles.addToCartButton,
+                pressed && styles.addToCartButtonPressed,
+              ]}
+              onPress={handleAddToCart}
+              disabled={!onAddToCart}
+            >
+              <BlurView 
+                intensity={20} 
+                tint="light" 
+                style={styles.addToCartBlur}
+              >
+                <Ionicons
+                  name="cart-outline"
+                  size={16}
+                  color={PRIMARY_COLOR}
+                  style={styles.cartIcon}
+                />
+                <Text style={styles.addToCartText}>
+                  {t('common.addToCart')}
+                </Text>
+              </BlurView>
+            </Pressable>
+          )}
         </View>
       </View>
     </Pressable>
@@ -191,23 +290,34 @@ const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
-    marginHorizontal: 6,
     marginBottom: 12,
+  },
+  containerPressed: {
+    transform: [{ scale: 0.98 }],
   },
   card: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.04,
     shadowRadius: 8,
+    elevation: 2,
+  },
+  cardPressed: {
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
     elevation: 4,
   },
   imageContainer: {
     height: CARD_WIDTH * 0.75,
     position: 'relative',
     overflow: 'hidden',
+    backgroundColor: '#F8FAFC',
   },
   image: {
     width: '100%',
@@ -215,33 +325,91 @@ const styles = StyleSheet.create({
   },
   imagePlaceholder: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#F1F5F9',
   },
-  gradientBackground: {
+  placeholderShimmer: {
+    flex: 1,
+    backgroundColor: '#E2E8F0',
+  },
+  placeholderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#F8FAFC',
+    padding: 16,
   },
-  gradientText: {
-    color: '#FFFFFF',
-    fontSize: 32,
+  placeholderLogo: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: PRIMARY_COLOR,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  placeholderLogoText: {
+    fontSize: 20,
     fontWeight: '800',
-    opacity: 0.8,
+    color: '#FFFFFF',
   },
-  discountBadge: {
+  placeholderText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#94A3B8',
+    letterSpacing: 2,
+  },
+  badgeContainer: {
     position: 'absolute',
     top: 8,
     left: 8,
-    backgroundColor: '#FF3B30',
-    borderRadius: 10,
+    gap: 4,
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
+    borderRadius: 6,
+    gap: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  discountText: {
+  discountBadge: {
+    backgroundColor: '#EF4444',
+  },
+  newBadge: {
+    backgroundColor: '#10B981',
+  },
+  bestsellerBadge: {
+    backgroundColor: '#F59E0B',
+  },
+  badgeText: {
     color: '#FFFFFF',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
+  },
+  stockBadge: {
+    position: 'absolute',
+    bottom: 8,
+    left: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    gap: 4,
+  },
+  stockIndicator: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  stockText: {
+    fontSize: 10,
+    fontWeight: '600',
   },
   wishlistButton: {
     position: 'absolute',
@@ -250,66 +418,116 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  wishlistButtonPressed: {
+    transform: [{ scale: 0.9 }],
+  },
+  wishlistButtonActive: {
+    backgroundColor: '#EF4444',
+    borderColor: '#EF4444',
   },
   content: {
     flex: 1,
     padding: 12,
   },
+  metaContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
   categoryBadge: {
-    alignSelf: 'flex-start',
-    borderRadius: 6,
+    backgroundColor: 'rgba(23, 116, 243, 0.08)',
+    borderRadius: 4,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    marginBottom: 6,
+    flex: 1,
+    marginRight: 8,
   },
   categoryText: {
     fontSize: 10,
     fontWeight: '600',
+    color: PRIMARY_COLOR,
     textTransform: 'uppercase',
   },
-  productName: {
-    fontSize: 13,
-    fontWeight: '600',
-    lineHeight: 16,
-    marginBottom: 8,
-    flex: 1,
-  },
-  priceSection: {
+  ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    gap: 2,
+  },
+  ratingText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#1E293B',
+  },
+  reviewCountText: {
+    fontSize: 10,
+    color: '#94A3B8',
+    marginLeft: 2,
+  },
+  productName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1E293B',
+    lineHeight: 18,
+    marginBottom: 4,
+  },
+  productDescription: {
+    fontSize: 11,
+    color: '#64748B',
+    lineHeight: 14,
+    marginBottom: 8,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  priceSection: {
+    flexDirection: 'column',
   },
   price: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '800',
+    color: PRIMARY_COLOR,
   },
   originalPrice: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 11,
+    color: '#94A3B8',
     textDecorationLine: 'line-through',
-    marginLeft: 6,
+    marginTop: 2,
   },
   addToCartButton: {
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  addToCartButtonPressed: {
+    transform: [{ scale: 0.97 }],
+  },
+  addToCartBlur: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 12,
+    backgroundColor: 'rgba(23, 116, 243, 0.08)',
   },
   cartIcon: {
     marginRight: 6,
   },
   addToCartText: {
-    color: '#FFFFFF',
+    color: PRIMARY_COLOR,
     fontSize: 12,
     fontWeight: '600',
   },
