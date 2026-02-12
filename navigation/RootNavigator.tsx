@@ -119,13 +119,28 @@ const RootNavigator: React.FC = () => {
           {(props) => (
             <SplashScreen
               {...props}
-              onFinish={() => {
+              onFinish={async () => {
                 console.log('Splash finishing, isAuthenticated:', isAuthenticated);
-                // Убедимся что инициализация завершена
+                console.log('isLoading:', isLoading);
+                
+                // Если инициализация еще не завершена, подождем
                 if (isLoading) {
-                  console.log('Still loading, waiting...');
-                  return;
+                  console.log('App still initializing, waiting for completion...');
+                  // Ждем завершения инициализации с таймаутом
+                  let attempts = 0;
+                  const maxAttempts = 20; // 2 секунды максимум
+                  
+                  while (isLoading && attempts < maxAttempts) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                  }
+                  
+                  if (attempts >= maxAttempts) {
+                    console.warn('Timeout waiting for app initialization, proceeding anyway');
+                  }
                 }
+                
+                console.log('Final navigation decision - isAuthenticated:', isAuthenticated);
                 
                 if (isAuthenticated) {
                   console.log('Navigating to Main');

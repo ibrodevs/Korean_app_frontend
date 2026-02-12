@@ -244,14 +244,7 @@ const CartScreen: React.FC = () => {
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.headerContent}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>Корзина</Text>
-          <View style={{ width: 40 }} />
         </View>
         
         {cartItems.length > 0 && (
@@ -303,65 +296,6 @@ const CartScreen: React.FC = () => {
             contentContainerStyle={styles.cartListContent}
           >
             {cartItems.map(renderCartItem)}
-
-            {/* Блок рекомендаций */}
-            <View style={styles.recommendationSection}>
-              <View style={styles.recommendationHeader}>
-                <Text style={styles.recommendationTitle}>С этим также покупают</Text>
-                <TouchableOpacity onPress={() => {
-                  const parentNav = navigation.getParent();
-                  if (parentNav) {
-                    parentNav.navigate('HomeTab', { screen: 'HomeMain' });
-                  }
-                }}>
-                  <Text style={styles.recommendationLink}>Все</Text>
-                </TouchableOpacity>
-              </View>
-              <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.recommendationList}
-              >
-                {[1, 2, 3].map((_, index) => {
-                  const mockProduct = {
-                    id: `rec_${index}`,
-                    name: `Товар ${index + 1}`,
-                    price: 2490 + (index * 500),
-                    image: `https://images.unsplash.com/photo-${1560472354 + index}?w=400`
-                  };
-                  
-                  return (
-                    <TouchableOpacity 
-                      key={index} 
-                      style={styles.recommendationItem}
-                      onPress={() => {
-                        // Переход к детальной странице товара
-                        const parentNav = navigation.getParent();
-                        if (parentNav) {
-                          parentNav.navigate('ProductDetail', {
-                            product: {
-                              id: mockProduct.id,
-                              name: mockProduct.name,
-                              price: mockProduct.price,
-                              images: [mockProduct.image],
-                              description: `Описание товара ${index + 1}`,
-                              category: 'recommended',
-                              rating: 4.5,
-                              reviewCount: 10 + index,
-                              stock: 20,
-                              currency: '₽'
-                            }
-                          });
-                        }
-                      }}
-                    >
-                      <View style={styles.recommendationImage} />
-                      <Text style={styles.recommendationItemPrice}>{mockProduct.price.toLocaleString('ru-RU')} ₽</Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
-            </View>
           </ScrollView>
 
           {/* Нижняя панель с итогом */}
@@ -452,16 +386,8 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: 20,
   },
   headerTitle: {
     fontSize: 20,
@@ -608,45 +534,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     minWidth: 20,
     textAlign: 'center',
-  },
-  recommendationSection: {
-    marginTop: 24,
-  },
-  recommendationHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  recommendationTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1E293B',
-  },
-  recommendationLink: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: PRIMARY_COLOR,
-  },
-  recommendationList: {
-    paddingRight: 16,
-    gap: 12,
-  },
-  recommendationItem: {
-    width: 100,
-    marginRight: 12,
-  },
-  recommendationImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 12,
-    backgroundColor: '#F1F5F9',
-    marginBottom: 8,
-  },
-  recommendationItemPrice: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: PRIMARY_COLOR,
   },
   emptyCart: {
     flex: 1,

@@ -32,7 +32,10 @@
     "clear": "지우기",
     "clearAll": "모두 지우기",
     "apply": "적용",
-    "addToCart": "장바구니에 추가"
+    "addToCart": "장바구니에 추가",
+    "quantity": "수량",
+    "item": "개",
+    "items": "개"
   },
   "appName": "코리안 스토어",
   "home": {
@@ -334,6 +337,8 @@
     "cancelOrder": "주문 취소",
     "writeReview": "리뷰 작성",
     "cancelConfirm": "정말로 이 주문을 취소하시겠습니까?",
+    "cancelConfirmation": "정말로 이 주문을 취소하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "orderCancelled": "주문이 성공적으로 취소되었습니다",
     "title": "내 주문",
     "allOrders": "개 주문",
     "all": "개 주문",
@@ -367,7 +372,15 @@
     "deliveryProgress": "완료",
     "viewDetails": "세부 정보 보기",
     "contactSupport": "고객 지원 문의",
-    "packageInfo": "패키지 내용물"
+    "packageInfo": "패키지 내용물",
+    "orderItems": "주문 상품",
+    "tracked": "추적 중",
+    "pickupLocation": "픽업 위치",
+    "navigate": "길찾기",
+    "openMaps": "지도 열기",
+    "workingHours": "영업 시간",
+    "orderActions": "주문 관리",
+    "copyTracking": "추적번호 복사"
   },
   "timeline": {
     "estimatedTime": "예상 시간",
@@ -507,6 +520,15 @@
     "title": "즐겨찾기",
     "empty": "즐겨찾기가 없습니다",
     "emptyDescription": "하트 아이콘을 눌러 상품을 즐겨찾기에 추가하세요"
+  },
+  "support": {
+    "contactSupport": "고객지원 문의",
+    "title": "고객지원",
+    "helpCenter": "도움말 센터",
+    "faq": "자주묻는질문",
+    "chat": "실시간 채팅",
+    "email": "이메일 지원",
+    "phone": "전화 지원"
   },
   "navigation": {
     "home": "홈",

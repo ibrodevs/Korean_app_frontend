@@ -1,6 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import en from './locales/en.json';
 import ko from './locales/ko.json';
@@ -12,9 +12,9 @@ const LANGUAGE_DETECTOR = {
   detect: async (callback: (lng: string) => void) => {
     try {
       const language = await AsyncStorage.getItem('language');
-      callback(language || 'en');
+      callback(language || 'ru');
     } catch (error) {
-      callback('en');
+      callback('ru');
     }
   },
   init: () => {},
@@ -37,7 +37,7 @@ i18n
       ko: { translation: ko },
       ru: { translation: ru },
     },
-    fallbackLng: 'en',
+    fallbackLng: 'ru',
     debug: __DEV__,
     interpolation: {
       escapeValue: false,

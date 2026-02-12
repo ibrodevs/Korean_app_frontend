@@ -1,13 +1,12 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
-    Alert,
-    Image,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { OrderHistory } from '../../types/order';
@@ -29,8 +28,22 @@ const OrderCard: React.FC<OrderCardProps> = ({
   onReorder,
   onCancelOrder,
 }) => {
-  const { t } = useTranslation();
   const { theme } = useTheme();
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'pending': return 'В ожидании';
+      case 'confirmed': return 'Подтвержден';
+      case 'processing': return 'В обработке';
+      case 'shipped': return 'Отправлен';
+      case 'outForDelivery': return 'В пути';
+      case 'delivered': return 'Доставлен';
+      case 'cancelled': return 'Отменен';
+      case 'returned': return 'Возвращен';
+      case 'refunded': return 'Возвращен';
+      default: return 'Неизвестно';
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -94,16 +107,16 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
   const handleCancelOrder = () => {
     Alert.alert(
-      t('orders.cancelOrder'),
-      t('orders.cancelConfirm'),
+      'Отменить заказ',
+      'Вы уверены, что хотите отменить этот заказ?',
       [
         { 
-          text: t('common.no'), 
+          text: 'Нет', 
           style: 'cancel',
           onPress: () => console.log('Cancel pressed')
         },
         {
-          text: t('common.yes'),
+          text: 'Да',
           style: 'destructive',
           onPress: () => onCancelOrder(order.id),
         },
@@ -192,7 +205,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         <View style={styles.orderHeader}>
           <View style={styles.orderNumberSection}>
             <Text style={[styles.orderLabel, { color: theme.textSecondary }]}>
-              {t('orders.order')}
+              Заказ
             </Text>
             <Text style={[styles.orderNumber, { color: theme.heading }]}>
               #{order.orderNumber}
@@ -225,7 +238,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
             style={[styles.statusText, { color: '#FFFFFF' }]}
             numberOfLines={1}
           >
-            {t(`orderStatus.${order.status}`)}
+            {getStatusText(order.status)}
           </Text>
         </LinearGradient>
       </View>
@@ -237,7 +250,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         <View style={styles.amountSection}>
           <View style={styles.amountContainer}>
             <Text style={[styles.amountLabel, { color: theme.textSecondary }]}>
-              {t('orders.total')}
+              Итого
             </Text>
             <Text style={[styles.amount, { color: theme.heading }]}>
               {order.currency} {order.totalAmount.toFixed(2)}
@@ -251,7 +264,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               activeOpacity={0.8}
             >
               <Text style={[styles.detailsButtonText, { color: theme.primary }]}>
-                {t('orders.viewDetails')}
+                Посмотреть детали
               </Text>
               <Ionicons name="chevron-forward" size={16} color={theme.primary} />
             </TouchableOpacity>
@@ -271,7 +284,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
             >
               <Ionicons name="close-circle" size={20} color={theme.error} />
               <Text style={[styles.actionButtonText, { color: theme.error }]}>
-                {t('orders.cancel')}
+                Отменить
               </Text>
             </TouchableOpacity>
           )}

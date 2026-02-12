@@ -1,18 +1,17 @@
-import React, { useEffect, useRef } from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from '../contexts/ThemeContext';
-import { useCart } from '../contexts/CartContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Platform, Animated, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Animated, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Stack Navigators
+import CartStackNavigator from './stacks/CartStackNavigator';
 import HomeStackNavigator from './stacks/HomeStackNavigator';
 import OrdersStackNavigator from './stacks/OrdersStackNavigator';
 import ProfileStackNavigator from './stacks/ProfileStackNavigator';
-import CartStackNavigator from './stacks/CartStackNavigator';
 
 // Types
 import { MainTabParamList } from '../types/navigation';
@@ -24,15 +23,13 @@ interface TabBarIconProps {
   focused: boolean;
   color: string;
   size: number;
-  badgeCount?: number;
 }
 
 const TabBarIcon: React.FC<TabBarIconProps> = ({ 
   routeName, 
   focused, 
   color, 
-  size, 
-  badgeCount 
+  size
 }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -92,21 +89,7 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({
           color={color}
         />
       </Animated.View>
-      
-      {/* Бейдж для корзины */}
-      {badgeCount && badgeCount > 0 && (
-        <View style={[
-          styles.badge,
-          { 
-            backgroundColor: '#FF3B30',
-            borderColor: '#FFFFFF',
-          }
-        ]}>
-          <Animated.Text style={styles.badgeText}>
-            {badgeCount > 99 ? '99+' : badgeCount}
-          </Animated.Text>
-        </View>
-      )}
+
       
       {/* Активный индикатор */}
       {focused && (
@@ -168,19 +151,16 @@ const TabBarButton: React.FC<TabBarButtonProps> = ({
 const MainTabNavigator: React.FC = () => {
   const { t } = useTranslation();
   const { theme, isDark } = useTheme();
-  const { getCartItemsCount } = useCart();
 
   const screenOptions = ({ route }: any) => ({
     headerShown: false,
     tabBarIcon: ({ focused, color, size }: any) => {
-      const badgeCount = route.name === 'CartTab' ? getCartItemsCount() : undefined;
       return (
         <TabBarIcon
           routeName={route.name}
           focused={focused}
           color={color}
           size={size}
-          badgeCount={badgeCount}
         />
       );
     },
@@ -333,23 +313,12 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     marginRight: -4,
   },
-  badge: {
+  activeIndicator: {
     position: 'absolute',
-    top: -2,
-    right: -8,
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
-  },
-  badgeText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: 'bold',
-    paddingHorizontal: 8,
+    bottom: -6,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
   },
   tabBarButton: {
     flex: 1,

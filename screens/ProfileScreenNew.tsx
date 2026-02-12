@@ -3,7 +3,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Animated,
   Dimensions,
@@ -37,7 +36,6 @@ type ProfileData = {
 };
 
 export default function ProfileScreen({ navigation }: ProfileScreenProps) {
-  const { t } = useTranslation();
   const { theme, isDark, setTheme } = useTheme();
   const { currency, setCurrency } = useCurrency();
   
@@ -123,8 +121,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
 
   const currencies: CurrencyType[] = ['Som', 'USD', 'EUR', 'RUB', 'KRW'];
   const themes = [
-    { label: t('profile.light'), value: false, icon: 'sunny' },
-    { label: t('profile.dark'), value: true, icon: 'moon' },
+    { label: 'Светлая', value: false, icon: 'sunny' },
+    { label: 'Темная', value: true, icon: 'moon' },
   ];
 
   const selectedThemeLabel = themes.find((item) => item.value === isDark)?.label;
@@ -219,7 +217,7 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
               style={styles.editProfileButton}
             >
               <Ionicons name="create-outline" size={20} color="#4F46E5" />
-              <Text style={styles.editProfileText}>Edit Profile</Text>
+              <Text style={styles.editProfileText}>Редактировать профиль</Text>
             </LinearGradient>
           </TouchableWithoutFeedback>
         </Animated.View>
@@ -229,17 +227,17 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           <View style={[styles.statsContainer, { borderTopColor: theme.border }]}>
             <Pressable style={styles.statItem} onPress={handlePaymentMethods}>
               <Text style={[styles.statValue, { color: theme.text }]}>12</Text>
-              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Orders</Text>
+              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Заказы</Text>
             </Pressable>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
               <Text style={[styles.statValue, { color: theme.text }]}>$2,849</Text>
-              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Spent</Text>
+              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Потрачено</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
               <Text style={[styles.statValue, { color: theme.text }]}>258</Text>
-              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Points</Text>
+              <Text style={[styles.statLabel, { color: theme.textSecondary }]}>Баллы</Text>
             </View>
           </View>
         </View>
@@ -250,8 +248,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           {/* Валюта */}
           <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
             <SettingItem
-              title="Currency"
-              description="Select your preferred currency"
+              title="Валюта"
+              description="Выберите предпочитаемую валюту"
               type="select"
               value={currency}
               options={currencies.map(curr => ({ label: curr, value: curr }))}
@@ -265,8 +263,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           {/* Тема */}
           <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
             <SettingItem
-              title="Theme"
-              description="Choose your app appearance"
+              title="Тема"
+              description="Выберите внешний вид приложения"
               type="select"
               value={isDark}
               options={themes}
@@ -280,8 +278,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           {/* Настройки */}
           <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
             <SettingItem
-              title="Settings"
-              description="Manage your app settings"
+              title="Настройки"
+              description="Управляйте настройками приложения"
               type="action"
               onPress={handleSettings}
               icon="settings"
@@ -292,8 +290,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           {/* Методы оплаты */}
           <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
             <SettingItem
-              title="Payment Methods"
-              description="Manage your payment options"
+              title="Способы оплаты"
+              description="Управляйте способами оплаты"
               type="action"
               onPress={handlePaymentMethods}
               icon="card"

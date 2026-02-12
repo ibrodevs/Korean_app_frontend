@@ -145,7 +145,7 @@ export const MOCK_ORDERS: OrderHistory[] = [
           name: 'Korean Face Sunscreen SPF 50+',
           description: 'Premium sunscreen',
           price: 24.99,
-          currency: 'USD',
+          currency: 'сом',
           category: 'Skincare',
           images: ['https://picsum.photos/150/150?random=order1'],
           rating: 4.8,
@@ -172,7 +172,7 @@ export const MOCK_ORDERS: OrderHistory[] = [
           name: 'Snail Mucin Essence',
           description: 'Hydrating essence',
           price: 18.50,
-          currency: 'USD',
+          currency: 'сом',
           category: 'Skincare',
           images: ['https://picsum.photos/150/150?random=order2'],
           rating: 4.7,
@@ -193,7 +193,7 @@ export const MOCK_ORDERS: OrderHistory[] = [
       },
     ],
     totalAmount: 68.48,
-    currency: 'USD',
+    currency: 'сом',
     shippingAddress: {
       fullName: 'John Doe',
       street: '123 Main St',
@@ -238,7 +238,7 @@ export const MOCK_ORDERS: OrderHistory[] = [
       },
     ],
     totalAmount: 34.99,
-    currency: 'USD',
+    currency: 'сом',
     shippingAddress: {
       fullName: 'John Doe',
       street: '123 Main St',
@@ -288,7 +288,7 @@ export const MOCK_ORDERS: OrderHistory[] = [
       },
     ],
     totalAmount: 114.96,
-    currency: 'USD',
+    currency: 'сом',
     shippingAddress: {
       fullName: 'John Doe',
       street: '123 Main St',
@@ -321,7 +321,7 @@ export const MOCK_ORDERS: OrderHistory[] = [
       },
     ],
     totalAmount: 39.99,
-    currency: 'USD',
+    currency: 'сом',
     shippingAddress: {
       fullName: 'John Doe',
       street: '123 Main St',

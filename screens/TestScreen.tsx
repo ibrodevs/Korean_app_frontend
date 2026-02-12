@@ -58,6 +58,12 @@ const TestScreen: React.FC = () => {
           case 'Favorites':
             parentNavigation.navigate('Main', { screen: 'FavoritesTab' });
             break;
+          case 'OrderTracking':
+            // Тестируем наш новый экран отслеживания заказов
+            (navigation as any).navigate('OrderTracking', { 
+              orderId: 'test-order-123' 
+            });
+            break;
           default:
             Alert.alert('Test', `Navigation to ${screen} tested`);
         }
@@ -144,6 +150,11 @@ const TestScreen: React.FC = () => {
           title="Go to Orders"
           onPress={() => testNavigation('Orders')}
           variant="outline"
+          style={styles.button}
+        />
+        <Button
+          title="🚚 Test Order Tracking"
+          onPress={() => testNavigation('OrderTracking')}
           style={styles.button}
         />
       </View>

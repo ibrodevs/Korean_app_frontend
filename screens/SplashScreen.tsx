@@ -5,141 +5,146 @@ import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Animated,
+  Easing,
   StatusBar
 } from 'react-native';
+
 interface SplashScreenProps {
   onFinish?: () => Promise<void> | void;
-  navigation?: any; 
+  navigation?: any;
 }
+
+const PRIMARY_COLOR = '#1774F3';
 
 const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish, navigation }) => {
   const { t } = useTranslation();
   const { theme, isDark } = useTheme();
   const hasNavigated = useRef(false);
-  const slideAnim = useRef(new Animated.Value(0)).current;
-  const opacityAnim = useRef(new Animated.Value(1)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
+  
+  // Анимационные значения
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.3)).current;
+  const bounceAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const initializeApp = async () => {
-      if (hasNavigated.current) {
-        return;
-      }
+      if (hasNavigated.current) return;
 
       try {
-        // Анимация появления
+        // Параллельная анимация
         Animated.parallel([
+          // Появление с масштабированием
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 600,
+            useNativeDriver: true,
+            easing: Easing.out(Easing.back(1.5)),
+          }),
           Animated.timing(scaleAnim, {
             toValue: 1,
-            duration: 800,
+            duration: 600,
             useNativeDriver: true,
+            easing: Easing.out(Easing.back(1.5)),
           }),
-          Animated.timing(rotateAnim, {
-            toValue: 1,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
+          // Мягкое покачивание
+          Animated.loop(
+            Animated.sequence([
+              Animated.timing(bounceAnim, {
+                toValue: 1,
+                duration: 800,
+                useNativeDriver: true,
+                easing: Easing.inOut(Easing.sin),
+              }),
+              Animated.timing(bounceAnim, {
+                toValue: 0,
+                duration: 800,
+                useNativeDriver: true,
+                easing: Easing.inOut(Easing.sin),
+              }),
+            ]),
+            { iterations: 2 }
+          ),
         ]).start();
 
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        // Задержка перед завершением - увеличена для гарантии завершения инициализации
+        await new Promise(resolve => setTimeout(resolve, 2500));
 
-        // Анимация исчезновения
-        Animated.parallel([
-          Animated.timing(slideAnim, {
-            toValue: -100,
-            duration: 800,
-            useNativeDriver: true,
-          }),
-          Animated.timing(opacityAnim, {
-            toValue: 0,
-            duration: 800,
-            useNativeDriver: true,
-          }),
-        ]).start(() => {
-          hasNavigated.current = true;
-
-          if (typeof onFinish === 'function') {
-            const result = onFinish();
-            if (result instanceof Promise) {
-              result.catch(error => console.error('onFinish error:', error));
-            }
+        // Завершаем сплеш
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start(() => {
+          if (!hasNavigated.current) {
+            hasNavigated.current = true;
+            onFinish?.();
           }
         });
+
       } catch (error) {
-        console.error('Splash screen initialization error:', error);
-        if (typeof onFinish === 'function') {
-          const result = onFinish();
-          if (result instanceof Promise) {
-            result.catch(error => console.error('onFinish error:', error));
-          }
-        }
+        console.error('Splash error:', error);
+        onFinish?.();
       }
     };
 
     initializeApp();
-  }, [onFinish, slideAnim, opacityAnim, scaleAnim, rotateAnim]);
+  }, []);
 
-  const rotate = rotateAnim.interpolate({
+  const bounce = bounceAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
+    outputRange: [0, -8],
   });
 
   return (
-    <StyledView className="flex-1 bg-primary">
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="#1779F3"
-      />
+    <StyledView style={{ 
+      flex: 1, 
+      backgroundColor: PRIMARY_COLOR,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}>
+      <StatusBar barStyle="light-content" backgroundColor={PRIMARY_COLOR} />
 
-      <StyledView className="flex-1 justify-center items-center px-8">
-        {/* Основной контент */}
-        <Animated.View
-          style={{
-            transform: [
-              { scale: scaleAnim },
-              { rotate: rotate }
-            ],
-            opacity: opacityAnim,
-          }}
-          className="items-center"
-        >
-          {/* Логотип/Иконка */}
-          <StyledView className="w-24 h-24 bg-white rounded-full justify-center items-center mb-8 shadow-lg">
-            <Text className="text-4xl">🛒</Text>
-          </StyledView>
-
-          {/* Название приложения */}
-          <Text className="text-3xl font-bold text-white mb-2 tracking-wide">
-            Korean Shop
+      <Animated.View style={{
+        opacity: fadeAnim,
+        transform: [{ scale: scaleAnim }, { translateY: bounce }],
+        alignItems: 'center',
+      }}>
+        {/* Логотип */}
+        <StyledView style={{
+          width: 96,
+          height: 96,
+          backgroundColor: 'white',
+          borderRadius: 24,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: 24,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.2,
+          shadowRadius: 12,
+          elevation: 8,
+        }}>
+          <Text style={{ fontSize: 48, color: PRIMARY_COLOR, fontWeight: 'bold' }}>
+            KS
           </Text>
+        </StyledView>
 
-          {/* Подзаголовок */}
-          <Text className="text-lg text-white/80 text-center mb-8">
-            Лучшие товары из Кореи
-          </Text>
+        {/* Название */}
+        <Text style={{
+          fontSize: 28,
+          fontWeight: '700',
+          color: 'white',
+          marginBottom: 8,
+          letterSpacing: 2,
+        }}>
+          KOREAN SHOP
+        </Text>
 
-          {/* Анимированный индикатор загрузки */}
-          <Animated.View
-            style={{
-              transform: [{ translateY: slideAnim }],
-              opacity: opacityAnim,
-            }}
-            className="items-center"
-          >
-            <ActivityIndicator size="large" color="#FFFFFF" />
-            <Text className="text-white/70 mt-4 text-sm">
-              Загрузка...
-            </Text>
-          </Animated.View>
-        </Animated.View>
-
-        {/* Декоративные элементы */}
-        <StyledView className="absolute top-20 left-10 w-16 h-16 bg-white/10 rounded-full" />
-        <StyledView className="absolute top-40 right-16 w-8 h-8 bg-white/10 rounded-full" />
-        <StyledView className="absolute bottom-32 left-20 w-12 h-12 bg-white/10 rounded-full" />
-        <StyledView className="absolute bottom-20 right-10 w-6 h-6 bg-white/10 rounded-full" />
-      </StyledView>
+        {/* Индикатор */}
+        <StyledView style={{ marginTop: 32 }}>
+          <ActivityIndicator size="large" color="white" />
+        </StyledView>
+      </Animated.View>
     </StyledView>
   );
 };

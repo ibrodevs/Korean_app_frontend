@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  Image,
-  Alert,
-  SafeAreaView,
-  StatusBar,
-} from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from '../contexts/ThemeContext';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import Text from '../components/Text';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  Alert,
+  Image,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import DateOfBirthPicker from '../components/DateOfBirthPicker';
+import Text from '../components/Text';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface EditProfileScreenProps {
   route: {
@@ -71,7 +72,7 @@ const EditProfileScreen: React.FC = () => {
   const handlePickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Permission required', 'Please allow access to your photos.');
+      Alert.alert('Требуется разрешение', 'Пожалуйста, разрешите доступ к вашим фотографиям.');
       return;
     }
 
@@ -90,7 +91,7 @@ const EditProfileScreen: React.FC = () => {
   const handleTakePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Permission required', 'Please allow access to your camera.');
+      Alert.alert('Требуется разрешение', 'Пожалуйста, разрешите доступ к камере.');
       return;
     }
 
@@ -106,7 +107,7 @@ const EditProfileScreen: React.FC = () => {
   };
 
   const handleAvatarActionSheet = () => {
-    const options = ['Gallery', 'Cancel'];
+    const options = ['Галерея', 'Отмена'];
     const cancelButtonIndex = 1;
 
     showActionSheetWithOptions(
@@ -125,21 +126,21 @@ const EditProfileScreen: React.FC = () => {
   const handleSave = () => {
     onSave(profile);
     navigation.goBack();
-    Alert.alert('Success', 'Profile updated successfully!');
+    Alert.alert('Успешно', 'Профиль обновлен успешно!');
   };
 
   const formatDisplayDate = (dateString: string) => {
     // Преобразуем формат даты для отображения
     if (dateString.includes('/')) {
       const [day, month, year] = dateString.split('/');
-      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+        'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
       return `${day} ${monthNames[parseInt(month) - 1]} ${year}`;
     }
     return dateString;
   };
 
-  const genderOptions = ['Male', 'Female'];
+  const genderOptions = ['Мужской', 'Женский'];
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -156,7 +157,7 @@ const EditProfileScreen: React.FC = () => {
         >
           <Ionicons name="arrow-back" size={30} color={theme.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>Edit Profile</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Редактировать профиль</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -183,9 +184,13 @@ const EditProfileScreen: React.FC = () => {
           <View style={[styles.fieldContainer, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <View style={styles.fieldContent}>
               <Ionicons name="person-outline" size={20} color={theme.textSecondary} />
-              <Text style={[styles.fieldValue, { color: theme.text }]}>
-                {profile.fullName}
-              </Text>
+              <TextInput
+                style={[styles.fieldValue, { color: theme.text, flex: 1, marginLeft: 10 }]}
+                value={profile.fullName}
+                onChangeText={(value) => handleInputChange('fullName', value)}
+                placeholder="Введите ваше имя"
+                placeholderTextColor={theme.textSecondary}
+              />
             </View>
           </View>
 
@@ -206,9 +211,15 @@ const EditProfileScreen: React.FC = () => {
           <View style={[styles.fieldContainer, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <View style={styles.fieldContent}>
               <Ionicons name="mail-outline" size={20} color={theme.textSecondary} />
-              <Text style={[styles.fieldValue, { color: theme.text }]}>
-                {profile.email}
-              </Text>
+              <TextInput
+                style={[styles.fieldValue, { color: theme.text, flex: 1, marginLeft: 10 }]}
+                value={profile.email}
+                onChangeText={(value) => handleInputChange('email', value)}
+                placeholder="Введите ваш email"
+                placeholderTextColor={theme.textSecondary}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
             </View>
           </View>
 
@@ -220,11 +231,11 @@ const EditProfileScreen: React.FC = () => {
             <View style={styles.fieldRowBetween}>
               <View style={styles.fieldContent}>
                 <Ionicons name="male-female-outline" size={20} color={theme.textSecondary} />
-                <Text style={[styles.fieldValue, { color: theme.text }]}>Gender</Text>
+                <Text style={[styles.fieldValue, { color: theme.text }]}>Пол</Text>
               </View>
               <View style={styles.genderValueRow}>
                 <Text style={[styles.genderValue, { color: theme.textSecondary }]}> 
-                  {profile.gender || 'Select'}
+                  {profile.gender || 'Выбрать'}
                 </Text>
                 <Ionicons name="chevron-forward" size={20} color={theme.textSecondary} />
               </View>
@@ -236,7 +247,7 @@ const EditProfileScreen: React.FC = () => {
           style={[styles.saveButton, { backgroundColor: theme.primary }]}
           onPress={handleSave}
         >
-          <Text style={styles.saveButtonText}>Save</Text>
+          <Text style={styles.saveButtonText}>Сохранить</Text>
         </TouchableOpacity>
 
       </ScrollView>
@@ -258,7 +269,7 @@ const EditProfileScreen: React.FC = () => {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: theme.card }]}> 
             <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: theme.text }]}>Gender</Text>
+              <Text style={[styles.modalTitle, { color: theme.text }]}>Пол</Text>
               <TouchableOpacity onPress={() => setShowGenderPicker(false)}>
                 <Ionicons name="close" size={22} color={theme.text} />
               </TouchableOpacity>

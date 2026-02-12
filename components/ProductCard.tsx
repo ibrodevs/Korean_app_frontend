@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
-import React, { memo, useCallback, useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { Image } from 'expo-image';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Animated, Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { Product } from '../types/product';
 import Text from './Text';
@@ -33,6 +33,7 @@ const ProductCard = memo(function ProductCard({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const addToCartScaleAnim = useRef(new Animated.Value(1)).current;
 
   const getDiscountPercentage = useCallback(() => {
     if (product.originalPrice && product.price) {
@@ -43,7 +44,7 @@ const ProductCard = memo(function ProductCard({
   }, [product.originalPrice, product.price, product.discount]);
 
   const formatPrice = useCallback((price: number) => {
-    return `${price.toLocaleString('ru-RU')} ₽`;
+    return `${price.toLocaleString('ru-RU')} сом`;
   }, []);
 
   const discountPercentage = getDiscountPercentage();
@@ -73,6 +74,31 @@ const ProductCard = memo(function ProductCard({
 
   const handleAddToCart = (e: any) => {
     e.stopPropagation();
+    
+    // Анимация bounce для кнопки
+    Animated.sequence([
+      Animated.timing(addToCartScaleAnim, {
+        toValue: 1.2,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(addToCartScaleAnim, {
+        toValue: 0.9,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(addToCartScaleAnim, {
+        toValue: 1.1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(addToCartScaleAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    
     onAddToCart?.(product);
   };
 
@@ -255,30 +281,39 @@ const ProductCard = memo(function ProductCard({
 
           {/* Add to Cart Button */}
           {onAddToCart && product.inStock !== false && product.stock !== 0 && (
-            <Pressable
-              style={({ pressed }) => [
+            <Animated.View
+              style={[
                 styles.addToCartButton,
-                pressed && styles.addToCartButtonPressed,
+                {
+                  transform: [{ scale: addToCartScaleAnim }],
+                },
               ]}
-              onPress={handleAddToCart}
-              disabled={!onAddToCart}
             >
-              <BlurView 
-                intensity={20} 
-                tint="light" 
-                style={styles.addToCartBlur}
+              <Pressable
+                style={({ pressed }) => [
+                  styles.addToCartButtonInner,
+                  pressed && styles.addToCartButtonPressed,
+                ]}
+                onPress={handleAddToCart}
+                disabled={!onAddToCart}
               >
-                <Ionicons
-                  name="cart-outline"
-                  size={16}
-                  color={PRIMARY_COLOR}
-                  style={styles.cartIcon}
-                />
-                <Text style={styles.addToCartText}>
-                  {t('common.addToCart')}
-                </Text>
-              </BlurView>
-            </Pressable>
+                <BlurView 
+                  intensity={20} 
+                  tint="light" 
+                  style={styles.addToCartBlur}
+                >
+                  <Ionicons
+                    name="cart-outline"
+                    size={16}
+                    color={PRIMARY_COLOR}
+                    style={styles.cartIcon}
+                  />
+                  <Text style={styles.addToCartText}>
+                    Добавить в корзину
+                  </Text>
+                </BlurView>
+              </Pressable>
+            </Animated.View>
           )}
         </View>
       </View>
@@ -509,6 +544,10 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   addToCartButton: {
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  addToCartButtonInner: {
     borderRadius: 10,
     overflow: 'hidden',
   },

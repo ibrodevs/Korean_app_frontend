@@ -15,6 +15,22 @@ export interface TrackingStatus {
   isCurrent: boolean;
 }
 
+export interface PickupLocation {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  workingHours: {
+    weekdays: string;
+    weekends: string;
+  };
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  distance?: string;
+}
+
 export interface OrderTracking {
   id: string;
   orderNumber: string;
@@ -28,6 +44,8 @@ export interface OrderTracking {
   trackingNumber: string;
   timeline: TrackingStatus[];
   items: OrderItem[];
+  deliveryType: 'delivery' | 'pickup'; // новое поле
+  pickupLocation?: PickupLocation; // информация о пункте выдачи
   deliveryWindow?: {
     start: string;
     end: string;

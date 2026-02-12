@@ -1,16 +1,16 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Animated,
+    Animated,
+    Dimensions,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Text from '../../components/Text';
-import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 interface HeaderProps {
   onMenuPress: () => void;
@@ -88,9 +88,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuPress, onSearchPress, onCartPress
             activeOpacity={0.7}
           >
             <Ionicons name="cart-outline" size={28} color="#FFFFFF" />
-            <View style={[styles.cartBadge, { backgroundColor: theme.error }]}>
-              <Text style={styles.cartBadgeText}>3</Text>
-            </View>
           </TouchableOpacity>
         </Animated.View>
       </View>

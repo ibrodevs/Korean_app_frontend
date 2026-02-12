@@ -32,7 +32,10 @@
     "clear": "Clear",
     "clearAll": "Clear All",
     "apply": "Apply",
-    "addToCart": "Add to Cart"
+    "addToCart": "Add to Cart",
+    "quantity": "Quantity",
+    "item": "item",
+    "items": "items"
   },
   "appName": "Korean Store",
   "home": {
@@ -291,6 +294,8 @@
     "cancelOrder": "Cancel Order",
     "writeReview": "Write Review",
     "cancelConfirm": "Are you sure you want to cancel this order?",
+    "cancelConfirmation": "Are you sure you want to cancel this order? This action cannot be undone.",
+    "orderCancelled": "Order has been cancelled successfully",
     "title": "My Orders",
     "allOrders": "orders",
     "all": "orders",
@@ -324,7 +329,15 @@
     "deliveryProgress": "Complete",
     "viewDetails": "View Details",
     "contactSupport": "Contact Support",
-    "packageInfo": "Package Contents"
+    "packageInfo": "Package Contents",
+    "orderItems": "Order Items",
+    "tracked": "Tracked",
+    "pickupLocation": "Pickup Location",
+    "navigate": "Navigate",
+    "openMaps": "Open Maps",
+    "workingHours": "Working Hours",
+    "orderActions": "Order Actions",
+    "copyTracking": "Copy Tracking"
   },
   "timeline": {
     "estimatedTime": "Estimated",
@@ -419,6 +432,15 @@
     "title": "Favorites",
     "empty": "No favorites yet",
     "emptyDescription": "Add products to your favorites by tapping the heart icon"
+  },
+  "support": {
+    "contactSupport": "Contact Support",
+    "title": "Support",
+    "helpCenter": "Help Center",
+    "faq": "Frequently Asked Questions",
+    "chat": "Live Chat",
+    "email": "Email Support",
+    "phone": "Phone Support"
   },
   "navigation": {
     "home": "Home",

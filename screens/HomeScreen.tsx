@@ -240,9 +240,6 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Простые вычисления
-  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-
   const filteredProducts = (() => {
     let products = featuredProducts;
     
@@ -347,13 +344,6 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                 onPress={() => navigation.navigate('CartTab', { screen: 'CartMain' })}
               >
                 <Ionicons name="cart-outline" size={22} color="#FFFFFF" />
-                {cartItemCount > 0 && (
-                  <View style={styles.cartBadge}>
-                    <Text style={styles.cartBadgeText}>
-                      {cartItemCount}
-                    </Text>
-                  </View>
-                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -556,25 +546,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
-  },
-  cartBadge: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    backgroundColor: '#FF4757',
-    borderRadius: 10,
-    minWidth: 18,
-    height: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: '#FFFFFF',
-  },
-  cartBadgeText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    paddingHorizontal: 4,
   },
   searchContainer: {
     marginBottom: 12,
