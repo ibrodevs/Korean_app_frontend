@@ -9,9 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "bundleIdentifier": "com.yourname.koreanfrontend",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.yourname.koreanfrontend",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -39,11 +41,23 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      [
+      "@react-native-google-signin/google-signin",
+    {
+      "iosUrlScheme": "com.googleusercontent.apps.1074628944814-mhnit64ojdadqsiegbijkhoctco6nbm8"
+    }
+  ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1813b49a-4045-418d-b8f7-566cdeb39b8b"
+      }
     }
   }
 }

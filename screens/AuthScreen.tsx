@@ -1,9 +1,16 @@
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useGoogleLogin } from '@react-oauth/google'; // Web
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import axios from 'axios'
+
 import { View as StyledView, Text } from '@/components/styled';
+import { HomeStackParamList } from '../types/navigation';
+import { useRouter } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   SafeAreaView,
@@ -18,9 +25,20 @@ import { AuthStackParamList } from '../types/navigation';
 
 const { width, height } = Dimensions.get('window');
 
+GoogleSignin.configure({
+    /**
+     * this is google sign in config created by Adilhan
+     */
+    webClientId: '1074628944814-je4b5jgu8uccj26rk9v9i73a8guf0kvn.apps.googleusercontent.com', 
+    offlineAccess: true,
+  });
+
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 const AuthScreen: React.FC = () => {
+  const BASE_URL_API = process.env.EXPO_PUBLIC_API_BASE_URL
+
+  const router = useRouter();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
 
@@ -32,6 +50,11 @@ const AuthScreen: React.FC = () => {
   const button2Anim = useRef(new Animated.Value(50)).current;
   const button3Anim = useRef(new Animated.Value(50)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  const navigationhome = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+
+
+ 
 
   useEffect(() => {
     // Параллельная анимация появления
@@ -107,7 +130,7 @@ const AuthScreen: React.FC = () => {
       Animated.timing(scaleAnim, {
         toValue: 0.98,
         duration: 100,
-        useNativeDriver: true,
+        useNativeDriver: true
       }),
       Animated.timing(scaleAnim, {
         toValue: 1,
@@ -122,9 +145,53 @@ const AuthScreen: React.FC = () => {
     navigation.navigate('Register');
   };
 
-  const handleGoogleLogin = () => {
-    console.log('Google login pressed');
+  
+
+  const sendUserGoogleAuthDataToAPI = async(token, isIdToken = true) => {
+    try{
+      // Для мобильных отправляем как id_token, для веба как access_token
+      const payload = isIdToken 
+        ? { "id_token": token }
+        : { "access_token": token };
+      
+      const response = await axios.post(`${BASE_URL_API}/api/auth/google/`, payload);
+      console.log('response from api: ', response.data);
+      return response.data;
+    }
+    catch (error) {
+      console.error('API Error:', error.response?.data || error.message);
+      throw error; 
+    }
+  }
+
+  const handleGoogleLogin = async() => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log("idToken", userInfo.data.idToken);
+      
+      const apiResponse = await sendUserGoogleAuthDataToAPI(userInfo.data.idToken, true);
+      console.log('User info:', apiResponse);
+    } catch (error) {
+      console.error('Login Error:', error);
+    }
+  }
+
+  const loginWeb = useGoogleLogin({
+  onSuccess: async (tokenResponse) => {
+    console.log('Web Login Success:', tokenResponse);
+    await sendUserGoogleAuthDataToAPI(tokenResponse.access_token, false);
+  },
+  });
+
+    const handleUniversalGoogleLogin = () => {
+    if (Platform.OS === 'web') {
+      loginWeb(); // Вызывает хук @react-oauth/google
+    } else {
+      handleGoogleLogin(); // Вызывает твою нативную функцию с GoogleSignin
+    }
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -258,7 +325,7 @@ const AuthScreen: React.FC = () => {
           >
             <TouchableOpacity
               style={styles.googleButton}
-              onPress={handleGoogleLogin}
+              onPress={handleUniversalGoogleLogin}
               activeOpacity={0.9}
             >
               <Ionicons name="logo-google" size={20} color="#6b7280" />
@@ -532,4 +599,19 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AuthScreen;
+
+
+const WEB_CLIENT_ID =  '1074628944814-je4b5jgu8uccj26rk9v9i73a8guf0kvn.apps.googleusercontent.com';
+
+const AuthScreenWithProvider = () => {
+  if (Platform.OS === 'web') {
+    return (
+      <GoogleOAuthProvider clientId={WEB_CLIENT_ID}>
+        <AuthScreen />
+      </GoogleOAuthProvider>
+    );
+  }
+  return <AuthScreen />;
+};
+
+export default AuthScreenWithProvider;
